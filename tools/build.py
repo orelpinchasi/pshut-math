@@ -15,7 +15,18 @@ head_add = '''<meta name="viewport" content="width=device-width, initial-scale=1
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="פשוט להצליח">'''
+<meta name="apple-mobile-web-app-title" content="פשוט להצליח">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="פשוט להצליח במתמטיקה">
+<meta property="og:title" content="פשוט להצליח במתמטיקה – כל הסרטונים במקום אחד">
+<meta property="og:description" content="הסברים, תרגול ושאלות בגרות פתורות – לפי כיתה, שאלון ונושא. חטיבת ביניים, 3, 4 ו-5 יח״ל.">
+<meta property="og:url" content="https://orelpinchasi.github.io/pshut-math/">
+<meta property="og:image" content="https://orelpinchasi.github.io/pshut-math/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="he_IL">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://orelpinchasi.github.io/pshut-math/og-image.jpg">'''
 h, n = re.subn(r'<meta name="viewport"[^>]*>', head_add, h, count=1); assert n
 
 h = h.replace('</style>', '''/* app mode */
