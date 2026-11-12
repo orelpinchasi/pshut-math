@@ -1551,7 +1551,7 @@ function renderFilters(){
 function card(v){
   const t = TOPICS[v.topic];
   const bg = `linear-gradient(135deg,hsl(${t.hue} 62% 46%),hsl(${(t.hue+40)%360} 66% 34%))`;
-  const tid=v.id||v.thumb; const img = tid ? `<img src="https://i.ytimg.com/vi/${tid}/mqdefault.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : "";
+  const tid=v.id||v.thumb; const img = tid ? `<img src="t/${tid}.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${tid}/mqdefault.jpg'">` : "";
   const tags = v.at.filter(a=>a[0]!=="insp").map(a=>`<span class="tag lv">${levelName(a[0])} · ${groupName(a[0],a[1])}</span>`).join("");
   const badge = v.playlist ? `<span class="badge">▶ פלייליסט · ${v.count} סרטונים</span>` : `<span class="badge">${t.name}</span>`;
   const inner = `<div class="thumb" style="background:${bg}"><span class="glyph">${t.glyph}</span>${img}${badge}<span class="play"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z" fill="#141b3a"/></svg></span></div>

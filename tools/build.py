@@ -43,10 +43,10 @@ body{padding-bottom:env(safe-area-inset-bottom)}
 .install-bar .x{background:transparent;color:#fff;opacity:.7;padding:8px}
 </style>''', 1)
 
-# תמונות ממוזערות: ישירות מיוטיוב, טעינה עצלה של הדפדפן עצמו
+# תמונות ממוזערות: מעוצבות, מתיקיית t/ (ואם חסרה – מיוטיוב), טעינה עצלה של הדפדפן עצמו
 old = '<img data-th="${tid}" alt="" hidden>'
 assert old in h, "thumbnail markup changed"
-h = h.replace(old, '<img src="https://i.ytimg.com/vi/${tid}/mqdefault.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">')
+h = h.replace(old, '<img src="t/${tid}.webp" alt="" loading="lazy" decoding="async" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/${tid}/mqdefault.jpg\'">')
 a = h.index('/* תמונות ממוזערות'); b = h.index('function hydrate()')
 c = h.index('\n', b)
 h = h[:a] + '/* תמונות ממוזערות – נטענות ישירות מיוטיוב */\nfunction hydrate(){}' + h[c:]
