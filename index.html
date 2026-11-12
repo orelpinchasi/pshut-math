@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141b3a">
+<meta name="description" content="כל הסרטונים של הערוץ במקום אחד – הסברים, תרגול ושאלות בגרות פתורות, לפי כיתה, שאלון ונושא.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="פשוט להצליח">
+
+<title>פשוט להצליח במתמטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#141b3a; --night2:#1f2a57; --gold:#f5b83d; --gold2:#ffd77a; --rose:#ef6f6c;
+  --paper:#fbf7ef; --ink:#1d2140; --muted:#6b6f86; --line:#e7e1d3; --card:#ffffff;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;overflow-x:hidden;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55}
+a{color:inherit}
+h1,h2,h3{font-family:"Secular One",Rubik,sans-serif;font-weight:400;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(20,27,58,.92);backdrop-filter:blur(8px);color:#fff}
+header.top .wrap{display:flex;align-items:center;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:"Secular One";font-size:20px;white-space:nowrap}
+.brand svg{flex:none}
+nav.links{margin-inline-start:auto;display:flex;gap:4px}
+nav.links a{text-decoration:none;padding:8px 12px;border-radius:999px;font-size:15px;opacity:.85}
+nav.links a:hover{background:rgba(255,255,255,.1);opacity:1}
+nav.links a.cta{background:var(--gold);color:var(--night);opacity:1;font-weight:700}
+@media (max-width:760px){nav.links a:not(.cta){display:none}.brand span{font-size:17px}}
+
+/* hero */
+.hero{background:radial-gradient(1200px 500px at 80% -10%,#33407e 0,transparent 60%),linear-gradient(180deg,var(--night),var(--night2));color:#fff;position:relative;overflow:hidden;padding:56px 0 90px}
+.stars{position:absolute;inset:0;pointer-events:none}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center}
+.eyebrow{display:inline-block;background:rgba(245,184,61,.15);color:var(--gold2);border:1px solid rgba(245,184,61,.35);padding:4px 12px;border-radius:999px;font-size:14px;margin-bottom:14px}
+.hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lead{font-size:19px;opacity:.88;max-width:560px;margin:16px 0 26px}
+.search{display:flex;background:#fff;border-radius:999px;padding:6px;max-width:560px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.search input{flex:1;border:0;outline:0;font:inherit;font-size:17px;padding:10px 16px;background:transparent;color:var(--ink);min-width:0}
+.search button{border:0;background:var(--gold);color:var(--night);font:inherit;font-weight:700;padding:10px 22px;border-radius:999px;cursor:pointer}
+.hero-stats{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
+.hero-stats b{display:block;font-family:"Secular One";font-size:28px;color:var(--gold2)}
+.hero-stats span{font-size:14px;opacity:.75}
+.planet{justify-self:center;width:100%;max-width:320px}
+@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.planet{display:none}.hero{padding:40px 0 80px}}
+
+/* level tabs */
+.levels{margin-top:-46px;position:relative;z-index:2}
+.level-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.morebtn{border:0;background:var(--night);color:#fff;font:inherit;font-weight:700;padding:12px 26px;border-radius:999px;cursor:pointer}
+.ltab{background:var(--card);border:2px solid transparent;border-radius:var(--r);padding:16px 14px;text-align:right;cursor:pointer;font:inherit;color:inherit;box-shadow:0 6px 20px rgba(29,33,64,.08);transition:.15s}
+.ltab:hover{transform:translateY(-2px)}
+.ltab.on{border-color:var(--gold);background:#fffaf0}
+.ltab .t{font-family:"Secular One";font-size:20px;display:block}
+.ltab .s{font-size:13px;color:var(--muted)}
+.ltab .n{float:left;background:var(--night);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;margin-top:3px}
+@media (max-width:980px){.level-tabs{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.level-tabs{grid-template-columns:repeat(2,1fr)}}
+
+/* filters */
+.filters{margin:26px 0 8px}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.frow .lbl{font-size:14px;color:var(--muted);margin-inline-end:4px;min-width:62px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink);display:inline-flex;gap:6px;align-items:center}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--night);color:#fff;border-color:var(--night)}
+.chip .c{font-size:12px;opacity:.6}
+.chip.empty{opacity:.5}
+.result-head{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 14px;gap:12px;flex-wrap:wrap}
+.result-head h2{font-size:28px}
+.result-head .clear{background:none;border:0;font:inherit;color:var(--rose);cursor:pointer;text-decoration:underline}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.card{background:var(--card);border-radius:var(--r);overflow:hidden;text-decoration:none;display:flex;flex-direction:column;box-shadow:0 4px 16px rgba(29,33,64,.07);transition:.15s;cursor:pointer;border:0;padding:0;font:inherit;text-align:right;color:inherit}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(29,33,64,.14)}
+.thumb{position:relative;aspect-ratio:16/9;display:grid;place-items:center;color:#fff;overflow:hidden}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .glyph{direction:ltr;unicode-bidi:isolate;font-family:"Secular One";font-size:54px;opacity:.95;text-shadow:0 4px 18px rgba(0,0,0,.25)}
+.thumb .play{position:absolute;bottom:10px;left:10px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.95);display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.thumb .badge{position:absolute;top:10px;right:10px;background:rgba(20,27,58,.85);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card h3{font-family:Rubik;font-weight:700;font-size:16.5px;line-height:1.35}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.tag{font-size:12px;background:#f3eee2;border-radius:6px;padding:2px 8px;color:#5b5a6e}
+.tag.lv{background:#e9ecfb;color:#33407e}
+.emptybox{grid-column:1/-1;background:#fff;border:2px dashed var(--line);border-radius:var(--r);padding:34px;text-align:center;color:var(--muted)}
+.emptybox b{display:block;color:var(--ink);font-size:18px;margin-bottom:6px}
+
+/* curriculum */
+section.block{padding:70px 0 10px}
+section.block > .wrap > h2{font-size:34px;margin-bottom:6px}
+section.block > .wrap > p.sub{color:var(--muted);margin:0 0 26px;max-width:680px}
+.cur{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+@media (max-width:860px){.cur{grid-template-columns:1fr}}
+.cur-col{background:#fff;border-radius:var(--r);padding:22px;box-shadow:0 4px 16px rgba(29,33,64,.06)}
+.cur-col h3{font-size:22px;display:flex;justify-content:space-between;align-items:center}
+.cur-col h3 small{font-family:Rubik;font-size:13px;color:var(--muted)}
+.cur-grp{margin-top:14px}
+.cur-grp .gh{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.cur-list{display:flex;flex-wrap:wrap;gap:6px}
+.cur-list button{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:6px 10px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+.cur-list button:hover{border-color:var(--gold);background:#fffaf0}
+.cur-list button .c{display:inline-block;min-width:20px;text-align:center;background:var(--gold);color:var(--night);font-size:12px;font-weight:700;border-radius:999px;margin-inline-start:6px;padding:0 6px}
+.cur-list button.zero .c{background:#e7e1d3;color:#8b8a99}
+
+/* about */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:stretch}
+@media (max-width:860px){.about{grid-template-columns:1fr}}
+.quote{background:var(--night);color:#fff;border-radius:var(--r);padding:34px;position:relative;overflow:hidden}
+.quote p{font-family:"Secular One";font-size:26px;line-height:1.35;margin:0 0 14px}
+.quote span{color:var(--gold2)}
+.pillars{display:grid;gap:12px}
+.pillar{background:#fff;border-radius:var(--r);padding:18px 20px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 4px 16px rgba(29,33,64,.06)}
+.pillar .ic{flex:none;width:44px;height:44px;border-radius:12px;background:#fff2d6;display:grid;place-items:center;font-family:"Secular One";font-size:22px;color:#b77d10}
+.pillar b{display:block;font-size:17px}
+.pillar span{color:var(--muted);font-size:15px}
+
+/* contact */
+.contact{background:linear-gradient(135deg,var(--gold),#f39c4a);border-radius:26px;padding:40px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;color:var(--night)}
+@media (max-width:760px){.contact{grid-template-columns:1fr;padding:28px}}
+.contact h2{font-size:34px}
+.contact p{margin:8px 0 0;font-size:17px}
+.btns{display:flex;flex-direction:column;gap:10px}
+.btn{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;background:var(--night);color:#fff;padding:14px 18px;border-radius:14px;font-weight:700}
+.btn small{font-weight:400;opacity:.75;direction:ltr}
+.btn.light{background:#fff;color:var(--night)}
+footer{padding:40px 0 50px;color:var(--muted);font-size:14px;text-align:center}
+
+/* modal (used only when the page is hosted on its own domain) */
+.modal{position:fixed;inset:0;background:rgba(10,14,32,.82);display:none;place-items:center;z-index:50;padding:20px}
+.modal.on{display:grid}
+.modal .box{width:min(960px,100%);background:#000;border-radius:16px;overflow:hidden}
+.modal iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+.modal .bar{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.modal .bar a{color:var(--rose);font-weight:700}
+.modal .x{background:none;border:0;font-size:26px;cursor:pointer;line-height:1}
+/* app mode */
+header.top{padding-top:env(safe-area-inset-top)}
+body{padding-bottom:env(safe-area-inset-bottom)}
+@media (display-mode:standalone){html{overscroll-behavior-y:none}}
+.install-bar{position:fixed;inset-inline:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;background:var(--night);color:#fff;border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:520px;margin:0 auto}
+.install-bar[hidden]{display:none}
+.install-bar p{margin:0;flex:1;font-size:14px;line-height:1.4}
+.install-bar b{color:var(--gold2)}
+.install-bar button{border:0;font:inherit;border-radius:999px;padding:8px 16px;cursor:pointer}
+.install-bar .go{background:var(--gold);color:var(--night);font-weight:700}
+.install-bar .x{background:transparent;color:#fff;opacity:.7;padding:8px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="24" r="12" fill="#f5b83d"/><circle cx="15" cy="21" r="2.2" fill="#d99a22"/><circle cx="24" cy="28" r="1.6" fill="#d99a22"/><path d="M20 3l1.6 4 4.2.3-3.2 2.7 1 4.1L20 12l-3.6 2.1 1-4.1-3.2-2.7 4.2-.3z" fill="#ffd77a"/></svg>
+      <span>פשוט להצליח במתמטיקה</span>
+    </a>
+    <nav class="links">
+      <a href="#videos">סרטונים</a>
+      <a href="#curriculum">תוכנית הלימודים</a>
+      <a href="#method">השיטה</a>
+      <a class="cta" href="#contact">שיעור אישי</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <svg class="stars" id="stars" aria-hidden="true"></svg>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">חטיבת ביניים · 3 · 4 · 5 יחידות</span>
+      <h1>כל אחד יכול להצליח.<br><em>רק צריך תנאים נכונים.</em></h1>
+      <p class="lead">כל הסרטונים של הערוץ במקום אחד — הסברים, תרגול ושאלות בגרות פתורות, מסודרים לפי כיתה, שאלון ונושא בתוכנית הלימודים.</p>
+      <form class="search" id="searchForm">
+        <input id="q" type="search" placeholder="חפשו נושא, שאלון או מושג… למשל ״הסתברות״ או ״806״" autocomplete="off">
+        <button type="submit">חיפוש</button>
+      </form>
+      <div class="hero-stats">
+        <div><b id="statVideos">0</b><span>סרטונים</span></div>
+        <div><b id="statTopics">0</b><span>נושאים</span></div>
+        <div><b>ז׳–יב׳</b><span>מכל הכיתות</span></div>
+      </div>
+    </div>
+    <svg class="planet" viewBox="0 0 300 300" aria-hidden="true">
+      <defs><radialGradient id="pg" cx="40%" cy="35%"><stop offset="0" stop-color="#ffd77a"/><stop offset="1" stop-color="#e39a1f"/></radialGradient></defs>
+      <circle cx="150" cy="180" r="100" fill="url(#pg)"/>
+      <circle cx="110" cy="160" r="12" fill="#d0891a" opacity=".6"/><circle cx="185" cy="215" r="8" fill="#d0891a" opacity=".6"/><circle cx="170" cy="140" r="5" fill="#d0891a" opacity=".6"/>
+      <!-- rose -->
+      <path d="M200 85 v-28" stroke="#3b8a5a" stroke-width="4" stroke-linecap="round"/>
+      <path d="M200 70 q12 -6 14 -16 q-10 2 -14 10" fill="#3b8a5a"/>
+      <circle cx="200" cy="50" r="11" fill="#ef6f6c"/>
+      <!-- formulas orbit -->
+      <g font-family="Secular One" fill="#fff" opacity=".85">
+        <text x="20" y="70" font-size="26">π</text>
+        <text x="235" y="140" font-size="22">x²</text>
+        <text x="30" y="260" font-size="22">∑</text>
+        <text x="250" y="270" font-size="20">√</text>
+        <text x="80" y="40" font-size="18">f′(x)</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<main id="videos">
+  <div class="wrap levels">
+    <div class="level-tabs" id="levelTabs"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="filters">
+      <div class="frow" id="subRow"></div>
+      <div class="frow" id="topicRow"></div>
+    </div>
+    <div class="result-head">
+      <h2 id="resultTitle">כל הסרטונים</h2>
+      <button class="clear" id="clearBtn" hidden>ניקוי סינון</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div style="text-align:center;margin-top:22px"><button class="morebtn" id="moreBtn" hidden></button></div>
+  </div>
+
+  <section class="block" id="curriculum">
+    <div class="wrap">
+      <h2>מפת תוכנית הלימודים</h2>
+      <p class="sub">כל הנושאים לפי שכבה ושאלון. המספר ליד כל נושא הוא כמות הסרטונים שיש עליו באתר — לחיצה מציגה אותם.</p>
+      <div class="cur" id="cur"></div>
+    </div>
+  </section>
+
+  <section class="block" id="method">
+    <div class="wrap">
+      <h2>השיטה: בגישת ״הנסיך הקטן״</h2>
+      <p class="sub">לא רק נוסחאות — אימון אישי של מוח, תודעה ונשימה דרך מתמטיקה.</p>
+      <div class="about">
+        <div class="quote">
+          <p>״רק בלב רואים היטב.<br><span>הדברים החשובים סמויים מן העין.</span>״</p>
+          <div style="opacity:.75">— הנסיך הקטן</div>
+        </div>
+        <div class="pillars">
+          <div class="pillar"><div class="ic">1</div><div><b>הבנה לפני טכניקה</b><span>מסבירים למה זה עובד, ואז התרגילים נהיים פשוטים.</span></div></div>
+          <div class="pillar"><div class="ic">2</div><div><b>מהקל אל הקשה</b><span>כל נושא נבנה בהדרגה: הסבר, תרגול בסיסי, ואז שאלות בגרות.</span></div></div>
+          <div class="pillar"><div class="ic">3</div><div><b>תנאים נכונים להצלחה</b><span>ביטחון, ריכוז ונשימה — כי ההצלחה מתחילה מהראש.</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <h2>רוצים שיעור-אימון אישי?</h2>
+          <p>אוראל פנחסי — שיעורים פרטיים במתמטיקה לכל הרמות, הכנה לבגרות ובניית ביטחון.</p>
+        </div>
+        <div class="btns">
+          <a class="btn" href="https://wa.me/972506702628" target="_blank" rel="noopener">וואטסאפ <small>050-6702628</small></a>
+          <a class="btn light" href="https://www.youtube.com/@the_little_prince_orelpinchasi?sub_confirmation=1" target="_blank" rel="noopener">הרשמה לערוץ ביוטיוב <small>▶</small></a>
+          <a class="btn light" href="https://www.instagram.com/grow_up_endless" target="_blank" rel="noopener">אינסטגרם — הנסיך הקטן <small>@grow_up_endless</small></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי</footer>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <iframe id="player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="סרטון"></iframe>
+    <div class="bar"><span id="mTitle"></span><span><a id="mLink" target="_blank" rel="noopener">ביוטיוב ↗</a> <button class="x" id="mClose" aria-label="סגירה">×</button></span></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   רמות לימוד
+   ========================================================= */
+const LEVELS = [
+  {id:"all", name:"הכל",          sub:"כל הסרטונים"},
+  {id:"mid", name:"חטיבת ביניים", sub:"כיתות ז׳ · ח׳ · ט׳", groups:[{id:"ז",name:"כיתה ז׳"},{id:"ח",name:"כיתה ח׳"},{id:"ט",name:"כיתה ט׳"}]},
+  {id:"u3",  name:"3 יח״ל",       sub:"שאלונים 371 · 372",  groups:[{id:"371",name:"371 · י׳–יא׳"},{id:"372",name:"372 · יב׳"}]},
+  {id:"u4",  name:"4 יח״ל",       sub:"שאלונים 471 · 472",  groups:[{id:"471",name:"471 · י׳–יא׳"},{id:"472",name:"472 · יב׳"}]},
+  {id:"u5",  name:"5 יח״ל",       sub:"שאלונים 571 · 572",  groups:[{id:"571",name:"571 · י׳–יא׳"},{id:"572",name:"572 · יב׳"}]},
+  {id:"insp",name:"הנסיך הקטן",   sub:"תוכן, משמעות והשראה"},
+];
+const CODE = {z:["mid","ז"],h:["mid","ח"],t:["mid","ט"],"3a":["u3","371"],"3b":["u3","372"],"4a":["u4","471"],"4b":["u4","472"],"5a":["u5","571"],"5b":["u5","572"]};
+
+/* =========================================================
+   נושאים
+   ========================================================= */
+const TOPICS = {
+  "signed":     {name:"מספרים מכוונים",                 glyph:"±",    hue:205},
+  "powers":     {name:"חזקות",                          glyph:"aⁿ",   hue:240},
+  "algebra":    {name:"אלגברה ופירוק לגורמים",          glyph:"ab",   hue:250},
+  "equations":  {name:"משוואות",                        glyph:"x=",   hue:230},
+  "systems":    {name:"מערכות משוואות",                 glyph:"{ }",  hue:265},
+  "inequal":    {name:"אי-שוויונות",                    glyph:"<",    hue:280},
+  "ratio":      {name:"יחס ופרופורציה",                 glyph:"a:b",  hue:30},
+  "percent":    {name:"אחוזים",                         glyph:"%",    hue:20},
+  "word":       {name:"בעיות מילוליות ותנועה",          glyph:"?",    hue:10},
+  "linear":     {name:"קו ישר ושיפוע",                  glyph:"y=mx", hue:190},
+  "quadratic":  {name:"פרבולה ופונקציה ריבועית",        glyph:"x²",   hue:175},
+  "angles":     {name:"זוויות",                         glyph:"∠",    hue:140},
+  "area":       {name:"שטחים והיקפים",                  glyph:"□",    hue:120},
+  "congruence": {name:"חפיפת משולשים",                  glyph:"≅",    hue:150},
+  "pythagoras": {name:"משולש ישר-זווית ופיתגורס",       glyph:"a²+b²",hue:160},
+  "similarity": {name:"דמיון משולשים ותאלס",            glyph:"∼",    hue:130},
+  "midsegment": {name:"מרובעים וקטע אמצעים",            glyph:"▱",    hue:110},
+  "geometry":   {name:"גאומטריה",                       glyph:"△",    hue:145},
+  "circle":     {name:"מעגל",                           glyph:"◯",    hue:165},
+  "analytic":   {name:"גאומטריה אנליטית",               glyph:"(x,y)",hue:200},
+  "combo":      {name:"גאומטריה + טריגו + אנליטית",      glyph:"△(x,y)",hue:215},
+  "trig-right": {name:"טריגונומטריה במשולש ישר-זווית",  glyph:"sin",  hue:330},
+  "trig-plane": {name:"טריגונומטריה במישור",            glyph:"sin",  hue:340},
+  "trig-space": {name:"טריגונומטריה במרחב",             glyph:"⬡",    hue:315},
+  "trig-func":  {name:"זהויות, משוואות ופונקציות טריגו",glyph:"cos",  hue:350},
+  "stats":      {name:"התפלגות נורמלית וסטטיסטיקה",     glyph:"σ",    hue:45},
+  "prob":       {name:"הסתברות",                        glyph:"P",    hue:55},
+  "sequences":  {name:"סדרות ואינדוקציה",               glyph:"aₙ",   hue:290},
+  "growth":     {name:"גדילה ודעיכה",                   glyph:"qⁿ",   hue:95},
+  "calc":       {name:"חדו״א – חקירת פונקציות",          glyph:"f′",   hue:0},
+  "extremum":   {name:"בעיות קיצון",                    glyph:"max",  hue:25},
+  "calc-exp":   {name:"פונקציות מעריכיות ו-ln",         glyph:"eˣ",   hue:15},
+  "integrals":  {name:"אינטגרלים",                      glyph:"∫",    hue:270},
+  "vectors":    {name:"וקטורים",                        glyph:"→",    hue:220},
+  "complex":    {name:"מספרים מרוכבים",                 glyph:"i",    hue:300},
+  "mixed":      {name:"תרגול ושאלות בגרות מעורבות",     glyph:"✓",    hue:210},
+  "inspire":    {name:"הנסיך הקטן – תוכן ומשמעות",      glyph:"✦",    hue:42},
+};
+
+/* =========================================================
+   תוכנית הלימודים: אילו נושאים בכל כיתה / שאלון
+   ========================================================= */
+const CURRICULUM = {
+  mid: {
+    "ז": ["signed","algebra","equations","word","ratio","percent","angles","area","mixed"],
+    "ח": ["algebra","equations","word","systems","inequal","linear","ratio","percent","angles","congruence","pythagoras","mixed"],
+    "ט": ["powers","algebra","quadratic","systems","word","extremum","pythagoras","trig-right","similarity","midsegment","prob"],
+  },
+  u3: {
+    "371": ["percent","growth","analytic","stats","prob"],
+    "372": ["trig-plane","trig-space","calc"],
+  },
+  u4: {
+    "471": ["analytic","combo","geometry","similarity","circle","trig-plane","prob","stats","calc","extremum","integrals","word","mixed"],
+    "472": ["sequences","growth","trig-space","calc-exp","integrals","vectors"],
+  },
+  u5: {
+    "571": ["equations","word","sequences","geometry","similarity","circle","trig-plane","trig-func","prob","stats","calc","extremum","integrals","mixed"],
+    "572": ["calc-exp","integrals","growth","vectors","complex","analytic"],
+  },
+};
+
+/* =========================================================
+   הסרטונים – כל הערוץ (השורות: קוד | נושא | שיוך | כותרת)
+   שיוך: z/h/t = כיתות ז/ח/ט · 3a/3b = 371/372 · 4a/4b = 471/472 · 5a/5b = 571/572
+   ========================================================= */
+const RAW = `W0ougLVUeKE|vectors|4b|472 וקטורים שאלות בגרות 4
+ma7ETzMN-zU|vectors|4b|472 וקטורים שאלות בגרות 3
+SBcSyxsCxw8|vectors|4b|472 וקטורים שאלות בגרות 2
+Y-sFuB9Rr4E|vectors|4b|472 וקטורים שאלות בגרות 1
+C3WVQFp3BCc|sequences|5a|סדרות 5 יח 571 מטורפת
+-i9brMt26EM|integrals|4a 5a|אינטגרל פונק שטח מפוצל
+tg55yzLGyq4|integrals|4a 5a|סוגי אינטגרלים
+eQaQg1WXERk|sequences|5a|תרגילי טופ סדרות 5 יח 571 מטורף ומדהים בו זמנית 2
+1HrbKKKzjz8|sequences|5a|תרגילי טופ סדרות 5 יח 571 מטורף ומדהים בו זמנית 3
+TH28celN5UA|sequences|5a|תרגילי טופ סדרות 5 יח 571 מטורף ומדהים בו זמנית 1
+GSK4hnUo4Ys|sequences|5a|הסבר מהות סדרה חשבונית כולל הנוסחאות 5 יח
+z460tms_YLI|trig-func|5a|פיתרון משוואות עם זהויות 5 יח 1
+LdDlp9l5Ogk|trig-func|5a|פיתרון משוואות עם זהויות 5 יח 3
+kzKMHexYDiw|trig-func|5a|מעגל היחידה 5 יח
+d2l7QwVmSNo|trig-func|5a|פיתרון משוואות עם זהויות 5 יח 2
+ayc3aDCU4c0|calc|5a|הסבר קשר בין כל הפונק קשר בין נגזרת ראשונה לשניה הסבר מטורף 5 יח
+4GzzhAk7yB0|calc|5a|תרגילי קעירות וקשר בין פונק 571 5 יח מתמטיקה הגאונים 2
+6mUqySdwvPI|calc|5a|תרגילי קעירות וקשר בין פונק 571 5 יח מתמטיקה הגאונים 1
+c1PuZXAAkbw|calc|5a|תרגילי קעירות וקשר בין פונק 571 5 יח מתמטיקה הגאונים 3
+B32BOied2Ic|similarity|t 4a 5a|מעוין עם ריבוע תרגיל מדהים 4 5 יח כיתה ט וי
+QVHRi3xlnJI|equations|5a|משוואות מיוחדות 5יח כיתה י 1
+tFoMhrS8RU4|geometry|4a 5a|מרובעים כל החוקים כיתה ט י 4 5 יח מטורף הכל ברגע
+P6p4EyVgTKQ|geometry|4a 5a|30 60 90 משולש
+GEPHHCpyc8U|equations|5a|משוואות מיוחדות 5יח כיתה י 3
+T2a44LPQigM|equations|5a|משוואות מיוחדות 5יח כיתה י 2
+9XEhHScdjEo|equations|5a|משוואות מיוחדות כיתה י 5 יח 2
+XyqAfvJAWKU|equations|5a|משוואות מיוחדות כיתה י 5 יח 1
+gxhI4xwnfvg|equations|5a|משוואות מיוחדות כיתה י 5 יח 11
+rsFAHVHDM9I|equations|5a|משוואות מיוחדות כיתה י 5 יח 10
+Ndon8XIvqt0|equations|5a|משוואות מיוחדות כיתה י 5 יח 9
+s2-XBGE-ljE|equations|5a|משוואות מיוחדות כיתה י 5 יח 7
+EjP9zdhkh-Y|equations|5a|משוואות מיוחדות כיתה י 5 יח 8
+ZtHkfnzJ8Ss|equations|5a|משוואות מיוחדות כיתה י 5 יח 5
+dM1fo6YR3uo|equations|5a|משוואות מיוחדות כיתה י 5 יח 4
+cFoXc1Y1lbs|equations|5a|משוואות מיוחדות כיתה י 5 יח 6
+16bwXE5vmys|equations|5a|משוואות מיוחדות כיתה י 5 יח 3
+TYZg47GIIls|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+FjY6BOzZ1qs|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+g6tk_bxuqyw|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+WLcV2GLaD3M|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+AbWuQ5u-MqM|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+HztCWTgcm0w|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+bCSvyi81goM|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+hw_kZli2thY|calc|4a 5a|הזזות פונק אופקית ואנכית - 4-5 יח
+iE2LKO1Qsgo|inspire||אצלך בעולם
+l3ZSLKc0Qzk|geometry|5a|שאלות טרפז ארכימדס 5 יח כיתה י 2
+LLCB4bbcjTs|geometry|5a|שאלות טרפז ארכימדס 5 יח כיתה י 1
+IQQsH6xxY3Y|calc|4a 5a|פונק כללית שאלה מתוקה וחמודה
+ZXppXE58RNM|geometry|4a 5a|הסבר קטע אמצעים
+sfTHttpMT78|stats|4a|התפלגות 471 מדהים ומרגש
+MY5nmXkVxHE|stats|4a|רגרסיה 471
+LDSXqKY04sA|calc|4a|חקירת שבר 471
+r9q3s6GPkUo|prob|4a|הסתברות עץ וואו 471
+gL3pGiP6pfk|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 8
+Wb7fSY1Q1T0|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 2
+XU14Qw7pzk4|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 6
+ah1t8h4JsnA|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 5
+OCq_Ru6r7LQ|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 4
+BWU2U6jWIZw|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 3
+85u2uGCcpOA|word|t|בעיות מילוליות כיתה ט הטופ של הטופ 1
+_sbq9OSEJC4|congruence|h|חפיפת משולשים כיתה ח תרגילים מדהימים ורעיונות יפים 3
+372bZic11kQ|pythagoras|h|משפט פיתגורס כיתה ח
+EanhqKVA_Jc|congruence|h|חפיפת משולשים כיתה ח תרגילים מדהימים ורעיונות יפים 5
+jhYuVppFWvs|congruence|h|חפיפת משולשים כיתה ח תרגילים מדהימים ורעיונות יפים 4
+ZYf3Kfp0JFs|congruence|h|חפיפת משולשים כיתה ח תרגילים מדהימים ורעיונות יפים 2
+PK38-1pd7Sk|extremum|4a 5a|המהות של פונק ונגזרת ואיך מוציאים נק' קיצון
+h6kUDMqG580|mixed|h|הכנה למבחן כיתה ח 3
+MPlVGKPLBas|mixed|h|הכנה למבחן כיתה ח 2
+QXeqwbLALUc|mixed|h|הכנה למבחן כיתה ח 1
+RVtAhxBPFl8|geometry|4a 5a|גאומטריה עם כל משפחת הריבועים הסבר מדהים
+0b_a6fD8xnc|quadratic|t|פרבולות עם משוואת ישר וסעיפים חכמים
+r0csTz9GPM0|algebra|t|פירוק לגורמים כיתה ט כולל כל ההסברים
+tjPznWnBRoo|midsegment|t|גאומטריה עם אנליטית כיתה ט
+RHyRznz0wAo|congruence|h|גאומטריה כיתה ח חפיפות 4
+jPJYKn1cpPU|congruence|h|גאומטריה כיתה ח חפיפות 2
+BUktbXdABsQ|congruence|h|גאומטריה כיתה ח חפיפות 3
+xyl0LmP5LLY|congruence|h|גאומטריה כיתה ח חפיפות 1
+PZai69igmwc|congruence|h|גאומטריה כיתה ח חפיפות 5
+CLlbep66Mbk|midsegment|t|גאומטריה כיתה ט כולל טענה נימוק
+M3Aga_eVjWg|word|t|בעיות מילוליות כיתה ט 2
+Uz3hfqTkmkI|word|t|בעיות מילוליות כיתה ט 1
+49hrcjuLrQc|word|t|בעיות מילוליות כיתה ט 3
+NDLS6BEoDvE|midsegment|t|גאומטריה כיתה ט תרגיל טיל
+QAHr7M_SZ9I|midsegment|t|גאומטריה כיתה ט תרגיל מדהים
+Y37CKWSu9DY|extremum|t|בעיית קיצון כיתה ט
+up3XWTb6Qgw|quadratic|t|פרבולה עם מלא סעיפים חכמים
+UQhvy01L8TA|word|t|בעיית תנועה כיתה ט
+5NTVC6RHDhI|quadratic|t|פרבולה מתוקה
+Iqwr4S9O4oo|midsegment|t|גאומטריה כיתה ט מתוקה מאוד
+iPkBl5mr4Uw|quadratic|t|פרבולה חכמה כיתה ט
+FdI1W5HFVfA|mixed|4a|בגרות 471 מתמטיקה 4 יח שאלות בגרות שאלה 4 3
+z4q6BLEsSe0|mixed|4a|בגרות 471 מתמטיקה 4 יח שאלה 6 שאלות בגרות 1
+CYlH9sc-gb4|mixed|4a|בגרות 471 מתמטיקה 4 יח שאלות בגרות שאלה 5 2
+roZWgMuLdvU|midsegment|t|מעוין כיתה ט גאומטריה לפתור נכון את החיים
+Gkqc9fSi21U|midsegment|t|מלבן כיתה ט גאומטריה
+ewRIuN-M9Ao|calc|4a|חקירת שבר בגרות 4 יח 471
+KyY8AFblPdk|quadratic|t|פרבולות עם משוואת ישר ושיפוע כיתה ט המטורפים
+iLifdM5FkvA|extremum|5a|בעיות קיצון 5 יח 571 מדהימות ומתוקות 2
+3TykNuSb2YE|extremum|5a|בעיות קיצון 5 יח 571 מדהימות ומתוקות 3
+O-vqv6JCHHY|extremum|5a|בעיות קיצון 5 יח 571 מדהימות ומתוקות 1
+dzYS1TeQNYg|sequences|5a|אינדוקציה 5 יח 571
+y8ezV7AbiDM|mixed|5a|שאלות קצרות 571 בגרות GOOL 2
+P63c-d_e314|sequences|5a|סדרות הנדסית מטורפת 571 GOOL
+EG6bSRJBBvA|mixed|5a|שאלות קצרות 571 בגרות GOOL
+MVLaPpgwOtI|mixed|4a 5a|שאלות קצרות GOOL
+TprcgewrC6U|similarity|4a 5a|חוצה זוויות עם דמיון
+y_crW37ZxnI|extremum|5a|בעיות קיצון 5 יח כיתה י בהצלחה
+Tx9YApVjaDw|similarity|4a 5a|דמיון עם שטחים
+ODV1LKmlzUM|integrals|5a|הסבר נדיר של כל האינטגרלים 5 יח 2
+UGyFinIOqhI|trig-func|5a|חקירת טריגו
+P4UyhVqeb5A|sequences|5a|סדרה נדירה של 5 יח תהנו
+DotcpJkQI0Y|calc|4a|חקירת שורש בגרות 4 יח
+aa10bBm7zLA|calc|4a|תרגיל בגרות 4 יח חקירת שבר מטורפת
+C3ZljlDyRv8|algebra|t|כפל מקוצר כיתה ט
+5DHvbhL4jK4|systems|h|2 משוואות עם 2 נעלמים כיתה ח מדהים ומרגש
+R0DrRHe7kBc|algebra|t|פירוק לגורמים כיתה ט האלופים
+9k7AQnONt8E|systems|h|2 משוואות עם 2 נעלמים כיתה ח
+55BxhBjFLQw|growth|4b|גדילה ודעיכה 482 שאלת בגרות יפיפיה
+p7lboMkO9L0|calc-exp|4b|חקירת EX 472 שאלות בגרות יפה מאוד
+7ECLhkvxCaI|growth|4b|גדילה ודעיכה 472 שאלה טובה ויפה שאלת בגרות
+V_Ofj9xrYRo|algebra|z|ביטויים אלגבריים כיתה ז כמה יפה ומיוחד
+Ng8rTA-_SQM|circle|4a 5a|שאלות גאומטריה במעגל הבסיס של הבסיס 1
+WvSjM6d3wfc|circle|4a 5a|שאלות גאומטריה במעגל הבסיס של הבסיס 2
+ETZ-hKc8gSE|calc-exp|4b 5b|חקירת EX שאלת בגרות נדירה ויפה וחכמה במיוחד
+2y4Sn1QHIP0|ratio|h|קנה מידה כיתה ח
+a1088kumg_o|analytic|5b|572 שאלת אנליטית גאונית כיתה יב 5 יח
+uTNLX7v1m9U|calc|4a 5a|הסבר על כל סוגי הפונקציות שנלמד בכל התיכון
+xMlruZe5xzo|quadratic|t|פרבולה הבסיס של הבסיס כיתה ט
+cu-vhLbdkD8|quadratic|t|ציר סימטריה פרבולה מדהימה ויפה כיתה ט
+Yw6L8lGpgvU|inspire||הדרכת ואימון מורים לגדילה תודעתית, נפשית וטכנולוגית – שיטת הנסיך הקטן
+tPu4UKKRLws|sequences|5a|אינדוקציה 571 שאלת בגרות
+MEY1Qac3sEk|geometry|5a|שאלת גאומטריה שאלות קצרות יפה וקטנה 571
+RYjE1t5AhfE|integrals|5a|קשר בין שלושת הגרפים כולל אינטגרל מיוחד 571
+cka511WRQJY|geometry|5a|גאומטריה שאלה מתוקה ויפה שאלת בגרות 571
+Ke1wFyfHPJo|word|z h|בעיות מילוליות כיתה ז וח עם נעלם אחד 1
+7nHzIir88sc|word|z h|בעיות מילוליות כיתה ז וח עם נעלם אחד 2
+cJb5ree73sg|midsegment|t 5a|קטע אמצעים בטרפז תרגילים ל5 יח כיתה ט המטורפים 4
+6dEwUSjPjZY|midsegment|t 5a|קטע אמצעים בטרפז תרגילים ל5 יח כיתה ט המטורפים 2
+ovNz_x6DdU4|midsegment|t 5a|קטע אמצעים בטרפז תרגילים ל5 יח כיתה ט המטורפים 3
+vVWccl79_1o|midsegment|t 5a|קטע אמצעים בטרפז תרגילים ל5 יח כיתה ט המטורפים
+p2BC17I9kLA|trig-plane|5a|הסבר טריגו כל הנוסחאות חשוב ביותר 5 יח (עותק)
+81HhG7Ehoi4|linear|h|הסבר על קו ישר ועל שיפועים כיתה ח האלופים והמטורפים
+ckceGLJ2VdY|linear|h|הסבר מדהים על שיפוע כיתה ח האלופים
+IMdyvzVEoOo|growth|4b|שאלת בגרות גדילה ודעיכה שאלה מקסימה ויפה 482
+3D7ni-ue5m4|vectors|4b|482 שאלת בגרות מדהימה וקטורים
+UAZzhaRW1zQ|calc-exp|4b|שאלת בגרות 472 EX קשר בין פונק לנגזרת כולל אינטגרל
+oiFuSCdp_I8|calc-exp|4b|חקירת EX שאלת בגרות מדהימה וטובה 472
+xV3ULPjEhUA|vectors|4b|וקטורים 472 שאלת בגרות טובה ויפה 4 יח כיתה יב
+-6uolwk5LDc|calc-exp|4b 5b|חקירה של EX 4 5 תרגיל מתוק מאוד
+k9q2OkIknkw|calc-exp|4b 5b|עוד קצת טוב עם EX משחקי חזקות
+bTTyxiP3fEg|inspire||הסבר לכללי הנסיך הקטן – איך לפתור כל שאלה בחיים
+Ik9ZJ0F0Mro|linear|h|קו ישר כולל שיפוע ותרגילים והסברים על מהות השיפוע ועל מהות ה-b כיתה ח 1
+MEeItYco3ZA|linear|h|קו ישר כולל שיפוע ותרגילים והסברים על מהות השיפוע ועל מהות ה-b כיתה ח 4
+ZEDkYn9SvjA|linear|h|קו ישר כולל שיפוע ותרגילים והסברים על מהות השיפוע ועל מהות ה-b כיתה ח 3
+-YlNxAYdXkA|inequal|h|אי-שוויונים כיתה ח כולל הוכחה 1
+RpX0l4tVf7Y|inequal|h|אי-שוויונים כיתה ח כולל הוכחה 3
+JIVoErkaDRo|linear|h|קו ישר כולל שיפוע ותרגילים והסברים על מהות השיפוע ועל מהות ה-b כיתה ח 2
+B5riOZz9H9A|trig-plane|4a 5a|הסבר משולש ישר זווית ומשפט הסינוסים
+qmRAAFgQSSw|trig-plane|4a 5a|תרגילים מדהימים של ישר זווית ומשפט הסינוסים 2
+IzupQGV9Jdg|trig-plane|4a 5a|תרגילים מדהימים של ישר זווית ומשפט הסינוסים 1
+AoWrEYPQKpo|trig-plane|4a 5a|תרגילים מדהימים של ישר זווית ומשפט הסינוסים 5
+MWlUh8Q2OBU|trig-plane|4a 5a|תרגילים מדהימים של ישר זווית ומשפט הסינוסים 4
+HYuapzRpNfA|trig-plane|4a 5a|תרגילים מדהימים של ישר זווית ומשפט הסינוסים 3
+Ohz1vlfsUKU|powers|5a|שאלת בגרות מדהימה על חזקות והבנה עמוקה 5 יח 571
+wC-0dkf2V0M|integrals|4a 5a|איך עושים אינטגרל מההתחלה עד הסוף 4 5 יח
+Z1xvmu8EJEo|integrals|5a|עוד אינטגרל ברמת 5 יח
+6F7BgzRIBZs|integrals|5a|עוד אינטגרל 5 יח המתוקים
+G-dFz43fEzI|circle|5b|אנליטית אליפסה עם מעגל ומשיקים שאלת בגרות 572
+xodGOzSI_LU|integrals|4b 5b|איך גוזרים ואיך עושים אינטגרל לפונקציית EX פשוט וקל
+Yx9LPNvzGh8|integrals|4b 5b|דוגמה חיה של אינטגרל מורכב של EX
+KpVKo1wRMVc|linear|h|איך מוציאים שיפוע כיתה ח המדהימים
+Wrbry84F3h8|midsegment|t|תרגיל בגאומטריה כיתה ט ריבוע נדיר תרגיל מטורף
+BUPpnTNEZNs|prob|5a|הסתברות 571 בגרות 5 יח 2
+ZcAMXaYwiLg|geometry|5a|גאומטריה 5 יח תרגיל בגרות 2
+dpwNwAe67vk|sequences|5a|הנדסית 5 יח בגרות
+qpXO5Fwv7bE|geometry|5a|הסבר מפגש תיכונים כיתה י 5 יח
+Q1hZRHuTeMA|inspire||הסבר לכללי הנסיך הקטן – איך לפתור כל שאלה בחיים
+BhUMB5PJjGA|geometry|4a 5a|תרגילי מפגש תיכונים כיתה י 4 5 יח 2
+PEk4geeYDnY|geometry|4a 5a|תרגילי מפגש תיכונים כיתה י 4 5 יח 1
+nMVPwBf1ypM|geometry|5a|תרגיל בגאומטריה – מפגש תיכונים עם קטע אמצעים כיתה י 5 יח
+Pf2qz4a7eRI|sequences|5a|תרגיל 45 סדרה הנדסית כיתה יא 5 יח
+PWvoPpLrt3o|sequences|5a|הוכחות סדרה הנדסית 5 יח
+-iHi0ifeqfk|circle|4a|תרגילי מעגל עם טריגו ואנליטית 4 יח 471 2
+TmzddKSabQY|circle|4a|תרגילי מעגל עם טריגו ואנליטית 4 יח 471 3
+ofDFVOW5rTI|circle|4a|תרגילי מעגל עם טריגו ואנליטית 4 יח 471 1
+0WDEtDss9Io|circle|4a|תרגיל בגרות קיץ 2025 שאלון 471 מעגל נדיר ביופיו
+HZa5cR-dc0Y|quadratic|t|פרבולה כיתה ט נדיר ומדהים
+JRpGIIc4o1I|linear|h|איך מוצאים שיפוע כיתה ח
+8pcQj1G5r6U|linear|h|הסבר משוואות ישר כיתה ח 2
+AsMQBuddCNQ|geometry|5a|הסבר של כל הרעיונות של מקבילית, מלבן, מעוין וריבוע 5 יח
+6VzwJRgd3nw|geometry|4a 5a|תרגיל מדהים – ריבוע עם חפיפות
+_sSopFPrPqc|linear|h|הסבר משוואות ישר כיתה ח 1
+a9NTiqZ39O8|linear|h|הסבר משוואות ישר כיתה ח 3
+U3XM5aLRw6o|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 4
+628fJZyAVkY|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 1
+T84VyAKc78A|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 3
+6COCY6Psjvs|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 7
+Mg-zpJWOJdE|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 2
+F-GPeYSNpDg|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 6
+AeE69eSDlug|midsegment|t 5a|תרגילי גאומטריה מדהימים כיתה ט 5 יח 5
+Gz6JBWoTKZU|trig-func|5a|זהויות כפולות – למה, כמה ואיך 5 יח כיתה יא
+oUtclI3b328|integrals|5a|אינטגרלים מהבסיס עד רמה גבוהה ביותר 5 יח 2
+gG74dYlbXTE|integrals|5a|אינטגרלים מהבסיס עד רמה גבוהה ביותר 5 יח 5
+PkV3sHepuf0|integrals|5a|אינטגרלים מהבסיס עד רמה גבוהה ביותר 5 יח 1
+QzwcBNXY-yY|integrals|5a|אינטגרלים מהבסיס עד רמה גבוהה ביותר 5 יח 4
+u5DUizbl-6w|integrals|5a|אינטגרלים מהבסיס עד רמה גבוהה ביותר 5 יח 3
+H-jzabc8Vts|linear|h|קו ישר – איך מוציאים את השיפוע ואת החיתוך עם ציר y לפי ציור כיתה ח
+mHKumhD_v9s|calc-exp|4b 5b|הסבר על פונקציית ln – איך גוזרים, איך פותרים משוואה והמשמעות שלה כיתה יב
+4X1vE6phfLw|calc-exp|4b|תרגילי בגרות 472 תרגילי ln מדהימים 2
+gaF2tpTyPUE|calc-exp|4b|תרגילי בגרות 472 תרגילי ln מדהימים 1
+uiKRS6YL5tg|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 4
+d3jO4QMTFSQ|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 3
+q0Tgd4QbNaA|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 2
+iKZTNEFgldI|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 1
+Lpl8-3yThDw|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 6
+5IeYPF6n2DU|mixed|z|עצירת התרעננות כיתה ז – תרגילים מתוקים 5
+hPZZCl9kwok|mixed|h|מבחן כיתה ח – תרגול חוזר
+nVO_cHYM5Lc|powers|t|חוקי חזקות כיתה ט 2
+lpsCXPPNRrQ|linear|h|משוואות קו ישר הבנה טובה ונקייה כולל שטח כיתה ח
+YDdlSDm1kvE|algebra|h|חוק הפילוג המורחב כיתה ח
+4zMLzzWlX_4|powers|t|חוקי חזקות כיתה ט 3
+2Ezer7lG9Ys|powers|t|חוקי חזקות כיתה ט 4
+OIrQm_BFovY|powers|t|חוקי חזקות כיתה ט 1
+CCvYbI4P5Ks|trig-func|5a|חקירת טריגו שאלת בגרות מתוקה מאוד 5 יח כיתה יא
+pSIQc21pvgo|trig-func|5a|להוכיח זהות פשוטה טריגו כיתה יא 5 יח
+HTY6sLjuZJo|quadratic|t|חקירה מלאה פונקציה ריבועית
+9avLbHwYoD4|quadratic|t 5a|חקירת פונקציה ריבועית מדהימה כיתה ט 5 יח
+P4LYA1E4bi0|midsegment|t 5a|תרגיל מקבילית ברמה גבוהה כיתה ט 5 יח
+KVuYCDng1P8|linear|h|קו ישר – תרגילים פתורים כיתה ח
+htFlcKDtWEU|linear|h|קו ישר – תרגילים פתורים כיתה ח (2)
+yKyOk3hcUTc|midsegment|t 5a|תרגיל מקבילית כיתה ט 5 יח נדיר ביותר
+Az-n6MUdG6Y|midsegment|t 5a|הסבר על מהות מקבילית, תכונות ואיך מוכיחים כיתה ט 5 יח
+ij3L4ctjrn0|linear|h|משמעות של משוואת קו ישר – מה אומר השיפוע ומה אומר ה-b כיתה ח
+SVeSJvxbH7g|linear|h|משוואת קו ישר – משמעות והסבר נדיר כיתה ח
+scn_3z2pbHQ|linear|h|אותו שיפוע – קווים מקבילים כיתה ח
+f6maSazM26s|quadratic|t 5a|פונקציה ריבועית – הסבר על המהות, ציר הסימטריה ונוסחת השורשים כיתה ט 5 יח
+lLQAb7p1Hs4|midsegment|t 5a|תרגיל בגאומטריה קטע אמצעים כיתה ט 5 יח
+zRrb6V1fCS4|similarity|5a|מפגש תיכונים כולל קטע אמצעים ומשולשים דומים כיתה י 5 יח 1
+bwCHQg1P4Es|similarity|5a|מפגש תיכונים כולל קטע אמצעים ומשולשים דומים כיתה י 5 יח 2
+VN3XoX4CM8A|similarity|5a|מפגש תיכונים כולל קטע אמצעים ומשולשים דומים כיתה י 5 יח 3
+pwg8AeZisdo|similarity|5a|מפגש תיכונים כולל קטע אמצעים ומשולשים דומים כיתה י 5 יח 4
+XD3ZG3gBXl4|algebra|t|הפרש ריבועים הסבר נדיר ביותר כיתה ט
+Efy-1-qQ73U|algebra|t|גורם משותף – מה זה אומר ואיך עושים את זה כיתה ט
+PT_FifdxY3w|algebra|t|כפל מקוצר פירוק לגורמים כיתה ט
+7oYdVs4mowc|algebra|t|הפרש ריבועים תרגול
+VC3jscHHhV8|algebra|t|פתירת משוואות בעזרת פירוק לגורמים כיתה ט
+AWmf5Xc6A3M|quadratic|t 5a|נוסחת השורשים כיתה ט 5 יח
+xYZaoYFNe0o|trig-plane|5a|הסבר טריגו כל הנוסחאות חשוב ביותר 5 יח
+ng8k3tKNCys|trig-plane|5a|תרגילי טריגו עם משפט הקוסינוסים 5 יח 3
+C_mrp14VJJ0|trig-plane|5a|תרגילי טריגו עם משפט הקוסינוסים 5 יח 2
+y2l-O8iFjSs|trig-plane|5a|תרגילי טריגו עם משפט הקוסינוסים 5 יח 1
+rofpJuJb2KE|trig-plane|4a 5a|משפט הקוסינוסים עם נעלמים
+3lquHAiZ4WA|midsegment|t|קטע אמצעים תרגיל נדיר ביותר כיתה ט
+jxURM7zSlwc|equations|h|משוואות עם מכנים – כפל בהצלבה
+4ckbxNM8-bc|ratio|h|יחס כיתה ח 1
+fqiPoKb3T4w|ratio|h|יחס כיתה ח 2
+UJBaKa-fnnM|ratio|h|יחס כיתה ח 3
+ARm8Me80alQ|ratio|h|יחס כיתה ח 4
+7ugjnJmc-Ck|ratio|h|יחס
+nAzJw388hy0|linear|h|שיפועים קו ישר – להבדיל ולהבחין כיתה ח
+UD7v1nr0WxI|midsegment|t|הסבר קטע אמצעים כיתה ט נדיר ביותר
+zOaZpuJG6Ss|midsegment|t|קטע אמצעים תרגיל וואו כיתה ט
+JHD33IgCAGw|linear|h|הסבר שיפועים כיתה ח 1
+bUozbQkWgNo|angles|h|משחקי זוויות – ישרים מקבילים וסכום זוויות במשולש כיתה ח
+fQz2mmSZ3kY|linear|h|הסבר שיפועים כיתה ח 2
+tMT1JseJ-uI|sequences|4b|סדרות הנדסיות וחשבוניות שאלות בגרות נדירות 4 יח 1
+l-9bIap9NWA|sequences|4b|סדרות הנדסיות וחשבוניות שאלות בגרות נדירות 4 יח 2
+6cKE9cF6KyA|sequences|4b|סדרות הנדסיות וחשבוניות שאלות בגרות נדירות 4 יח 3
+XGPCotTqfiA|sequences|4b|שאלות בגרות 4 יח כיתה יב סדרה חשבונית 2
+43BTZ76Uf7c|sequences|4b 5a|איך מוכיחים סדרה חשבונית
+tpMVRFcbINA|sequences|4b 5a|סכום סדרה חשבונית 4 5 יח
+Q3B7mihFHZ0|sequences|4b|שאלות בגרות 4 יח כיתה יב סדרה חשבונית 1
+GEH6UBDwgSo|sequences|4b 5a|הסבר סדרה חשבונית – מהות ונשמה 4 5 יח
+4ZjxK87PwB4|algebra|t|פירוק לגורמים תרגילים נדירים כיתה ט 2
+uCfNS9Ddg8I|algebra|t|פירוק לגורמים תרגילים נדירים כיתה ט 1
+oRbSTaBB7HQ|algebra|t|פירוק לגורמים תרגילים נדירים כיתה ט 3
+RP02rtY8xas|algebra|t|פירוק לגורמים – גורם משותף, דו-איבר בריבוע, הפרש ריבועים וטרינום
+yMfPHnTls1M|midsegment|t|תרגילי גאומטריה כיתה ט
+oP7-OWU3Zc4|trig-plane|5a|תרגיל טריגו עם מעגל חוסם וחסום 5 יח כיתה יא
+1kCAMOtH3EU|trig-func|5a|הוכחות זהויות – חובת צפייה 5 יח כיתה יא 2
+mPD7TU25MZ8|trig-func|5a|הוכחות זהויות – חובת צפייה 5 יח כיתה יא 3
+zZU2B6BosZU|trig-func|5a|הסבר מעגל היחידה 5 יח כיתה יא
+v2l5h7viRFU|trig-func|5a|הוכחות זהויות – חובת צפייה 5 יח כיתה יא 1
+pBSKbnIRwRw|equations|h|משוואה עם נעלם אחד ושבר כיתה ח
+EFzDsbJfT5Q|word|h|בעיה מילולית עם נעלם אחד כיתה ח
+IZL5bgKEkRI|equations|h|משוואה עם נעלם אחד ושבר נדיר ביופיו כיתה ח
+eILSrovcg7c|word|h|נעלם אחד – בעיה מילולית כיתה ח
+LKAIWCGvwOs|algebra|t 5a|פירוק לגורמים תרגילים נדירים 5 יח
+7TGd30Tl_G8|midsegment|t|גאומטריה כיתה ט נדיר ביופיו 1
+sqpJC4SCZ18|systems|t 5a|2 משוואות עם 2 נעלמים 5 יח כיתה ט
+wJpKPHk7JV4|midsegment|t|גאומטריה כיתה ט נדיר ביופיו 2
+qVGKP0OaqKM|calc-exp|4b|שאלת בגרות EX – לפתור שאלת בגרות אחרי 10 דקות של למידה 4 יח
+eZEEYI7Achs|calc|4a 5a|משמעות של פונקציה ונגזרת – מותאם לכל היחידות
+9xlz2qn6MPU|calc-exp|4b 5b|איך פותרים משוואת EX 4 5 יח כיתה יב
+iGANHzQ6x8Q|circle|5a|תרגיל גאומטריה מעגל 5 יח
+Z2atWx3rlZU|sequences|5a|סדרה הנדסית שאלה מקסימה יא 5 יח
+B5Bdg-IHbmo|sequences|5a|הוכחה סדרה הנדסית הטופ של הטופ 5 יח 2
+QFDdYaYzQGo|sequences|5a|הוכחה סדרה הנדסית הטופ של הטופ 5 יח 1
+QeRixbeoYFM|circle|4a 5a|משפטי מעגל – הבסיס המדהים 4 5 יח
+Ludwb0ZRSm0|geometry|5a|תרגיל גאומטריה נדיר ביופיו 5 יח כיתה י
+e5SDvUP4J_0|systems|h|2 משוואות עם 2 נעלמים
+xtxfTdoCaYg|word|h|בעיה מילולית כיתה ח
+_3-wubVOlHQ|equations|h|משוואות עם נעלם אחד
+xA6f-253Bmk|word|h|בעיה מילולית עם נעלם אחד – הבנת הנקרא
+W47wgznl6-U|linear|h|גרף פונקציה – הבנה בין x ל-y כיתה ח
+KxSW7o9k32g|linear|h|משוואת קו ישר – להציב ולגלות את x ו-y, שיפוע וחיתוך עם ציר y כיתה ח
+YyuPvw6z7HE|calc|4a|חקירה מלאה פונקציית שורש 4 יח הטופ של הטופ
+R59IYi1ke_Q|geometry|4a|תרגיל גאומטריה 4 יח
+-_ucICNLTI4|calc|4a 5a|הסבר משמעות פונקציית שורש – איך גוזרים, תחום הגדרה ופתירת משוואות
+b2KUR9GuIWQ|calc|5a|קשר בין פונקציה לנגזרת לנגזרת שנייה 5 יח 4
+JkiN5Okx7sw|calc|5a|התרגיל הכי מטורף – קשר בין שלוש הפונקציות 5 יח
+admuB8rSa-I|calc|5a|קשר בין פונקציה לנגזרת לנגזרת שנייה 5 יח 1
+b1vGMHuWktg|calc|5a|קשר בין פונקציה לנגזרת לנגזרת שנייה 5 יח 2
+RIo3Un8kuow|calc|5a|קשר בין פונקציה לנגזרת לנגזרת שנייה 5 יח 3
+YZrBEEkjvNw|circle|4a 5a|תרגילי משיק במעגל יא 4 5 יח 2
+0PhpTZPCmUw|circle|4a 5a|תרגילי משיק במעגל יא 4 5 יח 3
+A2oUi_OZKyg|circle|4a 5a|תרגילי משיק במעגל יא 4 5 יח 1
+U88Kkv1z-Is|circle|4a 5a|תרגילי משיק במעגל יא 4 5 יח 4
+WPDRJHm63LE|algebra|t|פירוק לגורמים כיתה ט מדהים מקסים ומהמם
+p_9CAQGw7dk|geometry|t 4a 5a|הסבר איך כותבים טענה-נימוק נכון
+Qx4SZqpmnp8|midsegment|t|תרגיל גאומטריה – דלתון כיתה ט, כולל משולש שווה שוקיים
+vrswaHDHB3M|analytic|4a 5a|תרגילי אנליטית תחילת כיתה י – כל הנוסחאות ב-2 דקות 2
+_vb9vpD_JTY|analytic|4a 5a|תרגילי אנליטית תחילת כיתה י – כל הנוסחאות ב-2 דקות 1
+PKNUkl5MMs8|analytic|4a 5a|תרגיל אנליטית תחילת כיתה י מדהים
+FTPOamTEcWs|inspire||אמיר מאיר סקורי – טמן זרע באדמה
+SF9g3UVbqDk|algebra|t|הפרש ריבועים כיתה ט הקבצה א – פירוק לגורמים
+gbSo2xuwC84|growth|4b|גדילה ודעיכה כיתה יב 472 תרגיל מדהים
+_eOiPMAIeOk|growth|4b|תרגילי בגרות גדילה ודעיכה שאלון 472 4 יח 2
+qxgtwlGRzxU|growth|4b|תרגילי בגרות גדילה ודעיכה שאלון 472 4 יח 3
+E3E6ZIKGPqs|growth|4b|תרגילי בגרות גדילה ודעיכה שאלון 472 4 יח 1
+_a2VcvGYWk0|pythagoras|t|משולש ישר זווית תרגיל מדהים ומיוחד כיתה ט
+t99-s6WdrE8|pythagoras|t|תרגיל בגאומטריה עם ישר זווית ברמה הכי גבוהה כיתה ט עם ביטוי צלעות
+_B7YZb5NSIw|pythagoras|t|תרגיל מהמם בישר זווית כיתה ט
+OEeWnYia7a4|powers|t|חוקי חזקות כיתה ט – בסיסי, מרשים והבנה חשובה
+Rsh5C463T3c|powers|t|חוקי חזקות כיתה ט – תרגילים ביחד בכיתה
+oOu7F7kHvEc|linear|h|הסבר קשר בין 2 משתנים כיתה ח
+2K-jF3QGnuM|pythagoras|t|הסבר משולש ישר זווית – 3 משפטים כיתה ט
+fxYquLYKk20|linear|h|קו ישר התחלה כיתה ח – תרגילים כולל גרף
+p8hW-RvAsdY|linear|h|כיתה ח קשר בין 2 משתנים – תחילת משוואת קו ישר
+HnuFO7r8suo|powers|t|חוקי חזקות כיתה ט – בסיסי ומרשים (2)
+2fJ9c891TJ4|geometry|4a|גאומטריה משולבת כיתה יא 4 יח שאלות פצצה 3
+gCLyZcnDmmc|geometry|4a|גאומטריה משולבת כיתה יא 4 יח שאלות פצצה 4
+TYSKoqbOLI0|geometry|4a|גאומטריה משולבת כיתה יא 4 יח שאלות פצצה 2
+-kwCVCOmIq0|geometry|4a|גאומטריה משולבת כיתה יא 4 יח שאלות פצצה 1
+mXi6ZJfqWK8|midsegment|t 5a|תרגיל בגאומטריה כיתה ט 5 יח
+8jO7iFJZjqc|algebra|z|תרגילי חוקיות תחילת כיתה ז
+KZhpRRYpmao|midsegment|t|הסבר משפטי גאומטריה – כל הבסיס עד מרובעים כיתה ט
+8QODdoZBi_U|angles|h|תרגילים לדוגמה של זוויות 2
+v77IjBd6NSw|angles|h|הסבר זוויות – הכל כולל ישרים מקבילים כיתה ח
+wyoMkCktmGQ|angles|h|תרגילים לדוגמה של זוויות 1
+gR1g9R4eUOM|systems|h|תרגילים לדוגמה – 2 משוואות עם 2 נעלמים 1
+PPOMvi2c9Hc|systems|h|תרגילים לדוגמה – 2 משוואות עם 2 נעלמים 2
+hINMWokFj0U|systems|t|הסבר מערכת משוואות עם 2 נעלמים תחילת כיתה ט
+EBCtkOOqAOA|angles|h|הסבר זוויות כיתה ח – קודקודיות, צמודות
+Q4wYuR3q0bk|angles|h|תרגילים לדוגמה – זוויות, תרגילי התחלה כיתה ח
+gDRt-H-tJvM|calc|5a|פונקציית פולינום כיתה י 5 יח – התחלה של ההתחלה כולל קו ישר
+vNpl3T8zoFw|calc|4a 5a|הסבר פונקציה זוגית ואי-זוגית
+dMvtJxnKX7M|calc|5a|פונקציית פולינום כיתה י 5 יח – התחלה של ההתחלה
+PwuYbUAHspU|extremum|4a 5a|בעיות קיצון – מילים למשוואות 4 5 יח
+R2RwQY6c42Q|extremum|4a 5a|מה עושים בבעיות קיצון – תהליך עבודה
+DvuAgNy0BDk|extremum|5a|שאלת בעיות קיצון 5 יח כיתה י-יא גאומטריה
+PUNVblgqk_w|extremum|4a 5a|בעיות קיצון 4 5 יח כיתה י-יא
+oMqjxkxfIu4|calc|4a 5a|משמעות של פונקציה ונגזרת
+fvHhEfZmflM|calc|4a 5a|פונקציית שורש חקירה מלאה עם סעיפים חכמים
+IKUrTtz-H5M|geometry|5a|תרגילי גאומטריה הכנה לכיתה יא 5 יח 3
+cdSgk4apkuA|geometry|5a|תרגילי גאומטריה הכנה לכיתה יא 5 יח 1
+SIM6YzkNmic|calc|4a 5a|למצוא אסימפטוטה אופקית בפונקציית שבר
+B6TwxfIELnw|geometry|5a|תרגילי גאומטריה הכנה לכיתה יא 5 יח 2
+KmbVu5YT_1k|calc|5a|עבודת קיץ הכנה לכיתה יא 5 יח – שאלת שבר עם פרמטר
+6w6-bh8fvEA|similarity|4a 5a|תאלס עם אותיות – רמה גבוהה
+ozi_z6r7Hq0|similarity|4a 5a|תרגילי בסיס תאלס עם מספרים 2
+LUQ3HRk03N4|similarity|4a 5a|תרגילי בסיס תאלס עם מספרים 1
+NPLZJuVL3SU|similarity|4a 5a|משפט תאלס הסבר 4 5 יח
+jrhHh5M52tg|percent|h|אחוזים כיתה ח פשוט וקל 3
+AU0_PMK0iEg|algebra|t|לפתור משוואה עם פירוק לגורמים ומכנה משותף כיתה ט כולל תחום הגדרה
+HQQ5Iy5XS0s|quadratic|t|פרבולות – משמעות כולל יצירת קו ישר כיתה ט
+NrYwBxJE2hI|prob|t|הסתברות כיתה ט בסיסי ויפה
+Spor_iQDmR8|quadratic|t|הרעיון של פרבולה כולל ציר סימטריה כיתה ט
+iZUsgSdSuBE|quadratic|t|פונקציה זוגית והבנה של נקודה על הפונקציה כיתה ט-י
+yQB2_bsG9tg|inspire||ראיון ערוץ 14 – אור אל פנחסי, שיטת אימון ״הנסיך הקטן״
+BbgPOBrm1wM|extremum|5a|חקירת פונקציה עם בעיית קיצון גרפית 5 יח
+QRybaUWljA4|extremum|5a|חקירת פונקציה עם בעיית קיצון גאומטרית 5 יח
+PAjkLqa-qOA|mixed|5a|שאלות קצרות שאלת בגרות 581 קיץ 2025
+-AQAcW5HusY|geometry|5a|גאומטריה שאלת בגרות 581 קיץ 2025
+I05KerPtID0|trig-plane|5a|טריגו שאלת בגרות 581 קיץ 2025
+YbmhYnjZeto|calc|4a|חקירת שבר שאלות בגרות 471 4 יח 1
+YjVtlCqrNuQ|inspire||כללי הצלחה בכל תרגיל ובכלל בחיים
+DHaTJf4Dyfg|calc|4a|חקירת שבר שאלות בגרות 471 4 יח 2
+Y0d-mPM8__U|stats|4a 5a|התפלגות נורמלית – הסבר של כל החומר בשתי דקות וחצי
+D27nej1Gq4I|stats|4a|התפלגות נורמלית שאלות בגרות 4 יח שאלון 471 2
+24kI1tEpmfs|combo|5a|שאלות קצרות גאומטריה עם טריגו שאלת בגרות 581 קיץ 2025
+lI7i1dsYF60|sequences|5a|סדרות הנדסיות שאלת בגרות 581 קיץ 2025
+3FTtOqnMHoI|geometry|4a 5a|תכונות משולש שווה שוקיים
+ky2bNscQsek|combo|4a 5a|אנליטית עם גאומטריה וטריגו – תרגילי הכנה לכיתה יא כולל משולש שווה שוקיים
+G1i0zbEKaaQ|combo|4a 5a|אנליטית עם גאומטריה וטריגו – תרגילי הכנה לכיתה יא כולל מרובעים ואיך מוכיחים
+TslLXinNOCA|percent|h|אחוזים כיתה ח פשוט וקל 2
+2TAmxkQyvOI|linear|h|משוואת ישר כיתה ח – ליצור משוואת ישר ונקודות חיתוך בין ישרים
+MUaIje0et0M|linear|h|משוואת ישר כיתה ח – ליצור משוואת ישר ונקודות חיתוך בין ישרים 1
+0lSqyTKnUrM|linear|h|משוואת ישר כיתה ח – ליצור משוואת ישר ונקודות חיתוך בין ישרים 2
+R6bMZvhGP5g|percent|h|אחוזים כיתה ח פשוט וקל 1
+BGojbaaXSzA|systems|h|2 משוואות עם 2 נעלמים – שיטת ההצבה
+azFOh8Q-HqM|trig-plane|4a 5a|משולש ישר זווית – תרגילי טריגו בסיסיים sin cos tan כיתה י 1
+GlgdXNHWwzs|trig-plane|4a 5a|משולש ישר זווית – תרגילי טריגו בסיסיים sin cos tan כיתה י 4
+YzdEo1rOmJk|trig-plane|4a 5a|משולש ישר זווית – תרגילי טריגו בסיסיים sin cos tan כיתה י 3
+uUymEV2bEQw|trig-plane|4a 5a|משולש ישר זווית – תרגילי טריגו בסיסיים sin cos tan כיתה י 2
+0jIoboASD-A|geometry|4a 5a|משולש שווה שוקיים – תכונות
+mF00-sMkugw|calc|4a|חקירת שבר – מתכונת שאלון 471
+WA90RICu3zk|prob|4a|הסתברות – מתכונת שאלון 471
+5ZPWfq66tFA|combo|4a|גאומטריה מרובעים עם טריגו ואנליטית – מתכונת שאלון 471
+VDzSDwcro2Y|extremum|4a|בעיית קיצון – מתכונת שאלון 471
+E6GkkdV-KeA|circle|4a|גאומטריה מעגל עם טריגו ואנליטית – מתכונת שאלון 471
+HenCmRQhfek|stats|4a|התפלגות נורמלית – מתכונת שאלון 471
+Bu9SXvVn_WY|stats|4a|רגרסיה לינארית – מתכונת שאלון 471
+KjJbW9E7E-4|calc|4a|חקירת שורש – מתכונת שאלון 471
+kS-uS5bRdyo|prob|4a|שאלות בגרות בהסתברות שאלון 471 4 יח 1
+3QJTG8ctV1E|prob|4a|שאלות בגרות בהסתברות שאלון 471 4 יח 2
+EKl9juzt9iE|prob|4a|הסבר מהות הסתברות שאלון 471
+keuzXJAEt1M|extremum|4a|בעיות קיצון גאומטריה שאלון 471 2
+wdxcvDr8VnQ|extremum|4a|בעיות קיצון גאומטריה שאלון 471 1
+YQ-mxXC2ZgI|extremum|4a|בעיות קיצון גאומטריה שאלון 471 – הסבר הסיפור
+iwv9oXy0FbE|extremum|4a|בעיות קיצון גאומטריה שאלון 471
+oos-_g6zThs|extremum|4a|בעיות קיצון גאומטריה שאלון 471 3
+v4A5CVYvdSk|extremum|4a 5a|בעיות קיצון גרפיות משאלה פשוטה עד רמה מורכבת 1
+RfxdPliTosE|extremum|4a 5a|הסבר מהות בעיות קיצון ושאלה פשוטה
+Kbi_v99lbeA|extremum|4a 5a|השלבים של בעיות קיצון גרפיות
+nK2A56QIm5M|extremum|4a 5a|בעיות קיצון גרפיות משאלה פשוטה עד רמה מורכבת 3
+m2PkmeAldUU|extremum|4a 5a|בעיות קיצון גרפיות משאלה פשוטה עד רמה מורכבת 2
+sa_15RpCObU|integrals|4a|חקירת פונקציית שבר עם אינטגרל של נגזרת שאלון 471 4 יח
+3a7A936WlFc|calc|5a|חקירת פונקציית שבר 571 שאלות בגרות 5 יח
+qhG8Z8sRCJM|stats|4a 5a|התפלגות נורמלית 3
+SOwVL0f-SDE|stats|4a 5a|התפלגות נורמלית
+vV6vOhbtvXA|stats|4a 5a|התפלגות נורמלית 2
+oAwmCzIRrGA|trig-func|5a|שאלות קצרות 5 יח שאלון 571 – חקירת טריגו
+pUcXhKsKvoo|calc|5a|שאלות קצרות 571 5 יח – פונקציה זוגית ואי-זוגית
+2SUz6ZGOMj4|sequences|5a|שאלות קצרות 5 יח שאלון 571 – סכום סדרה הנדסית מתכנסת עם פונקציית טריגו
+JhP8FQrLs1U|calc|5a|שאלות קצרות 571 – תחום הגדרה שבר ושורש 5 יח 2
+exphkhw5da0|integrals|4a|חקירת פונקציית שבר עם אינטגרל של נגזרת שאלון 471 4 יח 2
+CeCGuhyAIjw|stats|4a 5a|התפלגות נורמלית 4
+J5LoLLLKBXM|calc|5a|שאלות קצרות 571 – תחום הגדרה שבר ושורש 5 יח
+4yKjr37gMO4|calc|5a|שאלות קצרות 571 5 יח – תחום הגדרה עם חור בפונקציית שבר
+bFYMl0r0kCY|mixed|5a|שאלות קצרות 5 יח 571
+Zga61gbuczM|trig-func|5a|שאלות קצרות 571 – חקירת טריגו 5 יח
+2vQpwVPVoXA|trig-func|5a|טריגו עם פרמטרים 5 יח כיתה י
+hM6NImzJa8M|stats|4a|התפלגות נורמלית – בסיס הרעיון והסבר הנוסחה שאלון 471 1
+orRd_V9TTWE|stats|4a|התפלגות נורמלית – בסיס הרעיון והסבר הנוסחה שאלון 471 4
+jCVUBhQj35M|stats|4a|התפלגות נורמלית – בסיס הרעיון והסבר הנוסחה שאלון 471 2
+TRNJu_DemQo|stats|4a|התפלגות נורמלית – בסיס הרעיון והסבר הנוסחה שאלון 471 3
+4enbxOPBIaU|stats|4a|התפלגות נורמלית – בסיס הרעיון והסבר הנוסחה שאלון 471 5
+huxxUhHKTMI|integrals|4a 5a|אינטגרלים – שטחים כולל מורכבים 1
+CpiiL_KAC_o|integrals|4a|הסבר אינטגרלים – שטחים 471
+MC20Ti9zJpU|integrals|4a 5a|אינטגרלים – שטחים כולל מורכבים 2
+Qkyfa5xBaWo|integrals|4a 5a|פונקציה מורכבת – אינטגרל
+DQk9TrbzBSE|calc|4a 5a|פונקציה מורכבת – תרגיל התחלה
+EHTDrbCvR7Y|integrals|4a 5a|פונקציה מורכבת – תרגיל מתקדם אינטגרל
+mVhzaLH61Sw|integrals|4a 5a|הסבר אינטגרלים בסיסיים
+oFTdqn9pozE|integrals|4a 5a|תרגיל לדוגמה – אינטגרל עם משיק לפונקציה
+McTQURJN778|calc|5a|571 שאלה 1 שאלות קצרות – פונקציה עם שבר ושורש
+Qs31iE4hpW4|integrals|5a|571 שאלה 1 שאלות קצרות – קשר בין פונקציה לנגזרת ואינטגרל
+JboQYxo7RX0|trig-plane|5a|טריגו 571 שאלת בגרות
+KyxCXPdwd1I|geometry|5a|גאומטריה 571 שאלת בגרות
+8MdNFfQ2ZHU|mixed|5a|שאלה 6 571 שאלת בגרות
+niHnWY6hiQU|extremum|5a|בעיית קיצון 5 יח 581 עם גאומטריה
+nmeDAetQjoY|analytic|4a|אנליטית מרובעים 471
+-1KGmt08m1w|extremum|5a|בעיית קיצון 581
+ynRavXBnQ9E|geometry|5a|גאומטריה 581 – לחדד את המוח
+glfY_KeMv80|calc-exp|4b|פונקציית ln שאלת בגרות 482
+4r78Ea2KtAA|calc|5a|פונקציית שבר 5 יח 581 שאלה טילית
+XLY_8IG4cC0|calc|4a 5a|פונקציית שורש – תחום הגדרה, איך גוזרים ואיך פותרים משוואה
+VwBeN-UEn4w|calc|4a|פונקציית שורש שאלה מדהימה 471
+jVp8CwJX7Yg|circle|4a|מעגל עם אנליטית וטריגו שאלת בגרות 471
+e7a0nW2KPQk|calc|4a|פונקציית שורש שאלת בגרות 471
+zN6s9l_DwCA|calc|4a|פונקציית שורש שאלת בגרות 471 פצצה
+lfyT3_pHJtI|calc|4a|פונקציית שורש שאלת בגרות 471 2
+Kuw_d_K_Eas|integrals|4a 5a|אינטגרלים – למצוא את הפונקציה הקדומה, שאלות בסיס 3
+0eqCcDbSSXY|integrals|4a 5a|אינטגרלים – למצוא את הפונקציה הקדומה, שאלות בסיס 2
+vBOppatTi5Y|integrals|4a 5a|אינטגרלים – למצוא את הפונקציה הקדומה, שאלות בסיס 1
+CGQiLMC88pc|integrals|4a 5a|פעולת האינטגרל – איך עושים ומה המשמעות
+3koilWi2jW0|trig-plane|5a|טריגו 806 שאלות ברמת בגרות ומעבר 1
+oVSh5Jk3Wbs|trig-plane|5a|טריגו 806 שאלות ברמת בגרות ומעבר 2
+cY9VJHVL9Fc|calc|4a|פונקציית שורש 471 שאלות בסיסיות ומסכמות 4 יח 4
+bTQEJBOFRL8|calc|4a|פונקציית שורש 471 שאלות בסיסיות ומסכמות 4 יח 3
+7C1iWFfBa4M|calc|4a|פונקציית שורש 471 שאלות בסיסיות ומסכמות 4 יח 2
+rEhy55NEmzg|calc|4a|פונקציית שורש 471 שאלות בסיסיות ומסכמות 4 יח 1
+CaXlbRPQYTw|trig-plane|5a|טריגונומטריה 581 806 5 יח 3
+nrJxeq2FbVo|trig-plane|5a|טריגונומטריה 581 806 5 יח 1
+TIU5MW2WI94|trig-plane|5a|טריגונומטריה 581 806 5 יח 2
+WutsR9bsUYI|circle|4a|מעגל – שאלות מיוחדות ברמת בגרות 471 4 יח 2
+Kqzpm8ga3Ec|circle|4a|מעגל – שאלות מיוחדות ברמת בגרות 471 4 יח 3
+JeMQoNWSbXM|circle|4a|מעגל – שאלות מיוחדות ברמת בגרות 471 4 יח 1
+EtBfp3oIoVk|circle|4a|מעגל – שאלות מיוחדות ברמת בגרות 471 4 יח 4
+YjOQHaBz3yk|calc-exp|4b|פונקציית ln שאלות מסכמות 482 2
+4X5aCntxHqM|calc-exp|4b|פונקציית ln שאלות מסכמות 482 1
+KrToKZ9bNNo|calc-exp|4b|פונקציית ln שאלות מסכמות 482 4
+iUzZOy_KpM4|calc-exp|4b|פונקציית ln שאלות מסכמות 482 3
+QvOrf6An160|circle|4a|מעגל עם אנליטית, טריגו ומשיקים 471 תרגיל טיל
+5bW29sPmXHs|circle|4a|תרגילי מעגל כולל אנליטית וטריגונומטריה עם משפטי מעגל 471 1
+XySf9CSwv6o|circle|4a|תרגילי מעגל כולל אנליטית וטריגונומטריה עם משפטי מעגל 471 2
+hG-UooUBUuw|circle|4a|תרגילי מעגל כולל אנליטית וטריגונומטריה עם משפטי מעגל 471 3
+gF5fjir_03g|calc-exp|4b 5b|פונקציית ln שאלה טילית כולל נגזרת מורכבת
+Owbcmr2CbWI|calc-exp|4b|פונקציית ln תרגיל טיל עם משיק 482
+aL0ToJy31tY|calc|5a|תרגיל דיפרנציאלי טיל בליסטי 5 יח כיתה י
+zgu0PKfTSIE|sequences|4b|שאלת בגרות סדרה חשבונית 805 482
+336jzYVE2tg|calc-exp|4b|חקירה מלאה פונקציית ln שאלת בגרות 805 482
+crz6UazsALM|calc-exp|4b 5b|חקירה מלאה פונקציית ln
+4N5X2FWK8AQ|circle|4a|מעגל משיק לצירים שאלון 471 4 יח
+a6fGwc6A_qk|circle|4a|תרגיל מעגל כולל דמיון משולשים שאלון 471
+GkdFAVQCOpo|calc|4a|חקירת פונקציה רציונלית (שבר) שאלת בגרות 471
+8Ol8_NFCUhY|prob|4a|הסתברות שאלת בגרות 471 – חלום של שאלה
+62gjeBABjuc|trig-plane|5a|טריגו 806 582 שאלות בגרות 2
+PYCn43HUc-k|sequences|4b|סדרה חשבונית – כללי יסוד כולל סכום 805 482
+EIMD2BrNWOk|linear|h|משוואת ישר כיתה ח – חיתוכים עם הצירים ושטחים
+GJx2tnwJHDU|trig-space|4b|טריגו במרחב – רק לראות ולהבין (ללא קול) 482
+398Wck-FmF8|calc-exp|4b|תרגיל בגרות EX – רק לראות (ללא קול) 482
+tf_Y54De3YY|circle|4a|הסבר משוואת מעגל 471
+mmd1VWCkJu0|integrals|4b|תרגיל בגרות EX כולל אינטגרל 482
+ZTlR_8WBheE|circle|4a 5a|משפטים במעגל – יסודי ביותר, סרטון חובה
+9Q68kmi3doo|circle|4a 5a|מעגל – גאומטריה עם טריגו תרגילים פשוטים 2
+iwCIGSe8Xro|circle|4a 5a|מעגל – גאומטריה עם טריגו תרגילים פשוטים 1
+rKfLUOup4jk|calc-exp|4b 5b|פתירת משוואה ב-ln
+e85Ky98mJ14|calc-exp|4b|פתירת משוואות פונקציית ln 805
+I_YVfzf6Iw4|trig-plane|5a|טריגו 806 582 שאלות בגרות 1
+fcPs0gcMTXQ|calc-exp|4b 5b|איך גוזרים ln פשוט וקל
+EY5XH4LiXHQ|circle|4a|הסבר משוואת מעגל 471 (2)
+YMy1gF-kgV8|extremum|5a|בעיות קיצון 806 נדיר ביופיו 2
+rrwiPR3N1Qg|extremum|5a|בעיות קיצון 806 נדיר ביופיו 1
+XxQDAp1dTyY|trig-plane|5a|שאלות בגרות 806 טריגונומטריה שאלה 5 2
+HuvH7WtnpJw|trig-plane|5a|שאלות בגרות 806 טריגונומטריה שאלה 5 1
+T_RWdlDz-HU|trig-plane|5a|הסבר טריגונומטריה 806 כולל זהויות, משפט הסינוסים והקוסינוסים
+kDRE2xctaos|calc|4a|חקירת שבר עם סעיפים חכמים שאלון 471 4 יח 1
+DBMCwx2kfto|calc|4a|חקירת שבר עם סעיפים חכמים שאלון 471 4 יח 3
+2Yw97CBGbA8|calc|4a|חקירת שבר עם סעיפים חכמים שאלון 471 4 יח 2
+8kPp3zu0f_o|trig-space|4b|טריגו במרחב שאלות טובות ומסכמות 1
+7OWRsRzJgIU|integrals|4b 5b|פונקציית EX שאלות עם אינטגרלים 1
+wpde4pmiDtM|calc-exp|4b 5b|פונקציית ln – תחום הגדרה פשוט וקל
+Z4eHCCDU5oM|integrals|4b 5b|פונקציית EX שאלות עם אינטגרלים 2
+C86UI3CqaEQ|trig-space|4b|טריגו במרחב שאלות טובות ומסכמות 2
+EYLG70wGA8Q|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 6
+d_OqGCTgWtM|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 9
+2hfEZfW47VI|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 1
+fpCTsXLKva0|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 7
+9WtaDqr0QMI|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 3
+5fM4ekNuZaY|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 5
+Tl6ZsUmjLCc|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 4
+Z6ecViKusDE|circle|4a|מעגל – משוואת מעגל, גאומטריה וטריגו עם מעגל שאלון 471 2
+ACiFahJqGSw|linear|h|משוואת קו ישר עם שיפועים ושטחים כיתה ח
+khfOU1gS_VQ|linear|h|משוואת קו ישר כיתה ח עם שטחים ושיפועים
+DmCnmE6x4po|prob|4a|הסתברות שאלות ברמה גבוהה 471 4 יח 1
+YS1aicB1xqQ|prob|4a|הסתברות שאלות ברמה גבוהה 471 4 יח 2
+QKFONbzaL0E|trig-space|4b|טריגו במרחב שאלות בגרות 482 1
+yWNO1qMATok|trig-space|4b|טריגו במרחב שאלות בגרות 482 2
+f6ccpCKnoig|trig-space|4b|טריגו במרחב שאלות בגרות 482 3
+IB66lbZOrt4|calc|4a|חקירת פונקציה שאלון 471 שאלת בגרות כולל סעיפים חכמים
+1enNyGFiXg0|calc|4a|סעיף חכם – דיפרנציאלי 4 יח 471
+qnu8ihx5GNU|calc|4a|איך מוצאים פרמטר מנתון קשר פונקציה-נגזרת שאלון 471
+Xgg7TtogZXo|integrals|5a|חקירות שבר ושורש 581 כולל אינטגרלים שאלה 6 2
+7aOxzb5KwLU|integrals|5a|חקירות שבר ושורש 581 כולל אינטגרלים שאלה 6 3
+b2jW-oCGdEA|integrals|5a|חקירות שבר ושורש 581 כולל אינטגרלים שאלה 6 1
+Ff_Bgn5b7V4|prob|5a|הסתברות 806 שאלות פגז שאלון 581 2
+ovGquvoK7Xw|linear|h|משוואת קו ישר – חיתוך עם הצירים, בין ישרים ושטחים כיתה ח 1
+MQfVeUSXwcY|linear|h|משוואת קו ישר – חיתוך עם הצירים, בין ישרים ושטחים כיתה ח 4
+6dHPwEG4SrU|linear|h|משוואת קו ישר – חיתוך עם הצירים, בין ישרים ושטחים כיתה ח 2
+PJOUh2tZ0Y0|linear|h|משוואת קו ישר – חיתוך עם הצירים, בין ישרים ושטחים כיתה ח 3
+fQRVtAdwHR4|geometry|5a|שאלות בגרות 581 גאומטריה – התשובות נמצאות בנתונים 1
+6ip3QqPW0OE|geometry|5a|שאלות בגרות 581 גאומטריה – התשובות נמצאות בנתונים 3
+zV9vvlZyyn4|geometry|5a|שאלות בגרות 581 גאומטריה – התשובות נמצאות בנתונים 2
+cf6HivyzBNg|word|5a|תנועה שאלות בגרות 5 יח 581 – מסדר את ההיגיון 2
+QbKIx_5Jr-I|word|5a|תנועה שאלות בגרות 5 יח 581 – מסדר את ההיגיון 1
+kIcAuaWFgAg|word|5a|תנועה שאלות בגרות 5 יח 581 – מסדר את ההיגיון 3
+tG3ArQwIoEw|word|5a|תנועה שאלות בגרות 5 יח 581 – מסדר את ההיגיון 4
+-iXuvsmbw3c|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 7
+x7JnRaSJEL0|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 6
+Kuxn0IiVPbM|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 8
+oXwMsSXXzhM|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 9
+mAG67UyHBq8|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 10
+o5kDI5EPEAY|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 11
+9qpxhYGLi8k|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 12
+8oTtXwB1cC0|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 5
+FY0G_-bmzLo|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 4
+aGdnWW5t5NY|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 3
+Cz6V0Qlmlbs|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 2
+EoGpkSdlO0A|trig-space|4b|טריגו במרחב מהבסיס עד רמת בגרות שאלון 482 – 1
+KPxo3rMeLGc|calc-exp|4b|שאלת בגרות EX כולל סעיף חכם ומשחק עם חזקות 4 יח 482
+EgeupDkApFc|integrals|4b|שאלת בגרות 482 EX עם אינטגרל וסעיף חכם 4 יח
+nqn9-M1QW7w|prob|4a|שאלת בגרות הסתברות שאלון 471 4 יח
+wZWz6RcXNyU|prob|4a|טבלה עם עץ הסתברות – שאלה טילית שאלון 471
+6BuQVXCG0ro|prob|4a|הסתברות טבלה עם מותנה – רמה גבוהה ביותר 471
+P0V3h_u_j9k|trig-func|5a|משחק והוכחה של זהויות 5 יח 581 1
+bg9re9D3IK8|trig-func|5a|משחק והוכחה של זהויות 5 יח 581 5
+Igy_iHju22o|trig-func|5a|משחק והוכחה של זהויות 5 יח 581 4
+sTbqFWhFdWc|trig-func|5a|משחק והוכחה של זהויות 5 יח 581 3
+BhaVQaUKYqE|trig-func|5a|משחק והוכחה של זהויות 5 יח 581 2
+4sp9cdwD0Iw|trig-func|5a|הסבר מעגל היחידה 5 יח נדיר ביופיו
+XMED44o99AQ|calc|4a|חקירת פונקציית שבר רציונלית שאלון 471 – מההתחלה עד הסוף כולל אסימפטוטות
+ggK4Xurd7ls|calc|4a 5a|הסבר משמעות פונקציה ונגזרת – הבסיס של הבסיס שאלון 471
+GdgFwD2JDd0|calc|4a|חקירת שבר עם סעיפים חכמים, הזזות וקשר פונקציה-נגזרת שאלון 471 1
+qdm1CXRKkTo|calc|4a|חקירת שבר עם סעיפים חכמים, הזזות וקשר פונקציה-נגזרת שאלון 471 2
+RhIrkQcIL4Y|prob|4a|הסתברות טבלה עם מותנה – תרגילים לדוגמה 471 3
+AsXEMXdfwYk|prob|4a|הסתברות טבלה עם מותנה – תרגילים לדוגמה 471 2
+ep2utJW7CFQ|prob|4a 5a|הסתברות – מהות, משמעות והסבר
+EhqANtPcPZU|integrals|4b|אינטגרלים תרגילים לדוגמה EX שטח יב 4 יח שאלון 482 1
+krC3P9lwHyc|integrals|4b|אינטגרלים תרגילים לדוגמה EX שטח יב 4 יח שאלון 482 2
+OrDfYwULeh8|integrals|4a 5a|הסבר אינטגרלים – מהות, משמעות ולמה
+4PSRV7Hwhss|prob|4a|הסתברות טבלה עם מותנה – תרגילים לדוגמה 471 1
+8dY3mgnR8Co|extremum|4a 5a|בעיות קיצון 4 5 יח מכל הסוגים 1
+bp6X0sbXsEQ|extremum|4a 5a|בעיות קיצון 4 5 יח מכל הסוגים 3
+ZRp-bm3KmWM|extremum|4a 5a|בעיות קיצון 4 5 יח מכל הסוגים 2
+H2tPFoWG-zg|extremum|4a 5a|בעיות קיצון 4 5 יח מכל הסוגים 4
+utWc3yA0gAU|calc|4a|חקירת שורש – הסבר של כל החומר יא 4 יח
+7hfxFF8stXE|calc|4a|חקירת פונקציית שורש מלאה ועוד סעיפים חכמים 4 יח
+19j4Afl7X1M|calc|4a|פונקציית שבר עם פרמטר כולל סעיפים חכמים 471 4 יח
+7BQ1zZELn08|trig-space|4b|טריגונומטריה במרחב – הסבר כל החומר כולל פירמידות משולשות 482
+69HQUHxZvoI|calc|4a 5a|אסימפטוטה אופקית – הסבר נדיר ביותר 471
+2EGxOXmGAY0|trig-space|4b|פירמידה שהבסיס שלה משולש – תרגילים לדוגמה 482 2
+bWbGalB-p9E|trig-space|4b|פירמידה שהבסיס שלה משולש – תרגילים לדוגמה 482 1
+Ya_c0shS2bI|prob|4a 5a|הסתברות מותנית – תרגילים לדוגמה עץ 2
+QAbEiHRZVHA|prob|4a 5a|הסתברות מותנית – תרגילים לדוגמה עץ 3
+ofW5aF3P_wA|prob|4a 5a|הסתברות מותנית – תרגילים לדוגמה עץ 1
+H0dNGJvoNN8|prob|4a 5a|הסתברות מותנית דיאגרמת עץ – הסבר ודוגמה
+918cFrdhsS8|calc|4a 5a|סעיף חכם 1 – לחלק לפונקציה: מה קורה לפונקציה 4 5 יח
+EHufcfwYxvQ|trig-func|5a|נגזרות פונקציות טריגונומטריות 806
+j6XVT_DH7vI|trig-func|5a|דוגמאות של נגזרות פונקציות טריגונומטריות
+0b6nrNYjuck|trig-func|5a|פונקציה זוגית או אי-זוגית – פונקציה טריגונומטרית 806
+xJNK3AtYljg|trig-func|5a|נגזרת – הסבר פונקציות טריגונומטריות
+c8hYjN-iyus|trig-func|5a|משוואות טריגונומטריות 5 יח 806 5
+sunFLxG5JVs|trig-func|5a|משוואות טריגונומטריות 5 יח 806 3
+Z7hjyXFQXG4|trig-func|5a|משוואות טריגונומטריות 5 יח 806 2
+c2tBE3TGABM|trig-func|5a|משוואות טריגונומטריות 5 יח 806 1
+necr99XMWR4|trig-func|5a|מעגל היחידה – הסבר זהויות 5 יח משוואות טריגונומטריות
+Ym-l5c9PdiM|trig-space|4b|טריגו במרחב – פירמידה 482 כיתה יב 4 יח
+DdCBtIWlS3I|circle|4a 5a|גאומטריה מעגל שאלת בגרות 4 5 יח
+YRhoZGg1XnM|trig-space|4b|טריגו במרחב 482 כיתה יב 4 יח
+PqcylOWbf1k|calc-exp|4b|חקירת EX שאלת בגרות – חקירה מלאה 4 יח 482
+BVlrOjXSbVk|combo|4a|גאומטריה עם טריגו ואנליטית שאלת בגרות 471 שאלון חדש 4 יח
+Ar8ecnVFlq4|combo|4a|אנליטית עם גאומטריה וטריגו 471 שאלון חדש 4 יח
+T9P3rB8t2EQ|calc|4a|חקירת שבר רציונלית שאלון 471 – חקירה מלאה 4 יח
+Q_bLnZt6-mY|combo|4a|אנליטית עם טריגו וגאומטריה שאלון 471 4 יח
+MmYMgy8DrBo|prob|4a|הסתברות עץ עם נעלם וללא החזרה 471 4 יח
+cRIw-8eA3UM|prob|4a|הסתברות עץ עם נעלם שאלון 471 4 יח
+AyRwYSp1jv8|combo|4a|שאלון 471 גאומטריה עם טריגונומטריה ואנליטית 4 יח שאלון חדש
+Y5u1JHTVlEc|prob|4a|הסתברות שאלה עם נעלם – תרגיל עץ פשוט ונהדר 4 יח
+Q9DWtEzGi1k|calc|4a|חקירת שבר רציונלית עם פרמטר שאלון 471 4 יח
+Z9cYK3tKhXM|combo|4a|אנליטית עם טריגו 471 שאלון חדש 4 יח
+bxapMR4lLG0|prob|4a|הסתברות דיאגרמת עץ – שאלה מדהימה 4 יח שאלון 471
+653CyhxEBgE|prob|4a|הקונספט של נעלם בהסתברות שאלון 471
+Lz10rb0mVBY|prob|4a|הסתברות עץ עם נעלמים – תרגיל מסכם שאלון 471 4 יח
+L3E9xlIyXwQ|calc|4a 5a|קשר בין פונקציה לנגזרת עם פונקציית שבר – הבנה עמוקה 4 5 יח
+GOx8kBd5Gdo|trig-space|4b|טריגונומטריה – תיבה עם פרמטר: להביע צלעות ב-x 4 יח
+QO85hDzk704|calc|4a 5a|פונקציית שבר רציונלית – חקירה מלאה עם מציאת נעלם
+AYCNOq3mAFk|pythagoras|t 4a 5a|משולש ישר זווית – משפטים בגאומטריה
+B5CyNPN291Y|combo|4a|שאלון 471 גאומטריה עם אנליטית וטריגונומטריה – משולש ישר זווית 4 יח
+KhHIDIavq8s|combo|4a|שאלה 4 בשאלון 471 גאומטריה עם אנליטית וטריגו – שאלה קשה במיוחד יא 4 יח
+9GPmNZ0M2Sc|calc-exp|4b|איך פותרים משוואת EX – שאלה קשה שאלון 482 4 יח יב
+9tveAMSoYfE|calc-exp|4b|איך גוזרים EX שאלון 482 פשוט וקל כיתה יב 4 יח
+T1J0V4Y9m7w|calc|4a 5a|חקירה מלאה של פונקציה רציונלית (מנה) שאלון 471 571 – מהבסיס עד הסוף
+4Waxmi1cpd8|prob|4a|עוד תרגיל הסתברות ללא החזרה שאלון 471
+L_0BsiMjMmE|prob|4a|הסתברות עץ ללא החזרה – הבנה טובה של הרעיון שאלון 471 4 יח
+S7cxgZkv2b0|prob|4a|הסתברות רצף אירועים – הבסיס והרעיון שאלון 471 4 יח
+O5K61sYnzE8|prob|4a|מאורע משלים – לחשב הסתברות דרך מה שאנחנו לא רוצים 471 4 יח
+52AaycbyM2k|prob|4a|הסתברות דיאגרמת עץ תרגיל חביב ביותר 471 יא 4 יח
+5-it-CL_iE8|combo|4a|הסבר על מהות שאלה 4 בשאלון 471 – חיבור גאומטריה עם טריגונומטריה ואנליטית
+lc3C0SIx2VE|combo|4a|אנליטית עם טריגונומטריה 471 שאלון חדש 4 יח כיתה יא
+CsYVGZ7XXAs|calc-exp|4b|חקירת EX מדהימה כולל אסימפטוטות 482 4 יח כיתה יב
+pz2LbviQt8Y|calc-exp|4b|פתירת משוואות עם חוקי חזקות – המשך יב 4 יח 482
+2Wu-kggCLKU|calc-exp|4b|חוקי חזקות יב 4 יח 482 – חוקים בסיסיים ואיך משחקים
+FHmbPqW7V7U|prob|4a|הסתברות דיאגרמת עץ – השתלשלות אירועים כיתה יא 471 4 יח
+0QykShtLYl0|similarity|4a|גאומטריה דמיון משולשים תרגילים שווים ממש כיתה יא 471 4 יח
+R9B4P1HSekw|similarity|4a|גאומטריה דמיון משולשים – הסבר, הבנה ותרגילים בסיסיים כיתה יא 471 4 יח
+Wad3uw_rzGg|prob|4a|הסתברות מרחב מדגם – ההיגיון שבהיגיון כיתה יא 471 4 יח
+WgGFvfVdbCk|prob|4a|הסתברות – מהות ומשמעות כולל תרגילי התחלה כיתה יא 471 4 יח
+SFNJ6pirrx0|trig-space|4b|טריגונומטריה במרחב פירמידה – שאלה פצצה 482 4 יח
+HdS7tOAGn5c|trig-space|4b|טריגונומטריה במרחב פירמידה – שאלה חשמל 482 4 יח
+RxI8_XGTcYk|trig-space|4b|טריגונומטריה במרחב – הסבר פירמידה שבסיסה ריבוע או מלבן עם כל הטריקים
+yfb-An1f1yo|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – מנסרה משולשת, תרגיל קשה יותר 2
+FsiQ3JXo92M|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – מנסרה משולשת, תרגיל לדוגמה
+sOrk9eGVTjI|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – מנסרה משולשת
+ohu57uFzSoE|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – תיבה, תרגיל 3
+9bj34QGrdU0|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – תיבה, תרגיל 2
+FVMB_Z8pvMM|trig-space|4b|טריגונומטריה במרחב תרגילי התחלה – תיבה 4 יח 482
+oLgkZmtMlCk|calc|4a 5a|סעיפי חשיבה בפונקציה והזזות
+0vlacAfoSbc|calc|4a 5a|חקירת פונקציית פולינום – חקירה מלאה כולל סעיפים מיוחדים
+QKxiIwgir4E|calc|4a 5a|איך פותרים משוואות פולינום ומורכבת – הכי פשוט בעולם
+0pdBwNMjMgc|calc|4a 5a|פונקציה – מה אנחנו הולכים לעשות איתה ומה אנחנו רוצים ממנה
+qt4wkz8ngHc|calc|4a 5a|משמעות של פונקציה ונגזרת – כל התורה על רגל אחת
+DYqQIVsrwtA|calc|4a 5a|הסיפור של הנגזרת – משמעות ואיך גוזרים פולינום ומורכבת
+uzrWB6UZGKo|combo|4a|שאלת בגרות גאומטריה עם טריגו – מקבילית ודמיון משולשים 471 4 יח
+knA9FVHodys|combo|4a|שאלון 471 גאומטריה עם טריגו ואנליטית – דלתון וחפיפת משולשים
+oJ-20dYbpg0|similarity|4a 5a|דמיון משולשים – גאומטריה
+rJmpbSNCYgQ|combo|4a|שאלון 471 גאומטריה עם טריגו ואנליטית שאלת בגרות – כולל דמיון משולשים
+0u0g0aKvZTY|combo|4a|שאלון 471 שאלה 4 – גאומטריה עם אנליטית וטריגו: ריבוע ודמיון משולשים
+UPibjjCSnZ8|combo|4a|שאלת בגרות 471 – גאומטריה עם טריגו ואנליטית, שאלה 4
+WNKC-0Ev7tk|midsegment|t 4a 5a|גאומטריה – קטע אמצעים
+qEgkR-FoW8w|midsegment|t 4a 5a|גאומטריה – מקבילית
+CztsJsrUddU|calc|4a 5a|חקירת פונקציה רציונלית – הסבר על אסימפטוטות אנכית ואופקית
+xCqtqNO-kPI|circle|4a 5a|גאומטריה מעגל עם דמיון משולשים – עצות איך להצליח בכל תרגיל
+l_lDLpMQCew|circle|4a 5a|גאומטריה – הסברים על מעגל ומשיקים, שאלה תותחית
+AJ4BSjTwrQw|word|4a 5a|בעיות תנועה – שאלה טובה שמסדרת את הראש
+lNgOQBCBOX8|sequences|4b 5a|סדרה חשבונית וסדרה הנדסית – שאלת בגרות ל-4 ו-5 יח
+Y3C3mb7T8gU|sequences|4b 5a|סדרה חשבונית ל-4 ו-5 יח – שאלת בגרות קטלנית
+YnWy9NTILLY|inspire||לפנים משורת הדין – כה עשו חכמינו
+gzFSwDkWP54|inspire||מי אמר שזאת האות א'? – כה עשו חכמינו
+OgCf761vCa4|combo|5a|תרגיל טריגו עם גאומטריה – משפט הסינוסים והקוסינוסים 5 יח
+QrNzCmRCFAk|calc|4a 5a|הסבר קשר בין פונקציה לנגזרת ולנגזרת שנייה
+M8ViQSMDN_0|combo|5a|תרגיל טיל – טריגו עם גאומטריה, משפט הסינוסים והקוסינוסים 5 יח
+QgXiOEcWeyo|calc|4a 5a|חקירת שורש – פונקציית מכפלה, תרגיל בסיסי וטוב 4 5 יח
+a0vEBL0GkMQ|trig-plane|4a 5a|הסבר משפט הסינוסים והקוסינוסים
+cPioVsJiQFY|integrals|5a|אינטגרל ברמת 5 יח – הסבר ושאלת בגרות
+3kqU8aid4qg|extremum|4a 5a|בעיות קיצון – הסבר התהליך ותרגיל בגרות 4 יח (מומלץ גם ל-5 יח)
+mEFNMbHmbp4|inspire||יונת הזהב – כה עשו חכמינו
+cmW4pz4kQSQ|inspire||חמורו של שמעון בן שטח – כה עשו חכמינו
+CJCpxElB-uE|prob|5a|הסתברות שאלה פצצה 5 יח 581
+la9aLvuYvqg|calc|3b 4a 5a|פונקציית פולינום עם משיקים – שאלה בסיסית וטובה 3 4 5 יח
+QszdVAmWsXM|inspire||צרה שהיתה לטובה – כה עשו חכמינו
+TULZRPZwRE0|calc|4a 5a|חקירת שבר עם סעיפים חכמים – שאלה פצצה 471 571
+YajNwhCioxg|calc|4a 5a|חקירת שורש עם נעלם וחקירה מלאה עם סעיפים חכמים 471 571
+aWFXlGiuDHA|inspire||אמא ואבא טובים מכל – כה עשו חכמינו
+MUm7WDpXZQI|inspire||רבי טרפון ואימו – כה עשו חכמינו
+hAuWrEeW0W4|inspire||על קמצא ובר קמצא חרבה ירושלים – כה עשו חכמינו
+91GjUv8CW98|inspire||רבי אלעזר בן שמוע והרומי – כה עשו חכמינו
+Q8IRhizRs50|word|t 4a 5a|תרגיל סיפור – להעביר למשוואות עם 2 נעלמים
+3fD9Q3Ed0kw|word|h t|להפוך תרגיל מילולי למשוואה עם אחוזים – נעלם אחד
+fexjPks-ElY|equations|z h|תרגיל לשחק עם משוואה – חוקי חשבון: אותה פעולה לכל האיברים
+Uqohooysij4|powers|t|תרגיל בפירוק חזקות – איך לאחד ולחלק שברים עם מעריכים
+40BRmrtLV6w|calc|4a|חקירת פולינום עם מציאת נעלם וסעיף מחשבה כיתה י 471 4 יח
+M9YxjJz89uc|calc|4a 5a|חקירת פולינום עם הבנה ומחשבה – לפתוח תודעה 471
+kSQggClYiJU|calc-exp|4b|חורף 2021 שאלת בגרות EX עם כללי הצלחה לכל שאלה יב 4 יח 482 805
+xCv_ODagvLw|calc-exp|4b|482-805 EX – איך פותרים משוואה, חוקי הפונקציה ואיך גוזרים (הבסיס)
+O8mjhgo5qsc|analytic|4a|אנליטית עם גאומטריה 471 השאלון החדש – שאלה פשוטה וטובה
+lzZO6a-qsRE|sequences|4b|סדרות 482 שאלת בגרות מדהימה
+CgLK5T6Tkro|extremum|5a|שאלה 6 בגרות 806 581 – פונקציה רציונלית עם בעיית קיצון
+LFpz490JJnc|trig-plane|4a 5a|טריגונומטריה – מציאת זווית ואורך צלעות, הבסיס ועצות
+prjepL4Iagg|trig-plane|4a 5a|טריגונומטריה – איך למצוא זווית ואורך צלעות עם sin cos tan
+ksFluji0Ltw|calc|4a 5a|פונקציית שבר רציונלית – שאלה בסיסית על מציאת שיפוע 471-571
+hPfQI5rs5NQ|calc|4a 5a|פונקציית שבר רציונלית – שיפועים ומשיקים 4-5 יח
+P8mLFM1Xurk|calc|4a 5a|פונקציית שבר – משיקים ושיפועים, שאלה יפה וחמודה
+7FB9_k9PqIA|trig-plane|4a 5a|טריגונומטריה – איך משתמשים בסינוס, קוסינוס וטנגנס, שאלה פתורה
+58qX5pyITzI|calc|4a 5a|איך גוזרים נגזרת שורש – סיכום 4 5 יח
+K27EajWLnHU|calc|4a 5a|תחום הגדרה של שורש 4 5 יח
+yoWMLoLw8BE|combo|4a|471 שאלת גאומטריה עם טריגו ואנליטית כולל קטע אמצעים
+ri2DiFkN20M|word|5a|שאלת תנועה 5 יח – איך ניגשים נכון לשאלה
+6oIetmgqgJo|geometry|4a 5a|שאלות גאומטריה ברמה גבוהה מאוד – מרובעים ומעגל
+isG4wruCwy0|calc|4a 5a|חקירת פולינום עם סעיפי חשיבה
+UCYBjUIhrFQ|inspire||אגרת הרמב״ן
+wHFUkFX1Ml4|inspire||פשוט להצליח במתמטיקה ואימון מורים – ראיון בערוץ 14
+tqf403SC0SM|calc|4a 5a|פונקציה מורכבת – שאלות לדוגמה כולל קשר פונקציה-נגזרת ושאלות חשיבה 1
+8tr6BeIqEl4|calc|4a 5a|פונקציה מורכבת – שאלות לדוגמה כולל קשר פונקציה-נגזרת ושאלות חשיבה 2
+dAiuYL5pDVs|calc|4a|פונקציה מורכבת – שאלה להתחלה, צעדים ראשונים 471
+ledl__ZaNog|calc|4a|פונקציה מורכבת – הבסיס: איך גוזרים 471
+_P_satrH9So|calc|4a|פונקציה מורכבת – הבסיס: פתרון משוואה, זוגית ואי-זוגית 471
+MI1GYzA1VCA|calc|4a|קשר בין פונקציה לנגזרת – מהות ומשמעות, סרטון חובה 471 כיתה י (תרגילים)
+AzGctN8Y4n0|calc|4a|קשר בין פונקציה לנגזרת – מהות ומשמעות, סרטון חובה 471 כיתה י
+yQid3Tb_Gyw|calc|4a|קשר בין פונקציה לנגזרת – מהות ומשמעות 471 כיתה י (תרגילים 2)
+6C6kIbKfcg4|calc|4a 5a|חקירת פולינום חלק ב' כולל מציאת נעלם
+P8KQvAgpxj0|calc|4a 5a|חקירת פולינום חלק א' כולל מציאת נעלם
+L6QsvvxvFmk|calc|4a 5a|משמעות השיפועים בפונקציה – נקודות קיצון, עלייה וירידה
+SW0dBf6wpOc|calc|4a|פונקציית פולינום – שאלה פשוטה ומשמעותית 471 4 יח
+wbrgiFrHhWA|calc|4a 5a|משמעות של פונקציה ושל נגזרת – כל החומר בדקה
+GluhBU-xDjw|combo|4a|אנליטית עם גאומטריה וטריגו שאלון חדש 471 – תרגיל מסכם את כל החומר
+_I5RPimYjC8|combo|4a|אנליטית עם גאומטריה וטריגו שאלון 471 – שאלת בגרות פתורה מלאה
+afLTlwTzc74|combo|4a|גאומטריה עם טריגו ואנליטית 471 – רעיון ב-5 דקות 1
+auNKdCW1v7A|combo|4a|גאומטריה עם טריגו ואנליטית 471 – רעיון ב-5 דקות 2
+PQnWGSDu9yY|analytic|3a 4a 5a|גאומטריה אנליטית – נוסחאות, כלי העבודה ומשמעותם
+oKHeIRfrdiw|combo|4a|שאלות בגרות 471 אנליטית עם גאומטריה וטריגו – איך לפתור תרגיל 1
+oG8uC0LSAx4|combo|4a|שאלות בגרות 471 אנליטית עם גאומטריה וטריגו – איך לפתור תרגיל 2
+PvFqWB8Zuus|trig-plane|4a 5a|טריגו – משפט הסינוסים, tan ושטח משולש: מתי משתמשים בכל משפט
+xdCvbuft3T4|trig-func|5a|משוואות טריגונומטריות ברמה גבוהה 5 יח כיתה י 2
+HXUTt573L8o|trig-func|5a|משוואות טריגונומטריות ברמה גבוהה 5 יח כיתה י 3
+1bH5iNX-sRY|trig-func|5a|משוואות טריגונומטריות ברמה גבוהה 5 יח כיתה י 4
+geJCph2WK0Y|trig-func|5a|זהויות ומשוואות טריגונומטריות – משמעות ומהות, זהויות בסיסיות
+OrWJwcB3TVc|trig-func|5a|משוואות טריגונומטריות – tan: מה זה אומר ואיך פותרים כיתה י 5 יח
+EPYQcjyZkQg|trig-func|5a|משוואות טריגונומטריות – cos: מה זה אומר ואיך פותרים כיתה י 5 יח 1
+viygVphn87w|trig-func|5a|משוואות טריגונומטריות – cos: מה זה אומר ואיך פותרים כיתה י 5 יח 2
+pwMfDJs9GkA|trig-func|5a|משוואות טריגונומטריות – sin: מה זה אומר ואיך פותרים כיתה י 5 יח 2
+wDcAhbuFUBc|trig-func|5a|משוואות טריגונומטריות – sin: מה זה אומר ואיך פותרים כיתה י 5 יח 1
+8gwUzXX0fPM|percent|h 3a|בעיות אחוזים מהקל אל הקשה – איך לעבוד נכון עם אחוזים 5
+OgLu9mZWlpI|percent|h 3a|בעיות אחוזים מהקל אל הקשה – איך לעבוד נכון עם אחוזים 4
+mKsSZT90bbE|percent|h 3a|בעיות אחוזים מהקל אל הקשה – איך לעבוד נכון עם אחוזים 3
+7s9s4VOk_g8|percent|h 3a|בעיות אחוזים מהקל אל הקשה – איך לעבוד נכון עם אחוזים 1
+s5xHOIhZ-7w|percent|h 3a|בעיות אחוזים מהקל אל הקשה – איך לעבוד נכון עם אחוזים 2
+Cu122YudXb8|calc-exp|4b|חקירת EX שאלה קשה מאוד 4 יח כיתה יב 482
+Gi3c1qZ4I7M|calc-exp|4b|חקירת EX 482 4 יח כיתה יב
+nBlmBb7kAYg|calc-exp|4b|חקירת ln 482 שאלה איכותית
+276lQEr8zo0|calc-exp|4b|חקירת ln 482 4 יח כיתה יב
+gydEDEBIwjk|calc-exp|4b|חקירת ln 482 שאלה טילית
+aLABap2qftY|geometry|5a|גאומטריה 5 יח 581 שאלה 4 – שאלה קשה מאוד
+K1WD9DI7E0A|trig-plane|5a|שאלת טריגו 5 יח שאלת בגרות 581 – שאלה מדהימה
+yPYuBhaky9s|trig-plane|5a|טריגו עם הבעות של כמה נעלמים – רמה גבוהה כיתה י 5 יח
+P26L34v-ECU|integrals|5a|חקירת שבר עם שורש 5 יח 581 עם אינטגרל – שאלה פצצה
+jG7_zapLF24|calc|5a|שאלת פונקציה ומחשבה ברמה גבוהה 5 יח כיתה י-יא
+DJqyau2hl2k|calc-exp|4b 5b|חקירת EX איכותית כולל הסבר המהות
+-uTim2CY5Kw|circle|4a|משפטי מעגל ל-4 יח 481
+RxOsNwxjgzU|calc|4a 5a|פונקציה מורכבת – משמעות, איך פותרים משוואות וגוזרים
+h-z9QQDrbuc|calc|4a 5a|פונקציה מורכבת – חקירה מלאה
+lHULH4Ny9Hk|analytic|4a|שאלת אנליטית ברמה גבוהה שמקיפה את כל החומר 481 יא 4 יח
+nqiFewtq0tQ|prob|4a|שאלת הסתברות ברמה גבוהה שמקיפה את כל החומר 481 יא 4 יח
+TJ0RevxJdAs|circle|4a|טריגו ומעגל יא 4 יח 481 – שאלה שמסכמת את כל המעגל כולל משפטי מעגל
+Jz2F1X7tSeM|calc|4a|חקירת שורש נדירה – כמה רמות מעל הבגרות יא 4 יח 481
+Ml5-wykNqAI|integrals|4a|חקירת שבר – סיכום קשר פונקציה-נגזרת עם אינטגרל יא 4 יח 481
+cwz-3Knj3S4|trig-plane|4a|טריגו 481 – שאלת בגרות שמסכמת את כל החומר
+-KCT3ALD0F4|circle|4a|גאומטריה 4 יח עם מעגל 481 – שאלת בגרות לרציניים בלבד
+6irlS6RdB9c|trig-plane|4a 5a|סיכום משפטי טריגונומטריה – סינוסים, קוסינוסים ושטח משולש
+ldAYnq1alk0|calc|4a 5a|פונקציה מורכבת 4 5 יח – סיכום כל הנושא כולל סעיפים חכמים
+QMq3jWcMcZ4|trig-plane|4a 5a|טריגו עם גאומטריה – משפט הסינוסים והקוסינוסים
+8EYoa7y8Eos|calc|5a|חקירת שבר 5 יח – שאלה חכמה ביותר
+U1OdN2Be5NQ|extremum|5a|בעיות קיצון 5 יח 581 – שאלה איכותית
+MBinrhJkb68|calc|4a|חקירת שורש 481 – שאלת בגרות מדהימה
+iQeOLuO250U|calc|5a|חקירת שבר שאלה 6 5 יח 581
+albRNgdUO2o|word|5a|תנועה 5 יח 581 – שאלה פתורה
+pqmfJE8PZp8|prob|5a|הסתברות שאלה 4 שאלת בגרות 5 יח 581
+rflmjzUxcjs|sequences|5a|סדרות חורף 2024 581 – שאלת בגרות פתורה 5 יח
+JYL-E_6s_08|calc-exp|4b|חקירת EX שאלת בגרות 4 יח 482 1
+WajJW9oLp1M|calc-exp|4b|חקירת EX שאלת בגרות 4 יח 482 2
+fBU6WsPLfXM|integrals|4a|חקירת פונקציה עם קשר פונקציה-נגזרת ואינטגרל – חזרה לפונקציה המקורית 4 יח 481
+sB0FMwtVzTU|prob|4a|הסתברות שאלת בגרות 4 יח 481
+wBO5boZ6dPI|analytic|4a|גאומטריה אנליטית בגרות חורף 2014 שאלה 2 4 יח 481
+bAr5mxUagGI|geometry|4a 5a|תכונות בגאומטריה – סיכום משולשים, מרובעים, חפיפה ודמיון
+-l2UC4TYvb4|combo|4a|גאומטריה אנליטית עם טריגו וגאומטריה אוקלידית שאלת בגרות 471 חורף 2024
+udLNFErkgfk|calc-exp|4b|פונקציה מעריכית – שאלה ברמת בגרות 482 4 יח
+QrUZuXB7l0I|calc-exp|4b|פונקציות מעריכיות שאלות בגרות 482 805 4 יח 2
+HqMojH38lr4|calc-exp|4b|פונקציות מעריכיות שאלות בגרות 482 805 4 יח 1
+PR1aYBWSscw|trig-space|4b|טריגונומטריה במרחב שאלת בגרות 4 יח 482 805 – תיבה
+wsdWP1LR2kM|calc-exp|4b|חקירה לוגריתמית ln – שאלה ברמת בגרות 482 4 יח
+PCyMwTm4sqk|calc|5a|חקירת שבר עם סעיפים חכמים רמת 5 יח כיתה י 571 1
+4fPWdQqNvqU|calc|5a|חקירת שבר עם סעיפים חכמים רמת 5 יח כיתה י 571 2
+15124wbE0JA|circle|4a|טריגונומטריה ומעגל שאלת בגרות 481
+vLy6tO0raBw|trig-func|5a|חקירת טריגו שאלה 7 בגרות חורף 2024 806 581
+Rbx_rJExiX8|word|5a|שאלת תנועה – שאלה 1 בגרות חורף 2024 806 581
+aR3Lz-48Ld8|analytic|4a|גאומטריה אנליטית 481 שאלת בגרות
+-23N8BlDqGo|calc|4a|שאלת בגרות חקירת שבר 481 804 – חקירה רציונלית עם סעיף חכם
+Ia14Wb27erI|prob|4a|הסתברות שאלת בגרות 481
+RF6g0Y-_uI4|trig-plane|4a|טריגונומטריה – משפט הסינוסים ו-tan: מציאת זוויות וצלעות 481
+vKmRhi4hvNs|trig-plane|4a|שטח משולש – טריגונומטריה וגאומטריה 481
+GVqhnpR3Dqg|calc|4a 5a|פונקציה מורכבת – פתרון משוואות, שיפועים ומשוואת משיק 481 471 2
+1HsZ4PHEVIE|calc|4a 5a|פונקציה מורכבת – פתרון משוואות, שיפועים ומשוואת משיק 481 471 1
+PWW9x5DFjus|trig-plane|4a 5a|משפט הסינוסים – טריגונומטריה
+YiZ1gIGfYlY|circle|5a|תרגיל מעגל גאומטריה 5 יח – תרגיל בגרות פתור
+u_eRDxi9QlY|calc|4a 5a|חקירת שורש 4 5 יח – פונקציית מכפלה ומציאת פרמטר כולל סעיף חכם
+hfrTVkN91X8|circle|4a 5a|תרגיל מעגל גאומטריה 4 5 יח כיתה י
+cktSoj5_h30|combo|4a|אנליטית עם גאומטריה וטריגו שאלות בגרות 471 4 יח 1
+PtWEGqPoVD4|combo|4a|אנליטית עם גאומטריה וטריגו שאלות בגרות 471 4 יח 2
+IsUrUpDjG4Q|sequences|5a|סדרות שאלת בגרות 581
+dgaCjUWFbJo|word|5a|תנועה שאלת בגרות 581
+yVQGNJAL6QY|calc|4a|חקירת שבר – פתרון 2 שאלות בגרות עם סעיפים חכמים 481
+nbTqIgXoG7k|trig-plane|4a 5a|טריגונומטריה – משפט הסינוסים כיתה י
+Vm9oNc3Ypis|calc|4a 5a|חקירות שורש – שאלות בגרות והסבר כל החומר
+o6N8zXWczJk|prob|4a 5a|הסתברות עץ וטבלה – שאלות בגרות וחזרה על כל החומר
+2eApwjjoYkU|calc-exp|4b|חקירת EX עם שטחים וסעיפים חכמים – 2 שאלות בגרות 482
+fv6-VOP9yKg|trig-plane|4a|טריגונומטריה – פתרון 2 שאלות בגרות 481
+F0DdeY1DMxc|calc|4a|חקירת שבר – פתרון 2 שאלות בגרות עם סעיפים חכמים 481
+f3oWuJnftTk|analytic|4a|גאומטריה אנליטית – פתרון 2 שאלות בגרות 481
+puzrvNoZj7c|calc|4a 5a|חקירת פונקציה עם הזזות אופקית ואנכית – תרגיל 23
+QvIw3Ha-Zk8|analytic|4a 5a|אנליטית עם גאומטריה – שאלות עבודה פתורות 3
+Hm1xoJqeyNE|analytic|4a 5a|אנליטית עם גאומטריה – שאלות עבודה פתורות 1
+TJNv1cxl-es|analytic|4a 5a|אנליטית עם גאומטריה – שאלות עבודה פתורות 2
+SkafNnS5NEA|word|5a|קיץ 2023 מועד ב – שאלת תנועה 806 581 5 יח
+LWX-8kfGeO8|prob|4a|שאלת בגרות הסתברות 4 יח 481
+LzRIo4Tx7SQ|word|5a|קיץ 2021 מועד ב – שאלת תנועה 806 581 5 יח
+-2AimZ2q-gs|word|5a|שאלת תנועה 806 581 5 יח – שאלת בגרות
+tPjthJe9UyY|word|5a|קיץ 2019 מועד ב – שאלת תנועה 806 581 5 יח
+rJ1UU-kOMgs|calc|4a 5a|פונקציית שורש – נקודות קיצון קצה ומציאת פרמטרים
+tLcuu7YWQu0|calc|4a 5a|פונקציית שורש – מציאת 2 פרמטרים
+GZzcK5a-ddg|calc|4a 5a|פונקציית שורש ממעלה שנייה – נקודת קיצון עם פרמטר
+tSuzUUjT7aw|calc|4a 5a|חקירת פולינום עם סעיף חכם ופונקציה זוגית – שאלה 19
+IdJBBJzG2Ds|mixed|5a|חורף 2023 שאלון 581 806 5 יח – שאלה 6 שאלת בגרות פתורה
+RVpehyJoxBI|calc|4a 5a|פונקציית שורש – הסבר, תחום הגדרה, איך ולמה גוזרים עד חקירה מלאה
+O7cD7HFyQGs|trig-plane|5a|שאלת טריגונומטריה 806 חורף 2024 – שאלת בגרות מלאה פתורה 581
+9E705kOPET4|integrals|5a|חקירת שבר עם אינטגרל וקשר פונקציה-נגזרת – שאלה 6 חורף 2024 5 יח
+kssLrxw62_Y|calc|4a 5a|חקירת פונקציה מלאה – תחום הגדרה, אסימפטוטות ונגזרות: פולינום, מורכבת ורציונלית
+IZs4oRlF1YE|quadratic|t|תרגיל פרבולה עם קו ישר וישר המאונך לו – פתרון מלא
+yjcS0ZuNyxo|analytic|4a 5a|כיתה י משולש שווה שוקיים ודלתון – גאומטריה עם אנליטית, תרגילים פתורים
+t7E8-67tzHQ|circle|4a 5a|גאומטריה – תרגילים פתורים במעגל 481 581 2
+BmJWNvRdn9U|circle|4a 5a|משפטי מעגל – הסברים 481 581
+-naVE2zYSPM|circle|4a 5a|גאומטריה – תרגילים פתורים במעגל 481 581 1
+NcJCuQHHaIw|extremum|4a|בעיות קיצון – שאלת בגרות קיץ 2023 מועד ב שאלה 8 481
+GV366bMX3Co|extremum|4a|בעיות קיצון – שאלת בגרות קיץ 2023 שאלה 8 481
+2XmbwErLA74|extremum|4a|בעיות קיצון – שאלת בגרות חורף 2021 מועד מיוחד שאלה 8 481
+Z9qegQn2_xc|trig-plane|5a|חורף 2010 מועד ב שאלה 5 – טריגונומטריה 581 806
+ReKzd3CJ_Fs|analytic|4a|חורף 2021 נבצרים שאלת בגרות אנליטית שאלה 2 שאלון 481
+p6h9TkinJko|analytic|4a|גאומטריה אנליטית – הסבר כל החומר והנוסחאות 481 כולל הקשר לגאומטריה
+8fi0wh0vX4g|calc|4a 5a|חקירת פונקציה מלאה – משמעות הפונקציה והנגזרת כיתה י 481
+BFMm0MvO_a4|prob|4a|חורף 2022 נבצרים מועד א – הסתברות שאלה 3 שאלון 481
+ugoHaOAaSCk|prob|4a|חורף 2021 מועד א – הסתברות שאלה 3 שאלון 481
+vvuYnGkSmzI|prob|4a|קיץ 2021 מועד א – הסתברות שאלה 3 שאלון 481
+vS3uea1kWJA|trig-plane|4a|2021 מועד א 481 – שאלה 5 טריגונומטריה, שאלת בגרות מלאה
+Th04nuJFU-o|integrals|4a|אינטגרל עם משיקים ושטח מחולק – הסבר ושאלה פתורה 481
+2B9xX5enMFE|integrals|4a|אינטגרל של פונקציית נגזרת – הסבר ושאלת בגרות 481
+OJHjXZKjCGo|analytic|4a|משולש ישר זווית בגאומטריה אנליטית 471 כיתה י – שאלות פתורות
+A3uGMCzWyKs|analytic|4a|שטח משולש בגאומטריה אנליטית 471 כיתה י – שאלות פתורות
+JgbslPko7Wk|calc|3b|חקירת שורש – שאלת בגרות פתורה 803 382 חורף נבצרים 2022
+1MDE1Sz3QR8|calc|4a|חורף 2022 מועד א 481 – שאלה 6 חקירת שבר
+kiCaJsjtBN4|calc|4a|קיץ 2023 מועד ב 481 – שאלה 6 חקירת שבר
+9qcI2zDDL_8|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, דיפרנציאלי תרגיל פתור 3
+RgrDJu-3v0Y|calc|5a|חורף 2021 מועד א שאלה 6 – דיפרנציאלי 581 806
+iHtsMmJQsKI|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, מציאת נעלמים 3
+uEwZYIsPuYc|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, מציאת נעלמים 2
+fqQsN_WIVuU|mixed|5a|חורף 2021 מועד א שאלה 8 806 581
+sJT2jV9VtEY|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, מציאת נעלמים 1
+zhmuCBKJIIc|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, דיפרנציאלי תרגיל פתור 2
+dHrcssFUJsw|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, דיפרנציאלי תרגיל פתור 1
+fjgBk5pRNVI|calc|4a 5a|חקירות עם משיקים כיתה י – פולינום, דיפרנציאלי
+HRIdtBFzOf4|calc|3b|חקירת שורש – שאלת בגרות פתורה 803 382 קיץ 2022 מועד ב
+EGE2kwb1KmU|calc|3b|חקירת שורש – שאלת בגרות פתורה 803 382 (2)
+26kmzJa65_Q|calc|4a|פונקציה זוגית ואי-זוגית כיתה י 471
+h1wCQea2NLg|prob|4a 5a|הסתברות טבלה – פתרון שאלות והסברים חלק א
+EtzSqwUYJKo|prob|4a 5a|הסתברות טבלה – פתרון שאלות והסברים חלק ב כולל מותנה
+2tUcTDWFF7A|prob|4a 5a|הסתברות טבלה – פתרון שאלות והסברים חלק ג כולל מותנה עם נעלמים
+AX1KHSoiA7M|calc|4a 5a|נגזרות ומשיקים כיתה י – 2 פונקציות משיקות זו לזו
+n3CEXy8t4Y8|calc|4a 5a|פונקציה רציונלית – חקירה מלאה, תרגיל פתור
+BaG1bQ2lqPY|calc|4a 5a|חקירת פונקציית שבר רציונלית – תרגיל פתור
+uOyUSRaHBNs|calc|4a 5a|פולינום עם מציאת נעלמים – קשר פונקציה-נגזרת, הזזות, זוגיות
+nJ_0EwSsr9g|calc|4a|כיתה י פונקציית חזקה 471 – תרגיל פתור
+KLbc3OFvVWw|calc|4a 5a|פונקציה רציונלית – חקירה עם 2 שברים
+R4QuXSmBXBI|analytic|4a|גאומטריה אנליטית קיץ 2022 מועד ב שאלה 2 481
+FmKSMaZ_5MA|analytic|4a|גאומטריה אנליטית חורף 2023 שאלה 2 481
+TrpmxjW5dWo|prob|5a|קיץ 2022 מועד א – הסתברות שאלה 3 581 806
+C1th-UX1y50|prob|5a|קיץ 2021 מועד א – הסתברות שאלה 3 581 806
+1_1dfD9pwdI|word|5a|קיץ 2015 מועד ב – שאלת תנועה שאלה 1 581 806
+BBWBNWGgVhk|sequences|5a|סדרה הנדסית – תרגיל 39 עמ' 230 (יואל גבע חלק ג) 5 יח
+zjDUIQarqlI|calc-exp|4b|חורף 2023 שאלה 5 – חקירת ln 482
+PadbaVdwU00|calc|4a|עמ' 62 שאלה 8 (יואל גבע חלק ב) 471 כיתה י – פונקציית חזקה
+WlZkCYUdOY4|calc|4a|עמ' 70 שאלה 18 (יואל גבע חלק ב) 471 כיתה י – פונקציית פולינום
+Bfb4Xcm1oE4|integrals|4a|אינטגרלים – חזרה לפונקציה המקורית, פולינום ומורכבת 481 יא – פתרון שאלות
+SN8-33YeXDg|integrals|4a|אינטגרלים – חזרה לפונקציה המקורית, פולינום ומורכבת 481 יא – הסבר כל החומר
+PfNt_eZsSnA|inequal|4a 5a|אי-שוויון – תרגילים 1,2 עמ' 871 (יואל גבע כחול)
+WUnR4U2QWAc|inequal|4a 5a|אי-שוויון – תרגילים 1,2 עמ' 871 (יואל גבע כחול) – המשך
+28VrCzXpMEc|inequal|4a 5a|אי-שוויון – תרגילים 8,9 עמ' 871 (יואל גבע כחול)
+EcaT_5NxBfE|calc|4a 5a|תרגיל 16 עמ' 881 – חקירת פונקציה מורכבת עם פרמטר (יואל גבע כחול)
+PUlCfbTepPQ|analytic|4a|תרגיל 28 עמ' 50 (יואל גבע) 471 כיתה י – אנליטית עם גאומטריה
+piPB3jYjKIk|calc-exp|4b 5b|הסבר EX – כל החומר
+iaAsVpTMrRs|integrals|4b|שאלת EX – חקירה עם אינטגרל 482 שאלת בגרות
+OfvdwiwolBA|geometry|5a|חורף 2022 מועד א – גאומטריה שאלה 4 581
+DaQjBMTI6Qs|geometry|5a|2018 מועד ב – גאומטריה שאלה 4 581
+OyD46nBPnuI|calc-exp|4b|קיץ 2022 מועד ב – חקירת EX שאלה 4 482
+g20ZbYtDO18|geometry|5a|חורף 2022 נבצרים – גאומטריה שאלה 4 581
+Psv1sMv__Go|analytic|4a|תרגיל 33 עמ' 43 (יואל גבע) 471 כיתה י – אנליטית עם גאומטריה
+VOuPVoDwGLY|prob|4a|2023 מועד ב – הסתברות שאלה 3 481
+JmU6uTCUJLY|integrals|4a|קיץ 2019 מועד א שאלה 7 481 – חקירת פונקציה עם אינטגרל
+UQXBqol_yXg|geometry|5a|2022 מועד א – גאומטריה שאלה 4 581
+RDKYUH5AAjU|prob|4a 5a|קיץ 2022 מועד ב – הסתברות טבלה שאלה 3
+QLI5WyOh4Yo|calc-exp|4b|קיץ 2022 מועד א – חקירת EX שאלה 4 482
+VCEVjt50Qgw|trig-space|4b|טריגו במרחב – שאלה ברמה גבוהה 482 תיבה
+KSbuo1nAGMs|calc-exp|4b|חקירת EX 482 – שאלה ברמה גבוהה עם סעיפים חכמים
+Rm8gTc2GiKQ|calc-exp|4b|חקירת ln עם סעיפים חכמים – שאלה ברמה גבוהה 482
+InlGHwjl2y8|trig-space|4b|טריגו במרחב פירמידה 482 – שאלת בגרות 2015 מועד ב
+bQZwJz6lbp8|calc-exp|4b|קיץ 2023 מועד ב שאלה 5 – חקירת ln 482
+llEkzZsG9Vw|calc-exp|4b|חורף 2023 שאלה 5 – חקירת ln 482 שאלת בגרות
+J1wqZpVZQ-w|trig-space|4b|חורף 2017 שאלה 2 – טריגו במרחב 482
+RM2_Mz2F4jo|trig-space|4b|קיץ 2022 מועד ב – טריגו במרחב שאלה 2 482
+W1nKu_iwa1g|trig-space|4b|חורף 2022 מועד א – טריגו במרחב שאלה 2 482
+VDed8OkEDYs|calc|4a|481 חורף 2021 נבצרים – שאלה 6 חקירת שבר
+E7vxH0NZvLI|calc|4a|קיץ 2021 מועד מיוחד – שאלה 6 481 חקירת שבר רציונלית
+gG10HDbaVNU|calc-exp|4b|קיץ 2020 מועד א – חקירת EX 482
+-9qSWMivWls|calc-exp|4b|קיץ 2021 מועד מיוחד – שאלה 4 EX 482
+tLFB6Nx_MXs|calc-exp|4b|קיץ 2021 מועד מיוחד – שאלה 5 חקירת ln 482
+ZVjeeDguVOc|word|5a|חורף 2022 נבצרים 581 – בעיות תנועה
+F-DgswdHP9k|word|5a|חורף 2021 מועד א 581 – בעיות תנועה
+gW242RP4OI0|integrals|5a|פונקציה צוברת שטח 581 – הסבר החומר ותרגילים פתורים 1
+C0ANomaQmOY|integrals|5a|פונקציה צוברת שטח 581 – הסבר החומר ותרגילים פתורים 2
+mSoqDRcsl28|mixed|5a|תרגיל 12 עמ' 643 (יואל גבע חלק ג) 5 יח
+OpT276pEAks|mixed|5a|תרגיל 13 עמ' 639 (יואל גבע חלק ג) 5 יח
+F6X3B-crPog|mixed|5a|תרגיל 9 עמ' 638 (יואל גבע חלק ג) 5 יח
+Sh3u3rjbzAg|analytic|4a|גאומטריה עם אנליטית 471 כיתה י 4 יח
+vqf9OgG9esE|mixed|4a 5a|תרגיל 10 עמ' 854 (יואל גבע חלק ב כחול)
+e_DZPoCAnQY|mixed|4a 5a|תרגיל 29 עמ' 851 (יואל גבע חלק ב כחול)
+uXKcwtkgDlY|mixed|4a 5a|תרגיל 23 עמ' 869 (יואל גבע חלק ב כחול)
+vBJpiRG4NLc|calc|4a|סיכום פונקציות 481 – כל הסוגים: שורש, מורכבת ורציונלית
+7_vcjV1GK-o|geometry|4a|גאומטריה 481 – סיכום משולשים וחפיפות, מקבילית וקטע אמצעים
+9OvMkVvuZZc|analytic|4a|פתרון שאלות אנליטית עם גאומטריה 481
+6W9zzBwPJqQ|integrals|4b 5b|חקירת ln עם אינטגרל כולל שאלת בגרות
+UdpN8zEQ-qc|prob|4a 5a|הסתברות עץ וטבלה כולל מותנה ושאלות בגרות – הסבר כל החומר
+AI04dYvpDcU|analytic|3a|גאומטריה אנליטית – הסבר נוסחאות ופתרון תרגיל בגרות 3 יח
+fJn0esySCdg|calc-exp|4b 5b|ln – פתרון שאלות בגרות
+Mw1cdrRpjtU|prob|4a|הסתברות עץ עם נעלמים ומותנה 481 כיתה יא
+i_VJerzJr1E|calc|4a 5a|נגזרות ושיפועים כיתה י – דיפרנציאלי
+Bc42lH2AFpU|calc|4a|כיתה י פולינום – נגזרות, שיפועים ומשוואת משיק 471 תרגיל 21
+MI4Hn2Bv_ns|calc|4a|כיתה י פולינום – נגזרות, שיפועים ומשוואת משיק 471
+q8mbsXQjJSA|calc|4a|כיתה י 481 – פונקציה, נגזרות ושיפועים
+xrzNcpsWhzQ|calc|4a|פונקציה, נגזרות ושיפועים כיתה י 471
+Wbawq3ktaGY|calc|4a 5a|כיתה י – פונקציה: הסבר ופתרון משוואות ממעלה ראשונה ושנייה
+EX_c9H6HLeY|inspire||תפילת ילדים
+I0Q6TCg9sFk|analytic|3a 4a 5a|גאומטריה אנליטית – נוסחאות ושאלות
+XgvqTvAyNvQ|trig-plane|4a 5a|טריגו סיכום כיתה י
+QCaibh9sato|calc|4a|סיכום חקירת פונקציה רציונלית (שבר) 481 כיתה יא
+SoyV4Q0EPZs|calc|4a 5a|פונקציה מורכבת – התחלת החומר
+GNCM38B-mH4|inspire||קריאת מגילה – נוסח אפגניסטן
+`;
+const VIDEOS = RAW.trim().split("\n").map(l=>{const [id,topic,codes,title]=l.split("|");
+  return {id, topic, title, at: topic==="inspire" ? [["insp","-"]] : codes.split(" ").filter(Boolean).map(c=>CODE[c])};});
+VIDEOS.splice(0,0,{playlist:"PLg3cbQuMChKEin3LJacuqsIjjAvZmd9IJ", count:22, thumb:"kS-uS5bRdyo", title:"פלייליסט: הסתברות תשפ״ה – שאלון 471 החדש, כיתה יא׳", topic:"prob", at:[["u4","471"]]});
+
+/* ========================================================= */
+const CHANNEL = "https://www.youtube.com/@the_little_prince_orelpinchasi";
+const PAGE = 36;
+const FRAMED = (()=>{try{return window.self!==window.top}catch(e){return true}})();
+const state = {level:"all", group:null, topic:null, q:"", shown:PAGE};
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const levelName = id => LEVELS.find(l=>l.id===id).name;
+const groupName = (lv,g)=> (LEVELS.find(l=>l.id===lv).groups||[]).find(x=>x.id===g)?.name || g;
+const urlOf = v => v.playlist ? `https://www.youtube.com/playlist?list=${v.playlist}` : `https://www.youtube.com/watch?v=${v.id}`;
+const norm = s => s.toLowerCase().replace(/[׳'״"\-–]/g," ");
+
+function matches(v, s=state, ignore={}){
+  if(s.level==="all" && v.topic==="inspire" && !s.q) return false;
+  if(s.level!=="all" && !v.at.some(a=>a[0]===s.level && (ignore.group||!s.group||a[1]===s.group))) return false;
+  if(!ignore.topic && s.topic && v.topic!==s.topic) return false;
+  if(s.q){
+    const hay = norm(v.title+" "+TOPICS[v.topic].name+" "+v.at.map(a=>(a[0]==="insp"?"":levelName(a[0]))+" "+a[1]).join(" "));
+    if(!norm(s.q).split(/\s+/).filter(Boolean).every(w=>hay.includes(w))) return false;
+  }
+  return true;
+}
+const count = pred=>VIDEOS.filter(pred).length;
+
+function renderLevels(){
+  $("#levelTabs").innerHTML = LEVELS.map(l=>{
+    const n = l.id==="all"?count(v=>v.topic!=="inspire"):count(v=>v.at.some(a=>a[0]===l.id));
+    return `<button class="ltab ${state.level===l.id?"on":""}" data-l="${l.id}"><span class="n">${n}</span><span class="t">${l.name}</span><span class="s">${l.sub}</span></button>`;
+  }).join("");
+}
+function topicsForView(){
+  if(state.level==="insp") return [];
+  const present = t=>count(v=>v.topic===t&&matches(v,{...state,q:""},{topic:true}))>0;
+  if(state.level==="all") return Object.keys(TOPICS).filter(t=>t!=="inspire"&&present(t));
+  const cur = CURRICULUM[state.level];
+  const groups = state.group?[state.group]:Object.keys(cur);
+  const list = [...new Set(groups.flatMap(g=>cur[g]))];
+  Object.keys(TOPICS).forEach(t=>{ if(!list.includes(t)&&t!=="inspire"&&present(t)) list.push(t); });
+  return list;
+}
+function renderFilters(){
+  const lv = LEVELS.find(l=>l.id===state.level);
+  const sub = $("#subRow");
+  if(lv.groups){
+    sub.hidden=false;
+    sub.innerHTML = `<span class="lbl">${state.level==="mid"?"כיתה":"שאלון"}</span>` +
+      `<button class="chip ${!state.group?"on":""}" data-g="">הכל</button>` +
+      lv.groups.map(g=>`<button class="chip ${state.group===g.id?"on":""}" data-g="${g.id}">${g.name}<span class="c">${count(v=>v.at.some(a=>a[0]===lv.id&&a[1]===g.id))}</span></button>`).join("");
+  } else sub.hidden=true;
+  const ts = topicsForView();
+  const tr = $("#topicRow");
+  tr.hidden = !ts.length;
+  tr.innerHTML = `<span class="lbl">נושא</span><button class="chip ${!state.topic?"on":""}" data-t="">כל הנושאים</button>` +
+    ts.map(t=>{const n=count(v=>v.topic===t&&matches(v,state,{topic:true}));
+      return `<button class="chip ${state.topic===t?"on":""} ${n?"":"empty"}" data-t="${t}">${TOPICS[t].name}<span class="c">${n||"בקרוב"}</span></button>`}).join("");
+}
+function card(v){
+  const t = TOPICS[v.topic];
+  const bg = `linear-gradient(135deg,hsl(${t.hue} 62% 46%),hsl(${(t.hue+40)%360} 66% 34%))`;
+  const tid=v.id||v.thumb; const img = tid ? `<img data-th="${tid}" alt="" hidden>` : "";
+  const tags = v.at.filter(a=>a[0]!=="insp").map(a=>`<span class="tag lv">${levelName(a[0])} · ${groupName(a[0],a[1])}</span>`).join("");
+  const badge = v.playlist ? `<span class="badge">▶ פלייליסט · ${v.count} סרטונים</span>` : `<span class="badge">${t.name}</span>`;
+  const inner = `<div class="thumb" style="background:${bg}"><span class="glyph">${t.glyph}</span>${img}${badge}<span class="play"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z" fill="#141b3a"/></svg></span></div>
+    <div class="body"><h3>${esc(v.title)}</h3><div class="tags">${tags}</div></div>`;
+  if(FRAMED || v.playlist) return `<a class="card" href="${urlOf(v)}" target="_blank" rel="noopener">${inner}</a>`;
+  return `<button class="card" data-play="${v.id}" data-title="${esc(v.title)}">${inner}</button>`;
+}
+
+
+/* תמונות ממוזערות – ישירות מיוטיוב */
+function need(im){const id=im.dataset.th;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.remove()};im.loading="lazy";im.src=`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;}
+const IO = ("IntersectionObserver" in window) ? new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){IO.unobserve(e.target);const im=e.target.querySelector("img[data-th]");if(im)need(im);}}),{rootMargin:"600px"}) : null;
+function hydrate(){document.querySelectorAll("img[data-th]:not([src])").forEach(im=>IO?IO.observe(im.parentElement):need(im));}
+function renderGrid(){
+  const list = VIDEOS.filter(v=>matches(v));
+  let title = state.level==="all"?"כל הסרטונים":levelName(state.level);
+  if(state.group) title += " · "+groupName(state.level,state.group);
+  if(state.topic) title += " · "+TOPICS[state.topic].name;
+  if(state.q) title = `תוצאות עבור ״${state.q}״`;
+  $("#resultTitle").textContent = title + ` (${list.length})`;
+  $("#clearBtn").hidden = !(state.level!=="all"||state.topic||state.q);
+  $("#grid").innerHTML = list.length ? list.slice(0,state.shown).map(card).join("") :
+    `<div class="emptybox"><b>עוד אין כאן סרטונים – הם בדרך ✨</b>בינתיים אפשר למצוא עוד תכנים <a href="${CHANNEL}" target="_blank" rel="noopener">בערוץ היוטיוב</a> או לקבוע שיעור אישי.</div>`;
+  const more = $("#moreBtn");
+  more.hidden = list.length<=state.shown;
+  more.textContent = `הצגת עוד סרטונים (${list.length-state.shown} נוספים)`;
+  hydrate();
+}
+function renderCurriculum(){
+  $("#cur").innerHTML = LEVELS.filter(l=>l.groups).map(l=>`
+    <div class="cur-col"><h3>${l.name}<small>${l.sub}</small></h3>
+    ${l.groups.map(g=>`<div class="cur-grp"><div class="gh">${g.name}</div><div class="cur-list">
+      ${CURRICULUM[l.id][g.id].map(t=>{const n=count(v=>v.topic===t&&v.at.some(a=>a[0]===l.id&&a[1]===g.id));
+        return `<button class="${n?"":"zero"}" data-cl="${l.id}" data-cg="${g.id}" data-ct="${t}">${TOPICS[t].name}<span class="c">${n}</span></button>`}).join("")}
+    </div></div>`).join("")}</div>`).join("");
+}
+function render(){state.shown=PAGE;renderLevels();renderFilters();renderGrid();}
+
+document.addEventListener("click",e=>{
+  const b = e.target.closest("[data-l],[data-g],[data-t],[data-cl],[data-play],#clearBtn,#mClose,#moreBtn");
+  if(!b) { if(e.target.id==="modal") closeModal(); return; }
+  if(b.id==="moreBtn"){state.shown+=PAGE*2;renderGrid();return;}
+  if(b.id==="clearBtn"){Object.assign(state,{level:"all",group:null,topic:null,q:""});$("#q").value="";}
+  else if(b.id==="mClose"){closeModal();return;}
+  else if(b.dataset.play!==undefined){openModal(b.dataset.play,b.dataset.title);return;}
+  else if(b.dataset.l!==undefined){state.level=b.dataset.l;state.group=null;state.topic=null;}
+  else if(b.dataset.g!==undefined){state.group=b.dataset.g||null;if(state.topic&&!topicsForView().includes(state.topic))state.topic=null;}
+  else if(b.dataset.t!==undefined){state.topic=b.dataset.t||null;}
+  else if(b.dataset.cl){Object.assign(state,{level:b.dataset.cl,group:b.dataset.cg,topic:b.dataset.ct,q:""});$("#q").value="";
+    render();document.getElementById("videos").scrollIntoView({behavior:"smooth"});return;}
+  render();
+});
+$("#searchForm").addEventListener("submit",e=>{e.preventDefault();state.q=$("#q").value.trim();render();document.getElementById("videos").scrollIntoView({behavior:"smooth"});});
+$("#q").addEventListener("input",e=>{state.q=e.target.value.trim();render();});
+
+function openModal(id,title){
+  $("#player").src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+  $("#mTitle").textContent=title; $("#mLink").href=`https://www.youtube.com/watch?v=${id}`;
+  $("#modal").classList.add("on");
+}
+function closeModal(){$("#modal").classList.remove("on");$("#player").src="";}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+
+(function(){const s=$("#stars");let h="";for(let i=0;i<70;i++){const x=Math.random()*100,y=Math.random()*100,r=Math.random()*1.4+.3,o=Math.random()*.6+.2;h+=`<circle cx="${x}%" cy="${y}%" r="${r}" fill="#fff" opacity="${o}"/>`;}s.innerHTML=h;})();
+
+$("#statVideos").textContent = count(v=>v.topic!=="inspire"&&!v.playlist).toLocaleString("he-IL");
+$("#statTopics").textContent = Object.keys(TOPICS).length-2;
+render(); renderCurriculum();
+</script>
+<div class="install-bar" id="installBar" hidden>
+  <p id="installText"><b>התקינו את האפליקציה</b><br>גישה מהירה לכל הסרטונים ממסך הבית</p>
+  <button class="go" id="installGo">התקנה</button>
+  <button class="x" id="installX" aria-label="סגירה">✕</button>
+</div>
+<script>
+if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+(function(){
+  const bar=document.getElementById("installBar"),go=document.getElementById("installGo"),x=document.getElementById("installX");
+  const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+  let dismissed=false;try{dismissed=localStorage.getItem("installDismissed")==="1"}catch(e){}
+  if(standalone||dismissed)return;
+  let deferred=null;
+  addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;bar.hidden=false;});
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(ios){document.getElementById("installText").innerHTML='<b>התקינו את האפליקציה</b><br>לחצו על <b>שיתוף</b> ⬆ ואז <b>״הוספה למסך הבית״</b>';go.hidden=true;setTimeout(()=>bar.hidden=false,2500);}
+  go.onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;bar.hidden=true;};
+  x.onclick=()=>{bar.hidden=true;try{localStorage.setItem("installDismissed","1")}catch(e){}};
+  addEventListener("appinstalled",()=>bar.hidden=true);
+})();
+</script>
+</body>
+</html>
