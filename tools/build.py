@@ -28,7 +28,6 @@ head_add = '''<meta name="viewport" content="width=device-width, initial-scale=1
 <meta property="og:locale" content="he_IL">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://yt3.googleusercontent.com/bA21ER_Me2kuz8X2_95epE5TYcwVITT3LYBT49yY3AEaNybGwWTruqQCutZ-tuGekJMZ_FOa=s400-c-k-c0x00ffffff-no-rj">'''
-h, n = re.subn(r'(<a[^>]*class="brand"[^>]*>\s*)<svg.*?</svg>', r'\1<img src="icons/brand.png" width="34" height="34" alt="" style="border-radius:9px;flex:none">', h, count=1, flags=re.S); assert n, "brand logo"
 h, n = re.subn(r'<meta name="viewport"[^>]*>', head_add, h, count=1); assert n
 
 h = h.replace('</style>', '''/* app mode */
