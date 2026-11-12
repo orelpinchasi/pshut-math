@@ -21,12 +21,13 @@ head_add = '''<meta name="viewport" content="width=device-width, initial-scale=1
 <meta property="og:title" content="פשוט להצליח במתמטיקה – כל הסרטונים במקום אחד">
 <meta property="og:description" content="הסברים, תרגול ושאלות בגרות פתורות – לפי כיתה, שאלון ונושא. חטיבת ביניים, 3, 4 ו-5 יח״ל.">
 <meta property="og:url" content="https://orelpinchasi.github.io/pshut-math/">
-<meta property="og:image" content="https://orelpinchasi.github.io/pshut-math/og-image.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="https://yt3.googleusercontent.com/bA21ER_Me2kuz8X2_95epE5TYcwVITT3LYBT49yY3AEaNybGwWTruqQCutZ-tuGekJMZ_FOa=s400-c-k-c0x00ffffff-no-rj">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="400">
+<meta property="og:image:height" content="400">
 <meta property="og:locale" content="he_IL">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://orelpinchasi.github.io/pshut-math/og-image.jpg">'''
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yt3.googleusercontent.com/bA21ER_Me2kuz8X2_95epE5TYcwVITT3LYBT49yY3AEaNybGwWTruqQCutZ-tuGekJMZ_FOa=s400-c-k-c0x00ffffff-no-rj">'''
 h, n = re.subn(r'<meta name="viewport"[^>]*>', head_add, h, count=1); assert n
 
 h = h.replace('</style>', '''/* app mode */
