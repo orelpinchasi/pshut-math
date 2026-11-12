@@ -1,5 +1,5 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v1";
+const CACHE = "pshut-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
@@ -16,7 +16,7 @@ self.addEventListener("fetch", e => {
     return;
   }
   // תמונות ממוזערות, גופנים וקבצי האפליקציה: מהמטמון, ומתעדכן ברקע
-  if (url.origin === location.origin || /(^|\.)(ytimg\.com|gstatic\.com|googleapis\.com)$/.test(url.hostname)) {
+  if (url.origin === location.origin || /(^|\.)(gstatic\.com|googleapis\.com)$/.test(url.hostname)) {
     e.respondWith(caches.open(CACHE).then(async c => {
       const hit = await c.match(req);
       const net = fetch(req).then(r => { if (r.ok || r.type === "opaque") c.put(req, r.clone()); return r; }).catch(() => hit);

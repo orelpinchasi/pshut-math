@@ -1429,7 +1429,7 @@ function card(v){
 
 
 /* תמונות ממוזערות – ישירות מיוטיוב */
-function need(im){const id=im.dataset.th;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.remove()};im.loading="lazy";im.src=`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;}
+function need(im){const id=im.dataset.th;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.remove()};im.src=`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;}
 const IO = ("IntersectionObserver" in window) ? new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){IO.unobserve(e.target);const im=e.target.querySelector("img[data-th]");if(im)need(im);}}),{rootMargin:"600px"}) : null;
 function hydrate(){document.querySelectorAll("img[data-th]:not([src])").forEach(im=>IO?IO.observe(im.parentElement):need(im));}
 function renderGrid(){
