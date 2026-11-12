@@ -12,7 +12,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="פשוט להצליח">
-
 <title>פשוט להצליח במתמטיקה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +59,7 @@ nav.links a.cta{background:var(--gold);color:var(--night);opacity:1;font-weight:
 
 /* level tabs */
 .levels{margin-top:-46px;position:relative;z-index:2}
-.level-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.level-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .morebtn{border:0;background:var(--night);color:#fff;font:inherit;font-weight:700;padding:12px 26px;border-radius:999px;cursor:pointer}
 .ltab{background:var(--card);border:2px solid transparent;border-radius:var(--r);padding:16px 14px;text-align:right;cursor:pointer;font:inherit;color:inherit;box-shadow:0 6px 20px rgba(29,33,64,.08);transition:.15s}
 .ltab:hover{transform:translateY(-2px)}
@@ -296,7 +295,6 @@ const LEVELS = [
   {id:"u3",  name:"3 יח״ל",       sub:"שאלונים 371 · 372",  groups:[{id:"371",name:"371 · י׳–יא׳"},{id:"372",name:"372 · יב׳"}]},
   {id:"u4",  name:"4 יח״ל",       sub:"שאלונים 471 · 472",  groups:[{id:"471",name:"471 · י׳–יא׳"},{id:"472",name:"472 · יב׳"}]},
   {id:"u5",  name:"5 יח״ל",       sub:"שאלונים 571 · 572",  groups:[{id:"571",name:"571 · י׳–יא׳"},{id:"572",name:"572 · יב׳"}]},
-  {id:"insp",name:"הנסיך הקטן",   sub:"תוכן, משמעות והשראה"},
 ];
 const CODE = {z:["mid","ז"],h:["mid","ח"],t:["mid","ט"],"3a":["u3","371"],"3b":["u3","372"],"4a":["u4","471"],"4b":["u4","472"],"5a":["u5","571"],"5b":["u5","572"]};
 
@@ -370,7 +368,104 @@ const CURRICULUM = {
    הסרטונים – כל הערוץ (השורות: קוד | נושא | שיוך | כותרת)
    שיוך: z/h/t = כיתות ז/ח/ט · 3a/3b = 371/372 · 4a/4b = 471/472 · 5a/5b = 571/572
    ========================================================= */
-const RAW = `W0ougLVUeKE|vectors|4b|472 וקטורים שאלות בגרות 4
+const RAW = `azIs-mR6Wns|calc-exp|4b 5b|משוואות עם eˣ – גורם משותף והצבה
+WpCSI0L20jc|calc-exp|4b 5b|משוואות עם eˣ – הצבה t=eˣ ומשוואה ריבועית
+095OA6o7xLE|calc-exp|4b|משוואות מעריכיות עם לוגריתם – log כשאין בסיס משותף
+rZU0ewKwsYA|integrals|4b 5b|מציאת פונקציה מהנגזרת f′x=3−e⁻ˣ⁺² ומשיק
+Lp1tLgVgwRI|calc-exp|4b 5b|חקירת fx=ax∕ln x−a עם פרמטר + g=1∕f
+Fiy4Cf1dJak|calc-exp|4b 5b|חקירת fx=x+lnx²−8 – תחום, אסימפטוטות וקיצון
+NRpaBT1_GEo|calc-exp|4b 5b|המספר e ולוגריתם – לפתור משוואה מעריכית
+toJgvNF9x-k|integrals|4b 5b|אינטגרל שנותן ln – ∫1∕ax+bdx
+RCdpX18awEQ|calc-exp|4b 5b|גזירת eˣ – פונקציה מורכבת ומכפלה
+sh8GVTZ0QhE|stats|4a|התפלגות נורמלית – אורך חיי טלפונים סלולריים
+cGwibSYgh2U|prob|4a|הסתברות בטבלה – דירות בבניין, כיוון ומשופצות
+LOYGAKbJ_E8|sequences|4a 5a|סדרה חשבונית – a7=−a17, איבר שווה 0 וסכום
+XGKz8f5ype0|stats|4a|מתאם וקו רגרסיה – חישוב r ומשוואת הישר
+UlJfqghU0Gk|similarity|4a|מלבן חסום במשולש – דמיון ויחס שטחים
+57xXQEfRvDU|calc-exp|4b|משוואות מעריכיות – הוצאת גורם משותף והצבה t=3ˣ
+27m9ymj8unI|calc-exp|4b|משוואות מעריכיות – השוואת בסיסים
+r7JMk94oFz0|similarity|4a|מקבילית – יחסי קטעים ויחס שטחי משולשים
+2nDtXtn2Kvo|calc-exp|4b|משוואות מעריכיות – בסיס שבר
+LNfNBCyOodw|stats|4a|התפלגות נורמלית – משקלי תינוקות
+YufQMdwMbLk|stats|4a|התפלגות נורמלית – זמן חנייה בחניון
+gt0crOR4KZU|stats|4a|התפלגות נורמלית – זמן הגעה לעבודה, מציאת סטיית תקן
+jL8E5j6qEPI|stats|4a|התפלגות נורמלית – אורך פרחים במשתלה
+7c4l5olQ2a0|stats|4a|התפלגות נורמלית – ציוני בגרות ופסיכומטרי השוואת גרפים
+382YFfZSLxM|analytic|4a 5a|אנליטית – טרפז שווה שוקיים, מציאת הקודקוד הרביעי
+DDDnaGaS4n8|analytic|4a 5a|אנליטית – ישרים מאונכים, שיפוע ומרחק נקודה מישר
+QcYA_KqO9Z4|calc|4a 5a|חקירת פונקציה מורכבת fx=x²−kx³ עם פרמטר
+vTy2kt_5X08|analytic|4a|אנליטית – דלתון꞉ מציאת קודקודים ומשולשים חופפים
+MBnO859dtxU|calc|4a 5a|פונקציה זוגית ואי זוגית – הבנה וזיהוי
+UzLWgWIQSFA|analytic|4a 5a|שיפוע וזווית – tanα=m
+T3y0_CwZLb4|calc|4a 5a|חקירת פולינום fx=3x⁴−2x³ – קיצון ותחומי עלייה וירידה
+UMZ1rVml-Ec|calc|4a 5a|חקירת פונקציה רציונלית עם פרמטר y=x−1∕x²−b²
+ahsp9S9zPRo|analytic|4a|מעוין ABCD במערכת צירים – אלכסונים, שטח וזווית
+7uCKFWfte5c|analytic|4a|גאומטריה אנליטית – משולש ישר זווית ודמיון משולשים
+lKDd5m9GeiE|calc|4a 5a|חקירת פולינום fx=3x⁴−2x³ – פתיחה
+0dI1R9nMVCc|analytic|4a|בגרות חורף 2022 – גאומטריה אנליטית꞉ משולש ומקבילית
+mVvs58gSLZY|analytic|4a 5a|אנליטית – משולש שווה שוקיים, גובה ומרחק נקודה מישר
+FjMYWYcp8Ng|analytic|4a|אנליטית – מרובע ABCD, אלכסונים ומשוואות ישרים
+SjZhDh2vjf8|analytic|4a 5a|אנליטית – מלבן על שני ישרים מקבילים, מציאת קודקודים
+gVH8eUJvxbk|stats|t 3a|ממוצע משוקלל – שאלת שכר חודשי
+P7lA51BKtf8|similarity|t 4a|דמיון משולשים – גובה ליתר במשולש ישר זווית ומשולש שווה שוקיים
+gelSFN_dPM4|stats|t 3a|סטטיסטיקה – טבלת שכר, קבוצות והיסטוגרמה
+ZNKlUHdEuAY|similarity|t 4a|משפטים במעגל ומשולשים דומים – הסבר
+Ue9fQRgjHk4|analytic|3a 4a|מרובע במערכת צירים – שיפוע, משוואת ישר וחיתוך עם הצירים
+WVPCExStpx4|systems|t 3a|מערכת משוואות עם שברים 30∕x+1=30∕y – הצבה למשוואה ריבועית
+EB2vSJnunUA|systems|t|מערכת משוואות עם סוגריים – שיטת ההצבה
+v7kEt8s6B-c|trig-right|t 4a 5a|טריגונומטריה במשולש ישר זווית – חוצה זווית ותיכון
+uKeT3wkaqxQ|trig-right|t 4a 5a|טריגונומטריה במשולש ישר זווית – תיכון ליתר
+ln7LDBk9_YA|trig-right|t 4a 5a|טריגונומטריה במשולש ישר זווית – sin, cos, tan
+bh7UHUhjMxo|stats|3a 4a|היסטוגרמה – ממוצע, סטיית תקן ושינוי בנתונים
+ONnda2XxzLA|trig-right|3a|טריגונומטריה במעוין – גובה ואלכסון
+THbcNb27dAA|similarity|t|דמיון משולשים בצורת ״שעון חול״ – AB∥EF
+fV4MrtH3IEo|similarity|t 4a|דמיון משולשים – הסבר ותרגילים בסיסיים
+KmOlWOIyqhc|similarity|t|דמיון משולשים – יחס דמיון ואורכי צלעות
+4E2dsxsxlUo|percent|h|אחוזים – מחיר לפני הוזלה של 18%
+3wkex9F8gZs|area|t|גאומטריה – גובה במשולש ושטחים
+PZHiiseOKtg|quadratic|t|בעיה מילולית – משחקי ליגה, משוואה ריבועית xx−1=120
+tx3JltE0gP8|pythagoras|h t|משפט פיתגורס במלבן – חישוב BE ואלכסון AC
+i-onhCaJLMo|pythagoras|h|משפט פיתגורס – הקדמה ודוגמה 3 4 5
+7OLcgqc2Bcg|pythagoras|h|משפט פיתגורס – חישוב ניצב 10, 28
+jgKKiU8WHhM|geometry|t 4a 5a|חזרה בגאומטריה – מקבילית, מלבן ומשולשים דומים
+Tw-dQaLtlEw|pythagoras|h|משפט פיתגורס – חישוב יתר 10, 24
+KkMixGCwPQU|prob|t 4a|הסתברות בסיסית – בחירה אקראית, קובייה ובולים במעטפה
+-9YCzlo1ZfI|geometry|t 4a|מלבן ABCD – תיכונים במשולש וחישוב שטח
+zo4fiwfjATU|powers|t 4b|חוקי חזקות ושורשים – חזרה מהירה
+oM3ywsvImlI|prob|t 4a|הסתברות – עץ꞉ הטלת קובייה פעמיים וקובייה צבעונית
+Ci2-hk_Hwdc|prob|t 4a|הסתברות – עץ꞉ בנים ובנות, מטבעות עם החזרה
+DFXguy_43f0|prob|t 4a|הסתברות – מרחב מדגם꞉ מטבע וסביבון
+7GtLfeL2P88|percent|h t|הוזלה והתייקרות באחוזים – מחיר סופי ואחוז שינוי כולל
+O9bx9wdb9t4|congruence|h t|ריבוע ABCD – הוכחה ש EC מאונך ל DF חפיפה
+4Xud1T8e-z8|percent|h t|אחוזים – אנשים באולם, גברים ונשים
+I3E31288hI8|geometry|h t|ריבוע ABCD – הוכחת מעוין∕מקבילית חיצונית
+bSp-OnqzGfY|geometry|h t|ריבוע ABCD – MB=KC=DN, הוכחת זווית ישרה
+U2hg1EFQtnQ|linear|h|קו ישר – שיפוע ומשוואת ישר משתי נקודות
+BqhZbMOT-kg|geometry|h t|מרובע ABCD מלבן – הוכחת מעוין עם קטע אמצעים
+xyE223sBIew|congruence|h|חפיפת משולשים – הוכחה בשרטוט ״זיגזג״
+5r6L0t37t_w|prob|z h|מבוא להסתברות – הטלת קובייה
+Zc3vQrEj0IU|word|z|בעיית גילים – שגיא מבוגר מאיילה ב 5 שנים
+TYZINN_6jvk|linear|h t|הקו הישר y=6x−5 – שיפוע ונקודת חיתוך
+h02reVceKvA|word|z h|בעיה מילולית עם שברים – מספר שהסכום של 5∕12 ו 1∕5 ממנו
+yAJlGi1mt8k|word|z h|בעיה מילולית – מחירי משולשי פיצה בניית משוואה
+sLgUFtmed74|percent|z h|אחוזים – משקל תפוז מקולף 20% קליפה
+sgL2xO-S0ns|percent|z h|אחוזים – הנחה של 27% על 90 ש״ח
+oF13745Aapc|equations|z|משוואה עם שברים ומשתנה בשני האגפים
+hjxbsfDnCy4|angles|z|סימון זוויות בשלוש אותיות – חיבור זוויות
+RW5rkz8Nocc|angles|z|זוויות סביב נקודה – ישרים נחתכים
+Ek0bypvfcQE|angles|z|זוויות קודקודיות וצמודות – תרגיל קצר
+Noi6lEEFywY|angles|z|זוויות צמודות וזווית חיצונית במשולש
+wYbQdTTIeOU|angles|z|זוויות בין ישרים מקבילים – מתאימות, מתחלפות וחד צדדיות
+1faps8KoHIM|equations|z|משוואה עם שברים – כפל במכנה משותף
+uGa7zsJYiPk|equations|z|משוואה עם מכנים 7 ו 3 – פתרון שלב אחר שלב
+Cw1K-NZqPqE|angles|z|מבוא לזוויות – סימון זווית בשלוש אותיות
+O8oWIh0vF_g|angles|z|מבוא לזוויות – ישרה, חדה, קהה, צמודות וקודקודיות
+LCLbmUzOBrA|percent|z h|מבוא לאחוזים – 100%, 10% ו 1%, הנחה והתייקרות
+vElkYerdm3M|angles|z|ישרים נחתכים בנקודה – חישוב זוויות קצר
+QqqKkyh0py0|angles|z|חישוב זוויות בשרטוט משמאל קצר
+JkpPNgLKOrA|angles|z|חיסור זוויות – סימון בשלוש אותיות קצר
+1FOc7z0rUyI|angles|z|חוצה זווית וחישוב זוויות – תרגילים
+W0ougLVUeKE|vectors|4b|472 וקטורים שאלות בגרות 4
 ma7ETzMN-zU|vectors|4b|472 וקטורים שאלות בגרות 3
 SBcSyxsCxw8|vectors|4b|472 וקטורים שאלות בגרות 2
 Y-sFuB9Rr4E|vectors|4b|472 וקטורים שאלות בגרות 1
@@ -1353,10 +1448,9 @@ I0Q6TCg9sFk|analytic|3a 4a 5a|גאומטריה אנליטית – נוסחאות
 XgvqTvAyNvQ|trig-plane|4a 5a|טריגו סיכום כיתה י
 QCaibh9sato|calc|4a|סיכום חקירת פונקציה רציונלית (שבר) 481 כיתה יא
 SoyV4Q0EPZs|calc|4a 5a|פונקציה מורכבת – התחלת החומר
-GNCM38B-mH4|inspire||קריאת מגילה – נוסח אפגניסטן
-`;
+GNCM38B-mH4|inspire||קריאת מגילה – נוסח אפגניסטן`;
 const VIDEOS = RAW.trim().split("\n").map(l=>{const [id,topic,codes,title]=l.split("|");
-  return {id, topic, title, at: topic==="inspire" ? [["insp","-"]] : codes.split(" ").filter(Boolean).map(c=>CODE[c])};});
+  return {id, topic, title, at: topic==="inspire" ? [["insp","-"]] : codes.split(" ").filter(Boolean).map(c=>CODE[c])};}).filter(v=>v.topic!=="inspire");
 VIDEOS.splice(0,0,{playlist:"PLg3cbQuMChKEin3LJacuqsIjjAvZmd9IJ", count:22, thumb:"kS-uS5bRdyo", title:"פלייליסט: הסתברות תשפ״ה – שאלון 471 החדש, כיתה יא׳", topic:"prob", at:[["u4","471"]]});
 
 /* ========================================================= */
@@ -1418,7 +1512,7 @@ function renderFilters(){
 function card(v){
   const t = TOPICS[v.topic];
   const bg = `linear-gradient(135deg,hsl(${t.hue} 62% 46%),hsl(${(t.hue+40)%360} 66% 34%))`;
-  const tid=v.id||v.thumb; const img = tid ? `<img data-th="${tid}" alt="" hidden>` : "";
+  const tid=v.id||v.thumb; const img = tid ? `<img src="https://i.ytimg.com/vi/${tid}/mqdefault.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : "";
   const tags = v.at.filter(a=>a[0]!=="insp").map(a=>`<span class="tag lv">${levelName(a[0])} · ${groupName(a[0],a[1])}</span>`).join("");
   const badge = v.playlist ? `<span class="badge">▶ פלייליסט · ${v.count} סרטונים</span>` : `<span class="badge">${t.name}</span>`;
   const inner = `<div class="thumb" style="background:${bg}"><span class="glyph">${t.glyph}</span>${img}${badge}<span class="play"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 2l10 6-10 6z" fill="#141b3a"/></svg></span></div>
@@ -1428,10 +1522,8 @@ function card(v){
 }
 
 
-/* תמונות ממוזערות – ישירות מיוטיוב */
-function need(im){const id=im.dataset.th;im.onload=()=>{im.hidden=false};im.onerror=()=>{im.remove()};im.src=`https://i.ytimg.com/vi/${id}/mqdefault.jpg`;}
-const IO = ("IntersectionObserver" in window) ? new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){IO.unobserve(e.target);const im=e.target.querySelector("img[data-th]");if(im)need(im);}}),{rootMargin:"600px"}) : null;
-function hydrate(){document.querySelectorAll("img[data-th]:not([src])").forEach(im=>IO?IO.observe(im.parentElement):need(im));}
+/* תמונות ממוזערות – נטענות ישירות מיוטיוב */
+function hydrate(){}
 function renderGrid(){
   const list = VIDEOS.filter(v=>matches(v));
   let title = state.level==="all"?"כל הסרטונים":levelName(state.level);
@@ -1494,7 +1586,7 @@ render(); renderCurriculum();
   <button class="x" id="installX" aria-label="סגירה">✕</button>
 </div>
 <script>
-if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>r.update()).catch(()=>{}));}
 (function(){
   const bar=document.getElementById("installBar"),go=document.getElementById("installGo"),x=document.getElementById("installX");
   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
