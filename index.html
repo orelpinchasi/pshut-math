@@ -161,6 +161,22 @@ footer{padding:40px 0 50px;color:var(--muted);font-size:14px;text-align:center}
 .modal .bar{background:#fff;padding:12px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}
 .modal .bar a{color:var(--rose);font-weight:700}
 .modal .x{background:none;border:0;font-size:26px;cursor:pointer;line-height:1}
+
+/* ---- משפטי הנסיך הקטן ---- */
+.lp-day{margin:22px 0 6px;max-width:600px}
+.lp-day .in{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.06);border:1px solid rgba(245,184,61,.45);border-radius:22px;padding:18px 22px}
+.lp-day .lp-ic{width:68px;height:68px;background:rgba(245,184,61,.12);border-color:rgba(245,184,61,.6)}
+.lp-day .lp-ic svg{width:38px;height:38px}
+.lp-day .k{display:inline-block;font-size:12.5px;font-weight:700;color:var(--night);background:var(--gold);padding:3px 12px;border-radius:999px}
+.lp-day p{margin:8px 0 4px;font-size:26px;line-height:1.4;color:#fff;font-weight:600}
+.lp-day small{font-size:12.5px;color:rgba(255,255,255,.62)}
+.lp-ic{flex-shrink:0;width:50px;height:50px;border-radius:50%;background:var(--paper);border:1px solid rgba(245,184,61,.55);display:flex;align-items:center;justify-content:center}
+.lp-q{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 8px;color:var(--ink)}
+.lp-q .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(245,184,61,.7),transparent);max-width:160px}
+.lp-q .lp-ic{width:40px;height:40px}
+.lp-q p{margin:0;font-size:15.5px;line-height:1.5;text-align:center;max-width:560px}
+.lp-q small{display:block;font-size:11.5px;color:var(--muted);margin-top:1px}
+@media(max-width:600px){.lp-day p{font-size:21px}.lp-day .in{padding:16px;gap:14px;align-items:flex-start}.lp-day .lp-ic{width:52px;height:52px}.lp-day .lp-ic svg{width:30px;height:30px}.lp-ic{width:44px;height:44px}.lp-q .ln{display:none}.lp-q{justify-content:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 14px}.lp-q p{text-align:right;font-size:14.5px}}
 /* app mode */
 header.top{padding-top:env(safe-area-inset-top)}
 body{padding-bottom:env(safe-area-inset-bottom)}
@@ -202,6 +218,7 @@ body{padding-bottom:env(safe-area-inset-bottom)}
         <input id="q" type="search" placeholder="חפשו נושא, שאלון או מושג… למשל ״הסתברות״ או ״806״" autocomplete="off">
         <button type="submit">חיפוש</button>
       </form>
+      <div class="lp-day" id="lpDay"></div>
       <div class="hero-stats">
         <div><b id="statVideos">0</b><span>סרטונים</span></div>
         <div><b id="statTopics">0</b><span>נושאים</span></div>
@@ -1546,6 +1563,52 @@ function card(v){
 }
 
 
+
+
+/* ---- משפטים בהשראת הנסיך הקטן ---- */
+const LPI={
+ rose:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M16 15c-4 0-6-3-5-6 2 1 3 0 5-3 2 3 3 4 5 3 1 3-1 6-5 6z"/><path d="M16 15v13M16 22c-3-1-5-3-5-5M16 24c3-1 4-2 5-4"/></svg>',
+ fox:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 6l6 6h10l6-6-2 11-9 9-9-9z"/><circle cx="12.5" cy="16" r=".9" fill="#c9922a"/><circle cx="19.5" cy="16" r=".9" fill="#c9922a"/></svg>',
+ tree:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M7 13c0-4 4-7 9-7s9 3 9 7c0 3-3 4-9 4s-9-1-9-4z"/><path d="M14 17v10h4V17M10 28h12"/></svg>',
+ well:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M7 18h18v10H7z"/><path d="M9 18V8h14v10M6 8h20M16 8v6"/><path d="M14 14h4v3h-4z"/></svg>',
+ planet:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="17" r="7"/><ellipse cx="16" cy="17" rx="13" ry="3.5" transform="rotate(-15 16 17)"/><path d="M24 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="#c9922a"/></svg>',
+ sun:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 22a8 8 0 0116 0"/><path d="M4 22h24M16 9v3M7 13l2 2M25 13l-2 2M8 26h16"/></svg>',
+ lamp:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 5h8l2 7H10z"/><path d="M16 12v16M12 28h8M14 16h4"/></svg>',
+ crown:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 23l2-13 6 6 3-8 3 8 6-6 2 13z"/><path d="M6 27h20"/></svg>',
+ box:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l11-5 11 5v12l-11 5-11-5z"/><path d="M5 11l11 5 11-5M16 16v12"/><circle cx="12" cy="20" r=".8" fill="#c9922a"/><circle cx="19" cy="21" r=".8" fill="#c9922a"/></svg>',
+ hat:'<svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 24c4 0 6-2 8-8 2-6 9-7 12-2 2 3 3 8 6 10H3z"/></svg>',
+ star:'<svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4l3.4 8 8.6.7-6.6 5.6 2 8.4L16 22.3 8.6 26.7l2-8.4L4 12.7l8.6-.7z" fill="none" stroke="#c9922a" stroke-width="1.6" stroke-linejoin="round"/></svg>'
+};
+const LPQ=[
+ ['rose','הזמן שהשקעת בתרגיל הוא שעושה אותו שלך.'],
+ ['tree','טעות קטנה שלא מתקנים היום הופכת מחר לבאובב.'],
+ ['well','מה שמייפה תרגיל קשה הוא שאיפשהו מסתתר בו פתרון.'],
+ ['fox','לאלף נושא זה לחזור אליו כל יום, באותה שעה, עד שהוא מחכה לך.'],
+ ['sun','ביום קשה הנסיך הקטן ראה ארבעים וארבע שקיעות. ביום קשה, פתור רק תרגיל אחד.'],
+ ['hat','המבוגרים ראו כובע. מי שמבין רואה את מה שמסתתר בפנים. ככה גם בתרגיל.'],
+ ['planet','גם הכוכב שלך קטן. אבל אם תטפל בו כל יום, הוא יהיה הכי יפה בשמיים.'],
+ ['star','מי שרק סופר כוכבים לא באמת מחזיק בהם. גם מי שרק מעתיק פתרונות.'],
+ ['lamp','להדליק ולכבות בלי לחשוב זה לא ללמוד. עצור ושאל: למה?'],
+ ['crown','אל תדרוש מעצמך לפתור הכול היום. דרוש רק את מה שאתה יכול לתת.'],
+ ['box','לפעמים התשובה לא כתובה. היא בתוך הקופסה, וצריך לדמיין אותה.'],
+ ['tree','כל בוקר מנקים את הכוכב: חמש דקות של חזרה, והחומר לא משתלט עליך.'],
+ ['rose','גם לנוסחה צריך להשקות כל יום, אחרת היא נובלת.'],
+ ['fox','בהתחלה החומר מסתכל עליך מרחוק. כל יום תתקרב אליו עוד צעד.'],
+ ['well','הולכים במדבר של מספרים, ופתאום – באר: הבנת.'],
+ ['star','לא משנה כמה תרגילים פתרת. חשוב כמה מהם הבנת.'],
+ ['planet','כל אחד מגיע מכוכב אחר. כל אחד לומד בקצב שלו.'],
+ ['hat','כל שרטוט בגאומטריה מסתיר בתוכו משהו. צריך ללמוד לראות אותו.'],
+ ['rose','אלף תרגילים דומים, אבל רק זה שפתרת לבד הופך לחלק ממך.'],
+ ['fox','אתה אחראי לתמיד לכל נושא שהבנת. עכשיו למד אותו גם חבר.'],
+ ['star','הפתרון החשוב סמוי מן העין. בהתחלה רואים רק את השאלה.'],
+ ['tree','גם הבאובב הגדול מתחיל מזרע קטן. גם הבגרות מתחילה מתרגיל אחד.']
+];
+const LPDAY=Math.floor((Date.now()+2*3600e3)/864e5)%LPQ.length;
+const LPBY='בהשראת "הנסיך הקטן"';
+function lpDay(){const [ic,t]=LPQ[LPDAY];$("#lpDay").innerHTML=`<div class="in"><span class="lp-ic">${LPI[ic]}</span><div><span class="k">המשפט של היום</span><p>${t}</p><small>${LPBY}</small></div></div>`;}
+function lpStrip(n){const [ic,t]=LPQ[(LPDAY+1+n)%LPQ.length];return `<div class="lp-q"><span class="ln"></span><span class="lp-ic">${LPI[ic]}</span><p>${t}<small>${LPBY}</small></p><span class="ln"></span></div>`;}
+const LP_EVERY=4;
+
 /* תמונות ממוזערות – נטענות ישירות מיוטיוב */
 function hydrate(){}
 function renderGrid(){
@@ -1556,7 +1619,7 @@ function renderGrid(){
   if(state.q) title = `תוצאות עבור ״${state.q}״`;
   $("#resultTitle").textContent = title + ` (${list.length})`;
   $("#clearBtn").hidden = !(state.level!=="all"||state.topic||state.q);
-  $("#grid").innerHTML = list.length ? list.slice(0,state.shown).map(card).join("") :
+  $("#grid").innerHTML = list.length ? list.slice(0,state.shown).map((v,i)=>card(v)+((i+1)%LP_EVERY===0&&i+1<Math.min(list.length,state.shown)?lpStrip(Math.floor(i/LP_EVERY)):"")).join("") :
     `<div class="emptybox"><b>עוד אין כאן סרטונים – הם בדרך ✨</b>בינתיים אפשר למצוא עוד תכנים <a href="${CHANNEL}" target="_blank" rel="noopener">בערוץ היוטיוב</a> או לקבוע שיעור אישי.</div>`;
   const more = $("#moreBtn");
   more.hidden = list.length<=state.shown;
@@ -1571,7 +1634,7 @@ function renderCurriculum(){
         return `<button class="${n?"":"zero"}" data-cl="${l.id}" data-cg="${g.id}" data-ct="${t}">${TOPICS[t].name}<span class="c">${n}</span></button>`}).join("")}
     </div></div>`).join("")}</div>`).join("");
 }
-function render(){state.shown=PAGE;renderLevels();renderFilters();renderGrid();}
+function render(){lpDay();state.shown=PAGE;renderLevels();renderFilters();renderGrid();}
 
 document.addEventListener("click",e=>{
   const b = e.target.closest("[data-l],[data-g],[data-t],[data-cl],[data-play],#clearBtn,#mClose,#moreBtn");
