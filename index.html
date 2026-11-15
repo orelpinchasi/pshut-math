@@ -55,7 +55,7 @@ nav.links a.cta{background:var(--gold);color:var(--night);opacity:1;font-weight:
 /* hero */
 .hero{background:radial-gradient(1200px 500px at 80% -10%,#33407e 0,transparent 60%),linear-gradient(180deg,var(--night),var(--night2));color:#fff;position:relative;overflow:hidden;padding:56px 0 90px}
 .stars{position:absolute;inset:0;pointer-events:none}
-.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:center}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center}
 .eyebrow{display:inline-block;background:rgba(245,184,61,.15);color:var(--gold2);border:1px solid rgba(245,184,61,.35);padding:4px 12px;border-radius:999px;font-size:14px;margin-bottom:14px}
 .hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05}
 .hero h1 em{font-style:normal;color:var(--gold)}
@@ -63,11 +63,12 @@ nav.links a.cta{background:var(--gold);color:var(--night);opacity:1;font-weight:
 .search{display:flex;background:#fff;border-radius:999px;padding:6px;max-width:560px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .search input{flex:1;border:0;outline:0;font:inherit;font-size:17px;padding:10px 16px;background:transparent;color:var(--ink);min-width:0}
 .search button{border:0;background:var(--gold);color:var(--night);font:inherit;font-weight:700;padding:10px 22px;border-radius:999px;cursor:pointer}
+.reel{justify-self:center;position:relative;width:min(290px,72vw);aspect-ratio:9/16;border-radius:34px;overflow:hidden;border:5px solid var(--gold);box-shadow:0 30px 80px rgba(0,0,0,.45);background:#121a3d}.reel video{width:100%;height:100%;object-fit:cover;display:block}.reel .snd{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);border:0;border-radius:999px;background:rgba(18,26,61,.82);color:#fff;font:inherit;font-size:15px;font-weight:700;padding:9px 18px;cursor:pointer;white-space:nowrap}
 .hero-stats{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
 .hero-stats b{display:block;font-family:"Secular One";font-size:28px;color:var(--gold2)}
 .hero-stats span{font-size:14px;opacity:.75}
 .planet{justify-self:center;width:100%;max-width:320px}
-@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.planet{display:none}.hero{padding:40px 0 80px}}
+@media (max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr)}.reel{margin-top:10px}.planet{display:none}.hero{padding:40px 0 80px}}
 
 /* level tabs */
 .levels{margin-top:-46px;position:relative;z-index:2}
@@ -224,6 +225,7 @@ body{padding-bottom:env(safe-area-inset-bottom)}
         <div><b>ז׳–יב׳</b><span>מכל הכיתות</span></div>
       </div>
     </div>
+    <div class="reel"><video id="reelV" src="media/reel-ch14.mp4" poster="media/reel-ch14-poster.jpg" autoplay muted loop playsinline preload="metadata"></video><button type="button" class="snd" onclick="const v=document.getElementById('reelV');v.muted=!v.muted;if(!v.muted){v.currentTime=0;v.play();}this.textContent=v.muted?'🔊 הפעילו קול':'🔇 השתק'">🔊 הפעילו קול</button></div>
   </div>
 </section>
 
