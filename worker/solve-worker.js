@@ -2,10 +2,14 @@
  * פשוט להצליח במתמטיקה – שרת "צלם שאלה"
  * Cloudflare Worker: מקבל תמונה של שאלה, שולח ל-Claude, ומחזיר שיעור מסודר שלב-אחר-שלב.
  *
- * משתני סביבה (Settings → Variables and Secrets ב-Cloudflare):
- *   ANTHROPIC_API_KEY  (Secret, חובה)  – המפתח מ-console.anthropic.com
- *   ALLOWED_ORIGINS    (רשות)          – כתובות שמותר להן לפנות, מופרדות בפסיק
- *   MODEL              (רשות)          – ברירת מחדל: claude-sonnet-5-5
+ * משתני סביבה (Settings → Variables and Secrets ב-Cloudflare). צריך לפחות מפתח אחד:
+ *   GEMINI_API_KEY     (Secret)  – מפתח חינמי מ-aistudio.google.com  ← מתחילים מזה
+ *   ANTHROPIC_API_KEY  (Secret)  – מפתח מ-console.anthropic.com (בתשלום, מדויק יותר)
+ *   אם שניהם מוגדרים: Gemini קודם, ו-Claude כגיבוי כשהמכסה החינמית נגמרת.
+ *   PROVIDER           (רשות)    – "gemini" / "claude" כדי לכפות ספק אחד
+ *   GEMINI_MODEL       (רשות)    – ברירת מחדל: gemini-flash-latest
+ *   MODEL              (רשות)    – מודל Claude, ברירת מחדל: claude-sonnet-5-5
+ *   ALLOWED_ORIGINS    (רשות)    – כתובות שמותר להן לפנות, מופרדות בפסיק
  *   DAILY_LIMIT        (רשות)          – כמה שאלות ביום לכל משתמש (דורש KV בשם LIMITS). ברירת מחדל 15
  */
 
@@ -110,6 +114,90 @@ const LESSON_TOOL = {
   },
 };
 
+
+/* ===================== ספקים ===================== */
+class ProviderError extends Error {
+  constructor(status, msg) { super(msg); this.status = status; }
+}
+
+async function solveWithClaude(env, image, mediaType, userText) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+    body: JSON.stringify({
+      model: env.MODEL || "claude-sonnet-5-5",
+      max_tokens: 8000,
+      system: SYSTEM_PROMPT,
+      tools: [LESSON_TOOL],
+      tool_choice: { type: "tool", name: "lesson" },
+      messages: [{ role: "user", content: [
+        { type: "image", source: { type: "base64", media_type: mediaType, data: image } },
+        { type: "text", text: userText },
+      ] }],
+    }),
+  });
+  if (!res.ok) { const t = await res.text(); console.log("claude", res.status, t.slice(0, 400)); throw new ProviderError(res.status, "claude"); }
+  const data = await res.json();
+  const block = (data.content || []).find(b => b.type === "tool_use" && b.name === "lesson");
+  if (!block) throw new ProviderError(502, "claude: no lesson");
+  return block.input;
+}
+
+const GEMINI_JSON_RULES = `
+
+החזר אך ורק אובייקט JSON אחד (בלי טקסט לפניו או אחריו, בלי \`\`\`), לפי הסכמה הזאת:
+${JSON.stringify(LESSON_TOOL.input_schema)}
+השדה work חייב להיות ראשון: שם פותרים ובודקים לפני שכותבים את השלבים.
+זכור: בתוך מחרוזות JSON כל לוכסן הפוך של LaTeX נכתב כפול (\\\\frac).`;
+
+async function solveWithGemini(env, image, mediaType, userText) {
+  const models = [env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash"].filter(Boolean);
+  let last;
+  for (const model of [...new Set(models)]) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
+        contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
+        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 12000 },
+      }),
+    });
+    if (res.status === 404) { last = new ProviderError(404, `gemini model ${model} not found`); continue; } // מודל לא קיים – מנסים את הבא
+    if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, "gemini"); }
+    const data = await res.json();
+    const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
+    const lesson = parseJsonLoose(text);
+    if (!lesson) { console.log("gemini bad json", text.slice(0, 300)); throw new ProviderError(502, "gemini: bad json"); }
+    return lesson;
+  }
+  throw last || new ProviderError(502, "gemini: no model");
+}
+
+function parseJsonLoose(text) {
+  const t = String(text || "").replace(/^\s*```(?:json)?/i, "").replace(/```\s*$/, "");
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  if (a < 0 || b < a) return null;
+  try { return JSON.parse(t.slice(a, b + 1)); } catch { return null; }
+}
+
+/* מנקה ומוודא שהשיעור תקין לפני שמחזירים לדף */
+function normalize(L) {
+  if (!L || typeof L !== "object") return null;
+  delete L.work; // הטיוטה נשארת בשרת
+  if (L.readable === false) return { readable: false, retake_hint: String(L.retake_hint || "") };
+  if (!Array.isArray(L.steps)) return null;
+  L.steps = L.steps.filter(s => s && typeof s === "object").map(s => ({
+    title: String(s.title || ""), say: String(s.say || ""), mark: s.mark ? String(s.mark) : undefined,
+    board: (Array.isArray(s.board) ? s.board : []).filter(b => b && typeof b.v === "string").map(b => ({ t: b.t === "text" ? "text" : "math", v: b.v })),
+  }));
+  if (!L.steps.length) return null;
+  L.readable = true;
+  if (!TOPIC_KEYS[L.topic]) L.topic = "mixed";
+  L.topic_name = L.topic === "mixed" ? "" : TOPIC_KEYS[L.topic];
+  return L;
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
@@ -127,7 +215,7 @@ export default {
     if (request.method === "GET") return json({ ok: true, service: "pshut-math solve" });
     if (request.method !== "POST") return json({ error: "method" }, 405);
     if (!allowed.includes(origin)) return json({ error: "origin", message: "הבקשה הגיעה מאתר לא מורשה." }, 403);
-    if (!env.ANTHROPIC_API_KEY) return json({ error: "config", message: "השרת עוד לא הוגדר (חסר מפתח API)." }, 500);
+    if (!env.ANTHROPIC_API_KEY && !env.GEMINI_API_KEY) return json({ error: "config", message: "השרת עוד לא הוגדר (חסר מפתח API)." }, 500);
 
     // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS)
     if (env.LIMITS) {
@@ -153,41 +241,30 @@ export default {
       "תסביר לי אותה בשיטה של פשוט להצליח.",
     ].filter(Boolean).join("\n");
 
-    const apiRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: env.MODEL || "claude-sonnet-5-5",
-        max_tokens: 8000,
-        system: SYSTEM_PROMPT,
-        tools: [LESSON_TOOL],
-        tool_choice: { type: "tool", name: "lesson" },
-        messages: [{
-          role: "user",
-          content: [
-            { type: "image", source: { type: "base64", media_type: mediaType, data: image } },
-            { type: "text", text: userText },
-          ],
-        }],
-      }),
-    });
+    // סדר הספקים: Gemini (חינם) קודם, Claude כגיבוי – או ספק אחד אם הוגדר PROVIDER
+    let order = [];
+    if (env.GEMINI_API_KEY) order.push("gemini");
+    if (env.ANTHROPIC_API_KEY) order.push("claude");
+    if (env.PROVIDER && order.includes(env.PROVIDER)) order = [env.PROVIDER];
 
-    if (!apiRes.ok) {
-      const detail = await apiRes.text();
-      console.log("anthropic error", apiRes.status, detail.slice(0, 500));
-      return json({ error: "upstream", message: "המורה הדיגיטלי עמוס כרגע. נסו שוב בעוד דקה." }, 502);
+    let lesson = null, quota = false;
+    for (const p of order) {
+      try {
+        const raw = p === "gemini"
+          ? await solveWithGemini(env, image, mediaType, userText)
+          : await solveWithClaude(env, image, mediaType, userText);
+        lesson = normalize(raw);
+        if (lesson) { lesson.provider = p; break; }
+      } catch (e) {
+        if (e.status === 429) quota = true;
+        console.log("provider failed", p, e.status, e.message);
+      }
     }
-    const data = await apiRes.json();
-    const block = (data.content || []).find(b => b.type === "tool_use" && b.name === "lesson");
-    if (!block) return json({ error: "no_lesson", message: "לא הצלחתי לבנות הסבר. נסו לצלם שוב." }, 502);
-
-    const lesson = block.input;
-    delete lesson.work; // הטיוטה נשארת בשרת
-    lesson.topic_name = TOPIC_KEYS[lesson.topic] || "";
+    if (!lesson) {
+      return quota
+        ? json({ error: "quota", message: "המורה הדיגיטלי ענה על הרבה שאלות היום 🙂 נסו שוב מחר, או כתבו לאוראל בוואטסאפ." }, 429)
+        : json({ error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב, או נסו בעוד דקה." }, 502);
+    }
     return json({ lesson });
   },
 };
