@@ -1,0 +1,17 @@
+name = "pshut-solve"
+main = "solve-worker.js"
+compatibility_date = "2026-11-01"
+
+# המפתח לא נכתב כאן! מגדירים אותו פעם אחת:
+#   npx wrangler secret put ANTHROPIC_API_KEY
+
+[vars]
+MODEL = "claude-sonnet-5-5"
+DAILY_LIMIT = "15"
+
+# מגבלה יומית לכל משתמש (מומלץ). יוצרים פעם אחת:
+#   npx wrangler kv namespace create LIMITS
+# ומדביקים כאן את ה-id שמתקבל:
+# [[kv_namespaces]]
+# binding = "LIMITS"
+# id = "..."

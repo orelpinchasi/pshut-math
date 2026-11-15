@@ -1,6 +1,8 @@
 """בונה את index.html של האפליקציה מתוך קובץ ה-HTML של האתר ב-Claude.
 שימוש: python3 tools/build.py source.html index.html"""
-import re, sys
+import re, sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from solve_patch import patch as solve_patch
 src, out = sys.argv[1], sys.argv[2]
 h = open(src, encoding="utf-8").read()
 h = re.sub(r'</?untrusted-document-[0-9a-f]+>', '', h).strip()
@@ -75,5 +77,6 @@ if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWo
 </script>
 </body>'''
 i = h.rindex('</body>'); h = h[:i] + install + h[i+7:]
+h = solve_patch(h)
 open(out, 'w', encoding="utf-8").write(h)
 print("ok", len(h))
