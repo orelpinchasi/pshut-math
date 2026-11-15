@@ -109,6 +109,17 @@ const LESSON_TOOL = {
       check: { type: "string", description: "איך התלמיד יכול לבדוק בעצמו שהתשובה נכונה, משפט-שניים. נוסחאות בתוך \\( \\)" },
       remember: { type: "string", description: "העיקרון לקחת הלאה לשאלות דומות, משפט אחד. עברית מדוברת בלבד, בלי נוסחאות (מוקרא בקול)" },
       confidence: { type: "string", enum: ["high", "medium", "low"] },
+      match: {
+        type: "object",
+        description: "עוזר למצוא סרטון של אוראל שפותר שאלה זהה או דומה",
+        properties: {
+          exam: { type: "string", description: "אם מזוהה: שאלון/שנה/מועד/מספר שאלה, למשל '571 קיץ 2023 שאלה 3' או '35582 חורף 2022'. אחרת ריק" },
+          keywords: {
+            type: "array", maxItems: 10, items: { type: "string" },
+            description: "3–10 מילים בעברית שסביר שיופיעו בכותרת של סרטון על השאלה הזאת: שמות ודמויות מהסיפור (דנה, רותי), ההקשר (כפתורים, אוטובוס, משתלה), צורת הפונקציה (ln, שורש, רציונלית), ומושגי הנושא (משיק, אסימפטוטה, עץ, מותנה)",
+          },
+        },
+      },
     },
     required: ["work", "readable"],
   },
@@ -193,6 +204,8 @@ function normalize(L) {
   }));
   if (!L.steps.length) return null;
   L.readable = true;
+  const m = L.match && typeof L.match === "object" ? L.match : {};
+  L.match = { exam: String(m.exam || "").slice(0, 80), keywords: (Array.isArray(m.keywords) ? m.keywords : []).map(String).filter(Boolean).slice(0, 10) };
   if (!TOPIC_KEYS[L.topic]) L.topic = "mixed";
   L.topic_name = L.topic === "mixed" ? "" : TOPIC_KEYS[L.topic];
   return L;

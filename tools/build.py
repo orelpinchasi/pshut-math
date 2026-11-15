@@ -3,6 +3,7 @@
 import re, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from solve_patch import patch as solve_patch
+from export_videos import write as export_videos
 src, out = sys.argv[1], sys.argv[2]
 h = open(src, encoding="utf-8").read()
 h = re.sub(r'</?untrusted-document-[0-9a-f]+>', '', h).strip()
@@ -80,3 +81,4 @@ i = h.rindex('</body>'); h = h[:i] + install + h[i+7:]
 h = solve_patch(h)
 open(out, 'w', encoding="utf-8").write(h)
 print("ok", len(h))
+print("videos.json:", export_videos(h, os.path.join(os.path.dirname(os.path.abspath(out)), "videos.json")))
