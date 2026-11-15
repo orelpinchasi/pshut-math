@@ -152,7 +152,7 @@ const LESSON_TOOL = {
 
 /* ===================== ספקים ===================== */
 class ProviderError extends Error {
-  constructor(status, msg) { super(msg); this.status = status; }
+  constructor(status, msg, detail = "") { super(msg); this.status = status; this.detail = String(detail).slice(0, 300); }
 }
 
 async function solveWithClaude(env, image, mediaType, userText) {
@@ -171,7 +171,7 @@ async function solveWithClaude(env, image, mediaType, userText) {
       ] }],
     }),
   });
-  if (!res.ok) { const t = await res.text(); console.log("claude", res.status, t.slice(0, 400)); throw new ProviderError(res.status, "claude"); }
+  if (!res.ok) { const t = await res.text(); console.log("claude", res.status, t.slice(0, 400)); throw new ProviderError(res.status, "claude", t); }
   const data = await res.json();
   const block = (data.content || []).find(b => b.type === "tool_use" && b.name === "lesson");
   if (!block) throw new ProviderError(502, "claude: no lesson");
@@ -198,12 +198,12 @@ async function solveWithGemini(env, image, mediaType, userText) {
         generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 12000 },
       }),
     });
-    if (res.status === 404) { last = new ProviderError(404, `gemini model ${model} not found`); continue; } // מודל לא קיים – מנסים את הבא
-    if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, "gemini"); }
+    if (res.status === 404) { last = new ProviderError(404, `gemini model ${model} not found`, await res.text()); continue; } // מודל לא קיים – מנסים את הבא
+    if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, `gemini ${model}`, t); }
     const data = await res.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
     const lesson = parseJsonLoose(text);
-    if (!lesson) { console.log("gemini bad json", text.slice(0, 300)); throw new ProviderError(502, "gemini: bad json"); }
+    if (!lesson) { console.log("gemini bad json", text.slice(0, 300)); throw new ProviderError(502, `gemini ${model}: bad json`, text.slice(0, 300)); }
     return lesson;
   }
   throw last || new ProviderError(502, "gemini: no model");
@@ -284,7 +284,7 @@ export default {
     if (env.ANTHROPIC_API_KEY) order.push("claude");
     if (env.PROVIDER && order.includes(env.PROVIDER)) order = [env.PROVIDER];
 
-    let lesson = null, quota = false;
+    let lesson = null, quota = false; const fails = [];
     for (const p of order) {
       try {
         const raw = p === "gemini"
@@ -294,13 +294,14 @@ export default {
         if (lesson) { lesson.provider = p; break; }
       } catch (e) {
         if (e.status === 429) quota = true;
+        fails.push(`${e.message} (${e.status || "?"}): ${e.detail || ""}`);
         console.log("provider failed", p, e.status, e.message);
       }
     }
     if (!lesson) {
       return quota
         ? json({ error: "quota", message: "המורה הדיגיטלי ענה על הרבה שאלות היום 🙂 נסו שוב מחר, או כתבו לאוראל בוואטסאפ." }, 429)
-        : json({ error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב, או נסו בעוד דקה." }, 502);
+        : json({ error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב, או נסו בעוד דקה.", detail: fails }, 502);
     }
     return json({ lesson });
   },
