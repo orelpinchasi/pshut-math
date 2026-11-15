@@ -188,7 +188,11 @@ ${JSON.stringify(LESSON_TOOL.input_schema)}
 זכור: בתוך מחרוזות JSON כל לוכסן הפוך של LaTeX נכתב כפול (\\\\frac).`;
 
 async function solveWithGemini(env, image, mediaType, userText) {
-  const models = [env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-lite-latest"].filter(Boolean);
+  // לכל מודל יש מכסה יומית חינמית נפרדת (נכון לנובמבר 2026: Flash ‏~20 ביום, Flash-Lite ‏~500 ביום).
+  // מתחילים מהחכמים ביותר, וכשמכסה נגמרת או שמודל עמוס – עוברים לבא.
+  const models = [env.GEMINI_MODEL,
+    "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3-flash-preview", "gemini-2.5-flash",
+    "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-flash-latest"].filter(Boolean);
   let last;
   for (const model of [...new Set(models)]) {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
@@ -201,7 +205,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
       }),
     });
     // מודל לא קיים / עמוס / תקלה זמנית – מנסים את המודל הבא ברשימה
-    if ([404, 500, 503].includes(res.status)) { last = new ProviderError(res.status, `gemini ${model}`, await res.text()); continue; }
+    if ([404, 429, 500, 503].includes(res.status)) { last = new ProviderError(res.status, `gemini ${model}`, await res.text()); continue; }
     if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, `gemini ${model}`, t); }
     const data = await res.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
