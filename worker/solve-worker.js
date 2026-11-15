@@ -186,7 +186,7 @@ ${JSON.stringify(LESSON_TOOL.input_schema)}
 זכור: בתוך מחרוזות JSON כל לוכסן הפוך של LaTeX נכתב כפול (\\\\frac).`;
 
 async function solveWithGemini(env, image, mediaType, userText) {
-  const models = [env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash"].filter(Boolean);
+  const models = [env.GEMINI_MODEL, "gemini-flash-latest", "gemini-3.5-flash", "gemini-2.5-flash", "gemini-flash-lite-latest"].filter(Boolean);
   let last;
   for (const model of [...new Set(models)]) {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
@@ -198,7 +198,8 @@ async function solveWithGemini(env, image, mediaType, userText) {
         generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 12000 },
       }),
     });
-    if (res.status === 404) { last = new ProviderError(404, `gemini model ${model} not found`, await res.text()); continue; } // מודל לא קיים – מנסים את הבא
+    // מודל לא קיים / עמוס / תקלה זמנית – מנסים את המודל הבא ברשימה
+    if ([404, 500, 503].includes(res.status)) { last = new ProviderError(res.status, `gemini ${model}`, await res.text()); continue; }
     if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, `gemini ${model}`, t); }
     const data = await res.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
@@ -254,14 +255,14 @@ export default {
     if (!allowed.includes(origin)) return json({ error: "origin", message: "הבקשה הגיעה מאתר לא מורשה." }, 403);
     if (!env.ANTHROPIC_API_KEY && !env.GEMINI_API_KEY) return json({ error: "config", message: "השרת עוד לא הוגדר (חסר מפתח API)." }, 500);
 
-    // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS)
+    // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS). נספרות רק שאלות שקיבלו תשובה.
+    let quotaKey = null, used = 0;
     if (env.LIMITS) {
       const ip = request.headers.get("CF-Connecting-IP") || "anon";
-      const key = `d:${new Date().toISOString().slice(0, 10)}:${ip}`;
-      const used = parseInt((await env.LIMITS.get(key)) || "0", 10);
+      quotaKey = `d:${new Date().toISOString().slice(0, 10)}:${ip}`;
+      used = parseInt((await env.LIMITS.get(quotaKey)) || "0", 10);
       const limit = parseInt(env.DAILY_LIMIT || "15", 10);
       if (used >= limit) return json({ error: "limit", message: `הגעת למכסה היומית (${limit} שאלות). נתראה מחר! 🌟` }, 429);
-      await env.LIMITS.put(key, String(used + 1), { expirationTtl: 60 * 60 * 26 });
     }
 
     let body;
@@ -303,6 +304,7 @@ export default {
         ? json({ error: "quota", message: "המורה הדיגיטלי ענה על הרבה שאלות היום 🙂 נסו שוב מחר, או כתבו לאוראל בוואטסאפ." }, 429)
         : json({ error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב, או נסו בעוד דקה.", detail: fails }, 502);
     }
+    if (quotaKey && lesson.readable !== false) await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 });
     return json({ lesson });
   },
 };
