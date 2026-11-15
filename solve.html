@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141b3a">
+<meta name="description" content="תקועים בשאלה במתמטיקה? מצלמים אותה ומקבלים שיעור קצר, שלב אחרי שלב, בשיטה של פשוט להצליח.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="פשוט להצליח במתמטיקה">
+<meta property="og:title" content="צלמו שאלה – פשוט להצליח במתמטיקה">
+<meta property="og:description" content="מצלמים שאלה שנתקעתם בה ומקבלים שיעור קצר, שלב אחרי שלב.">
+<meta property="og:image" content="https://orelpinchasi.github.io/pshut-math/og-star.jpg">
+<meta property="og:locale" content="he_IL">
+<title>צלמו שאלה – פשוט להצליח במתמטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<style>
+:root{
+  --night:#141b3a; --night2:#1f2a57; --gold:#f5b83d; --gold2:#ffd77a; --rose:#ef6f6c;
+  --paper:#fbf7ef; --ink:#1d2140; --muted:#6b6f86; --line:#e7e1d3; --card:#ffffff; --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{font-family:"Secular One",Rubik,sans-serif;font-weight:400;margin:0}
+button{font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+
+/* header – כמו באתר */
+header.top{position:sticky;top:0;z-index:20;background:rgba(20,27,58,.92);backdrop-filter:blur(8px);color:#fff;padding-top:env(safe-area-inset-top)}
+header.top .wrap{display:flex;align-items:center;gap:12px;height:60px;max-width:1180px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:"Secular One";font-size:18px;white-space:nowrap}
+.back{margin-inline-start:auto;text-decoration:none;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.1);font-size:14px}
+
+/* hero / capture */
+.hero{background:radial-gradient(900px 420px at 80% -10%,#33407e 0,transparent 60%),linear-gradient(180deg,var(--night),var(--night2));color:#fff;padding:34px 0 70px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background-image:radial-gradient(1.5px 1.5px at 12% 22%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 72% 14%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 88% 62%,#ffd77a 50%,transparent 51%),radial-gradient(1px 1px at 30% 78%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 52% 40%,#fff 50%,transparent 51%)}
+.eyebrow{display:inline-block;background:rgba(245,184,61,.15);color:var(--gold2);border:1px solid rgba(245,184,61,.35);padding:4px 12px;border-radius:999px;font-size:13px;margin-bottom:12px}
+.hero h1{font-size:clamp(32px,7vw,48px);line-height:1.1}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{opacity:.88;font-size:17px;margin:12px 0 0;max-width:520px}
+
+.panel{background:var(--card);border-radius:22px;box-shadow:0 14px 40px rgba(29,33,64,.12);padding:20px;margin-top:-46px;position:relative;z-index:2}
+.shoot{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shoot label{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:18px;padding:20px 10px;cursor:pointer;font-weight:700;text-align:center;transition:.15s}
+.shoot label:active{transform:scale(.98)}
+.shoot .cam{background:var(--gold);color:var(--night);font-size:18px}
+.shoot .cam .ic{font-size:34px;line-height:1}
+.shoot .gal{background:#f3efe4;color:var(--ink)}
+.shoot .gal .ic{font-size:28px;line-height:1}
+.shoot input{display:none}
+.tips{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;color:var(--muted);font-size:13px;margin:14px 0 0}
+
+.preview{margin-top:16px;display:grid;gap:14px}
+.preview .imgbox{position:relative;border-radius:16px;overflow:hidden;background:#eee;max-height:340px;display:grid;place-items:center}
+.preview img{max-width:100%;max-height:340px;display:block}
+.preview .redo{position:absolute;top:10px;left:10px;border:0;background:rgba(20,27,58,.8);color:#fff;border-radius:999px;padding:6px 12px;font-size:13px}
+.lbl{font-size:14px;color:var(--muted);margin-bottom:6px;display:block}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:14px;color:var(--ink)}
+.chip.on{background:var(--night);color:#fff;border-color:var(--night)}
+textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;resize:vertical;min-height:52px;background:#fffdf8}
+.go{border:0;background:var(--night);color:#fff;font-weight:700;font-size:18px;padding:15px;border-radius:16px;width:100%}
+.go b{color:var(--gold2)}
+.demo-link{display:block;margin:16px auto 0;background:none;border:0;color:var(--night);text-decoration:underline;font-size:14px}
+
+/* loading */
+.loading{text-align:center;padding:40px 10px 30px}
+.orbit{width:120px;height:120px;margin:0 auto 18px;position:relative}
+.orbit .planet{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd77a,#f5b83d 55%,#d99a22);box-shadow:0 0 40px rgba(245,184,61,.5)}
+.orbit .star{position:absolute;top:0;left:50%;margin-left:-8px;font-size:16px;transform-origin:8px 60px;animation:spin 2.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading .msg{font-family:"Secular One";font-size:21px;min-height:1.6em}
+.loading .sub{color:var(--muted);font-size:14px}
+
+/* notices */
+.note{border-radius:14px;padding:12px 14px;font-size:14px;margin:0 0 14px;display:flex;gap:10px;align-items:flex-start}
+.note.warn{background:#fff4dc;border:1px solid #f3d28d}
+.note.err{background:#fdeaea;border:1px solid #f2b8b6}
+.note.info{background:#eef1fb;border:1px solid #cfd6f1}
+.note button{margin-inline-start:auto;border:0;background:var(--night);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;white-space:nowrap}
+
+/* ====== נגן השיעור ====== */
+.stage{padding:18px 0 40px}
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.lesson-head h2{font-size:24px;flex:1;min-width:0}
+.tag{font-size:12px;background:var(--night);color:#fff;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.tag.gold{background:var(--gold);color:var(--night)}
+
+.board{position:relative;aspect-ratio:9/14;max-height:max(420px,calc(100svh - 190px));width:100%;max-width:460px;margin:0 auto;border-radius:26px;overflow:hidden;color:#fff;
+  background:radial-gradient(600px 300px at 85% -10%,#33407e 0,transparent 65%),linear-gradient(180deg,#141b3a,#1b2550 70%,#141b3a);
+  box-shadow:0 24px 60px rgba(20,27,58,.35);border:4px solid var(--gold);display:flex;flex-direction:column;user-select:none}
+.board::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(1.4px 1.4px at 10% 12%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 80% 8%,#fff 50%,transparent 51%),radial-gradient(1.4px 1.4px at 92% 44%,#ffd77a 50%,transparent 51%),radial-gradient(1px 1px at 6% 70%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 60% 90%,#fff 50%,transparent 51%)}
+.segs{display:flex;gap:4px;padding:12px 14px 0;direction:rtl;position:relative;z-index:1}
+.segs i{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+.segs i::after{content:"";position:absolute;inset:0;background:var(--gold);transform:scaleX(var(--p,0));transform-origin:right;transition:transform .25s linear}
+.scene-top{display:flex;align-items:center;gap:8px;padding:12px 16px 0;position:relative;z-index:1}
+.scene-top .num{background:var(--gold);color:var(--night);font-weight:800;font-size:13px;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.scene-top .ttl{font-family:"Secular One";font-size:19px;line-height:1.2}
+.lines{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;padding:10px 18px;overflow-y:auto;position:relative;z-index:1;scroll-behavior:smooth}
+.lines>:first-child{margin-top:auto}.lines>:last-child{margin-bottom:auto}
+.ln{opacity:0;transform:translateY(10px);transition:opacity .35s,transform .35s}
+.ln.in{opacity:1;transform:none}
+.ln.math{direction:ltr;text-align:center;font-size:clamp(19px,5.6vw,26px)}
+.ln.math .katex-display{margin:0;overflow-x:auto;overflow-y:hidden;padding:4px 0}
+.ln.text{font-size:clamp(16px,4.4vw,19px);text-align:center;opacity:0}
+.ln.text.in{opacity:.92}
+.ln .pen{display:inline-block;clip-path:inset(0 100% 0 0);transition:clip-path var(--d,.9s) ease-out}
+.ln.text .pen{clip-path:inset(0 0 0 100%)}
+.ln.in .pen{clip-path:inset(0 0 0 0)}
+.board .katex{color:#fff}
+.im{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.hl{color:var(--gold)}
+.big{font-family:"Secular One";font-size:clamp(22px,6vw,28px);text-align:center;line-height:1.3}
+.bigq{background:rgba(255,255,255,.07);border:1px dashed rgba(255,255,255,.3);border-radius:16px;padding:12px 14px;font-size:16px;text-align:center}
+.bigq .k{display:block;font-size:12px;color:var(--gold2);margin-bottom:4px}
+.answer-box{border:2px solid var(--gold);background:rgba(245,184,61,.12);border-radius:18px;padding:14px;text-align:center}
+.answer-box .k{font-size:13px;color:var(--gold2);display:block;margin-bottom:2px}
+.answer-box .ln.math{font-size:clamp(20px,6vw,28px)}
+.cap{position:relative;z-index:1;margin:0 12px 12px;background:rgba(10,14,34,.72);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.5;min-height:3.2em}
+.cap .w{transition:color .15s}
+.cap .w.on{color:var(--gold2)}
+.cap .w.done{color:#fff}
+.cap .w.todo{color:rgba(255,255,255,.55)}
+.tap{position:absolute;inset:0;z-index:3;display:grid;place-items:center;background:rgba(10,14,34,.55);border:0;color:#fff}
+.tap span{background:var(--gold);color:var(--night);font-weight:800;font-size:19px;border-radius:999px;padding:14px 26px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+
+.controls{display:flex;justify-content:center;align-items:center;gap:10px;margin:14px auto 0;max-width:460px}
+.cb{border:0;background:#fff;color:var(--night);border-radius:999px;min-width:46px;height:46px;font-size:18px;box-shadow:0 4px 14px rgba(29,33,64,.1);padding:0 12px}
+.cb.main{background:var(--night);color:#fff;min-width:64px;height:56px;font-size:22px}
+.cb.small{font-size:13px;font-weight:700;height:38px;min-width:46px}
+
+.after{max-width:460px;margin:18px auto 0;display:grid;gap:10px}
+.after a,.after button{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;background:var(--night);color:#fff;padding:14px 16px;border-radius:14px;font-weight:700;border:0;width:100%;text-align:right}
+.after .light{background:#fff;color:var(--night);box-shadow:0 4px 14px rgba(29,33,64,.08)}
+.after .gold{background:var(--gold);color:var(--night)}
+
+details.written{max-width:460px;margin:18px auto 0;background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(29,33,64,.06)}
+details.written summary{padding:14px 16px;font-weight:700;cursor:pointer}
+.wr{padding:0 16px 14px}
+.wr h4{margin:14px 0 4px;font-size:15px}
+.wr .m{direction:ltr;text-align:center;overflow-x:auto}
+.wr p{margin:4px 0;color:#3a3f5e;font-size:14px}
+.disclaimer{max-width:460px;margin:14px auto 0;color:var(--muted);font-size:12px;text-align:center}
+footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./">
+      <svg width="30" height="30" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="24" r="12" fill="#f5b83d"/><circle cx="15" cy="21" r="2.2" fill="#d99a22"/><circle cx="24" cy="28" r="1.6" fill="#d99a22"/><path d="M20 3l1.6 4 4.2.3-3.2 2.7 1 4.1L20 12l-3.6 2.1 1-4.1-3.2-2.7 4.2-.3z" fill="#ffd77a"/></svg>
+      <span>פשוט להצליח</span>
+    </a>
+    <a class="back" href="./">לכל הסרטונים ←</a>
+  </div>
+</header>
+
+<!-- ===== מסך 1: צילום ===== -->
+<section id="scrCapture">
+  <div class="hero">
+    <div class="wrap">
+      <span class="eyebrow">📸 צלמו שאלה · קבלו שיעור</span>
+      <h1>נתקעתם בשאלה?<br><em>צלמו אותה.</em></h1>
+      <p>תוך כמה שניות תקבלו שיעור קצר עם קול — שלב אחרי שלב, בשיטה של פשוט להצליח: קודם מבינים, ואז זה נהיה פשוט.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="panel">
+      <div id="pickBox">
+        <div class="shoot">
+          <label class="cam"><span class="ic">📷</span>צלמו שאלה<input type="file" accept="image/*" capture="environment" id="inCam"></label>
+          <label class="gal"><span class="ic">🖼️</span>העלאה מהגלריה<input type="file" accept="image/*" id="inGal"></label>
+        </div>
+        <div class="tips"><span>☀️ באור טוב</span><span>📐 ישר מלמעלה</span><span>1️⃣ שאלה אחת בכל פעם</span></div>
+      </div>
+
+      <div class="preview" id="prevBox" hidden>
+        <div class="imgbox"><img id="prevImg" alt="השאלה שצילמתם"><button class="redo" id="redo">צילום מחדש</button></div>
+        <div>
+          <span class="lbl">באיזו רמה אתם? (עוזר להתאים את ההסבר)</span>
+          <div class="chips" id="levelChips"></div>
+        </div>
+        <div>
+          <span class="lbl">מה בדיוק לא ברור? (לא חובה)</span>
+          <textarea id="note" maxlength="300" placeholder="למשל: רק סעיף ב׳ / לא הבנתי למה מחלקים פה"></textarea>
+        </div>
+        <button class="go" id="goBtn">✨ <b>הסבירו לי</b> את השאלה</button>
+      </div>
+      <div id="captureMsg"></div>
+    </div>
+    <button class="demo-link" id="demoBtn">או: צפו בשיעור לדוגמה ▶</button>
+  </div>
+</section>
+
+<!-- ===== מסך 2: טעינה ===== -->
+<section id="scrLoading" hidden>
+  <div class="wrap loading">
+    <div class="orbit"><div class="planet"></div><div class="star">⭐</div></div>
+    <div class="msg" id="loadMsg">קורא את השאלה…</div>
+    <div class="sub">זה לוקח בדרך כלל 10–30 שניות. נשימה עמוקה 🙂</div>
+  </div>
+</section>
+
+<!-- ===== מסך 3: השיעור ===== -->
+<section id="scrLesson" hidden>
+  <div class="wrap stage">
+    <div id="lessonNotes"></div>
+    <div class="lesson-head">
+      <h2 id="lTitle"></h2>
+      <span class="tag" id="lLevel"></span>
+      <span class="tag gold" id="lTopic"></span>
+    </div>
+
+    <div class="board" id="board">
+      <div class="segs" id="segs"></div>
+      <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span></div>
+      <div class="lines" id="lines"></div>
+      <div class="cap" id="cap"></div>
+      <button class="tap" id="tapStart"><span>▶ התחילו את השיעור</span></button>
+    </div>
+
+    <div class="controls">
+      <button class="cb" id="bNext" aria-label="השלב הבא">⏭</button>
+      <button class="cb main" id="bPlay" aria-label="נגן / עצור">⏸</button>
+      <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
+      <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
+      <button class="cb small" id="bMute" aria-label="קול">🔊</button>
+    </div>
+
+    <div class="after">
+      <a class="gold" id="moreVideos" href="./">🎬 עוד סרטונים בנושא באתר <span>←</span></a>
+      <button class="light" id="shareBtn">📤 שליחת הפתרון לחבר / לוואטסאפ <span>←</span></button>
+      <button id="againBtn">📸 צלמו שאלה נוספת <span>←</span></button>
+    </div>
+
+    <details class="written" id="written">
+      <summary>📝 הפתרון הכתוב המלא</summary>
+      <div class="wr" id="wr"></div>
+    </details>
+    <p class="disclaimer">ההסבר נוצר אוטומטית ונבדק פעמיים, אבל גם מורה דיגיטלי יכול לטעות. תמיד כדאי לבדוק את התשובה בעצמכם — ואם משהו לא מסתדר, <a href="https://wa.me/972506702628" target="_blank" rel="noopener">כתבו לאוראל</a>.</p>
+  </div>
+</section>
+
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי</footer>
+
+<script>
+/* =========================================================
+   הגדרות – אחרי שמקימים את השרת (ראו worker/README.md)
+   מדביקים כאן את כתובת ה-Worker. כל עוד ריק – הדף עובד במצב הדגמה.
+   ========================================================= */
+const WORKER_URL = "";
+
+const LEVELS = ["חטיבת ביניים","3 יח״ל","4 יח״ל","5 יח״ל"];
+const $ = s => document.querySelector(s);
+const show = id => { for (const s of ["scrCapture","scrLoading","scrLesson"]) $("#"+s).hidden = s !== id; scrollTo(0,0); };
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- שיעור לדוגמה ---------- */
+const DEMO = {
+  readable:true, title:"משוואה ריבועית בפירוק", topic:"quadratic", topic_name:"פרבולה ופונקציה ריבועית", level:"3 יח״ל", confidence:"high",
+  question:"פתרו את המשוואה: \\(x^2-5x+6=0\\)",
+  big_idea:"אם מכפלה של שני דברים שווה לאפס – אחד מהם חייב להיות אפס. אז נהפוך את המשוואה למכפלה.",
+  steps:[
+    {title:"מה יש לנו פה?", say:"יש לנו איקס בריבוע, ואגף אחד כבר שווה אפס. זה בדיוק המצב שאנחנו אוהבים.",
+     board:[{t:"math",v:"x^2-5x+6=0"},{t:"text",v:"משוואה ריבועית · אגף ימין = 0 ✓"}], mark:"=0"},
+    {title:"הרעיון המרכזי", say:"אם כפל של שני מספרים יוצא אפס, לפחות אחד מהם הוא אפס. אין דרך אחרת לקבל אפס בכפל.",
+     board:[{t:"math",v:"a\\cdot b=0"},{t:"math",v:"\\Downarrow"},{t:"math",v:"a=0\\quad\\text{or}\\quad b=0"}]},
+    {title:"מחפשים שני מספרים", say:"צריך שני מספרים שהמכפלה שלהם שש, והסכום שלהם מינוס חמש. נסו לחשוב רגע... מינוס שתיים ומינוס שלוש!",
+     board:[{t:"text",v:"מכפלה = 6 · סכום = 5−"},{t:"math",v:"(-2)\\cdot(-3)=6"},{t:"math",v:"(-2)+(-3)=-5"}], mark:"-5"},
+    {title:"מפרקים למכפלה", say:"עכשיו כותבים את המשוואה ככפל של שני סוגריים: איקס פחות שתיים, כפול איקס פחות שלוש.",
+     board:[{t:"math",v:"x^2-5x+6=0"},{t:"math",v:"(x-2)(x-3)=0"}], mark:"(x-2)(x-3)"},
+    {title:"כל סוגריים = 0", say:"ולפי הרעיון המרכזי, אחד הסוגריים חייב להיות אפס. אז פותרים שתי משוואות קטנות וקלות.",
+     board:[{t:"math",v:"x-2=0\\;\\Rightarrow\\;x=2"},{t:"math",v:"x-3=0\\;\\Rightarrow\\;x=3"}]},
+  ],
+  answer:{tex:"x_1=2,\\qquad x_2=3", say:"הפתרונות הם איקס שווה שתיים, ואיקס שווה שלוש."},
+  check:"מציבים \\(x=2\\): \\(4-10+6=0\\) ✓ · מציבים \\(x=3\\): \\(9-15+6=0\\) ✓",
+  remember:"כשאגף אחד הוא אפס – מנסים לפרק למכפלה. מכפלה שווה אפס אומרת שאחד הגורמים הוא אפס."
+};
+
+/* ---------- KaTeX ---------- */
+function tex(v, display=true, mark){
+  if (!window.katex) return `<span dir="ltr">${esc(v)}</span>`;
+  const opts = {displayMode:display, throwOnError:true, strict:false};
+  if (mark && v.includes(mark)) {
+    try { return katex.renderToString(v.split(mark).join(`\\textcolor{#f5b83d}{${mark}}`), opts); } catch(e){}
+  }
+  try { return katex.renderToString(v, opts); } catch(e){ return `<span dir="ltr">${esc(v)}</span>`; }
+}
+function mixed(s){ // טקסט עם \( ... \) בפנים
+  return String(s ?? "").split(/\\\((.+?)\\\)/s).map((p,i) => i%2 ? `<span class="im" dir="ltr">${tex(p,false)}</span>` : esc(p)).join("");
+}
+
+/* ---------- מסך הצילום ---------- */
+let photo = null; // {data, type, url}
+let level = store.get("lvl") || "";
+function drawChips(){
+  $("#levelChips").innerHTML = LEVELS.map(l => `<button class="chip${l===level?" on":""}" data-l="${l}">${l}</button>`).join("");
+}
+$("#levelChips").onclick = e => { const b = e.target.closest(".chip"); if(!b) return; level = level===b.dataset.l ? "" : b.dataset.l; store.set("lvl",level); drawChips(); };
+drawChips();
+
+async function compress(file){
+  const url = URL.createObjectURL(file);
+  const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+  const max = 1600, k = Math.min(1, max/Math.max(img.naturalWidth,img.naturalHeight));
+  const c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth*k); c.height = Math.round(img.naturalHeight*k);
+  const g = c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+  const out = c.toDataURL("image/jpeg", .85);
+  return { data: out.split(",")[1], type:"image/jpeg", url: out };
+}
+async function onPick(e){
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  $("#captureMsg").innerHTML = "";
+  try { photo = await compress(f); }
+  catch(err){ $("#captureMsg").innerHTML = `<div class="note err">😕 לא הצלחתי לפתוח את התמונה. נסו לצלם שוב או לבחור תמונה אחרת.</div>`; return; }
+  $("#prevImg").src = photo.url; $("#pickBox").hidden = true; $("#prevBox").hidden = false;
+}
+$("#inCam").onchange = onPick; $("#inGal").onchange = onPick;
+$("#redo").onclick = () => { photo = null; $("#prevBox").hidden = true; $("#pickBox").hidden = false; };
+
+const LOAD_MSGS = ["קורא את השאלה…","מבין מה בעצם שואלים…","מפרק לשלבים קטנים…","פותר בטיוטה…","בודק את התשובה פעמיים…","מכין את הלוח…"];
+let loadTimer;
+function startLoading(){ let i=0; $("#loadMsg").textContent = LOAD_MSGS[0]; show("scrLoading");
+  loadTimer = setInterval(()=>{ i=Math.min(i+1,LOAD_MSGS.length-1); $("#loadMsg").textContent = LOAD_MSGS[i]; }, 3800); }
+function stopLoading(){ clearInterval(loadTimer); }
+
+$("#goBtn").onclick = async () => {
+  if (!photo) return;
+  if (!WORKER_URL) { openLesson(DEMO, [{cls:"info", html:"🛠️ <b>מצב הדגמה:</b> הפתרון האוטומטי עוד לא מחובר לשרת, אז הנה שיעור לדוגמה שמראה איך זה ייראה."}]); return; }
+  startLoading();
+  try {
+    const r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ image: photo.data, mediaType: photo.type, level, note: $("#note").value.trim() }) });
+    const j = await r.json().catch(()=>({}));
+    stopLoading();
+    if (!r.ok || !j.lesson) throw new Error(j.message || "משהו השתבש. נסו שוב בעוד רגע.");
+    const L = j.lesson;
+    if (L.readable === false || !Array.isArray(L.steps) || !L.steps.length) {
+      show("scrCapture");
+      $("#captureMsg").innerHTML = `<div class="note warn">📷 ${esc(L.retake_hint || "לא הצלחתי לקרוא את השאלה. נסו לצלם שוב, ישר ובאור טוב.")}</div>`;
+      return;
+    }
+    const notes = [];
+    if (L.confidence === "low") notes.push({cls:"warn", html:"⚠️ <b>שימו לב:</b> לא הייתי בטוח בקריאה של חלק מהשאלה. בדקו בפתיחה שהשאלה שהבנתי היא באמת השאלה שלכם."});
+    store.set("last", JSON.stringify(L));
+    openLesson(L, notes);
+  } catch(err) {
+    stopLoading(); show("scrCapture");
+    $("#captureMsg").innerHTML = `<div class="note err">😕 ${esc(err.message || "אין חיבור כרגע.")} <button onclick="document.getElementById('goBtn').click()">ניסיון נוסף</button></div>`;
+  }
+};
+$("#demoBtn").onclick = () => openLesson(DEMO, [{cls:"info", html:"▶ זה שיעור לדוגמה. כך ייראה ההסבר לשאלה שתצלמו."}]);
+$("#againBtn").onclick = () => { stopAll(); photo=null; $("#prevBox").hidden=true; $("#pickBox").hidden=false; $("#captureMsg").innerHTML=""; $("#note").value=""; show("scrCapture"); };
+
+/* =========================================================
+   נגן השיעור: סצנות + קריינות + כתוביות
+   ========================================================= */
+let scenes = [], cur = 0, playing = false, runId = 0, rate = 1, muted = store.get("muted")==="1", heVoice = null;
+
+function pickVoice(){
+  const vs = speechSynthesis.getVoices().filter(v => /^(he|iw)/i.test(v.lang));
+  heVoice = vs.find(v => /google/i.test(v.name)) || vs.find(v => /carmit/i.test(v.name)) || vs[0] || null;
+}
+if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+function buildScenes(L){
+  const out = [];
+  out.push({ num:"בואו נתחיל", ttl:L.title || "השאלה", intro:true,
+    html:`${L.question ? `<div class="ln text bigq"><span class="k">השאלה כפי שהבנתי</span>${mixed(L.question)}</div>` : ""}
+          ${L.big_idea ? `<div class="ln big">💡 ${esc(L.big_idea)}</div>` : ""}`,
+    say:`בואו נפתור את זה יחד. ${L.big_idea || ""}` });
+  L.steps.forEach((s,i) => out.push({ num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:s.board||[], mark:s.mark, say:s.say||"" }));
+  if (L.answer) out.push({ num:"התשובה", ttl:"🎯 הגענו!", answer:true,
+    html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
+          ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
+    say:`${L.answer.say || ""} ${L.check ? "ותמיד כדאי לבדוק: מציבים את התשובה בחזרה בשאלה." : ""}` });
+  if (L.remember) out.push({ num:"לקחת הלאה", ttl:"⭐ מה זוכרים", html:`<div class="ln big">${esc(L.remember)}</div><div class="ln text">כל אחד יכול להצליח. רק צריך תנאים נכונים.</div>`,
+    say:`${L.remember} כל הכבוד שלא ויתרתם!` });
+  return out;
+}
+
+function openLesson(L, notes=[]){
+  stopAll();
+  scenes = buildScenes(L); cur = 0;
+  $("#lessonNotes").innerHTML = notes.map(n => `<div class="note ${n.cls}">${n.html}</div>`).join("");
+  $("#lTitle").textContent = L.title || "השיעור שלך";
+  $("#lLevel").textContent = L.level || ""; $("#lLevel").hidden = !L.level;
+  $("#lTopic").textContent = L.topic_name || ""; $("#lTopic").hidden = !L.topic_name;
+  $("#moreVideos").href = L.topic && L.topic !== "mixed" ? `./?topic=${encodeURIComponent(L.topic)}#videos` : "./#videos";
+  $("#segs").innerHTML = scenes.map(()=>"<i></i>").join("");
+  $("#bMute").textContent = muted ? "🔇" : "🔊";
+  renderWritten(L);
+  window._lesson = L;
+  drawScene(0, false);
+  $("#tapStart").hidden = false;
+  show("scrLesson");
+}
+
+function renderWritten(L){
+  let h = L.question ? `<p><b>השאלה:</b> ${mixed(L.question)}</p>` : "";
+  if (L.big_idea) h += `<p>💡 ${esc(L.big_idea)}</p>`;
+  L.steps.forEach((s,i) => {
+    h += `<h4>${i+1}. ${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
+    (s.board||[]).forEach(b => h += b.t==="math" ? `<div class="m">${tex(b.v)}</div>` : `<p>${mixed(b.v)}</p>`);
+  });
+  if (L.answer) h += `<h4>🎯 תשובה</h4><div class="m">${tex(L.answer.tex)}</div>`;
+  if (L.check) h += `<p>✅ ${mixed(L.check)}</p>`;
+  if (L.remember) h += `<p>⭐ ${esc(L.remember)}</p>`;
+  $("#wr").innerHTML = h;
+}
+
+function setSegs(){
+  [...$("#segs").children].forEach((el,i) => el.style.setProperty("--p", i<cur ? 1 : 0));
+}
+function drawScene(i, animate=true){
+  const sc = scenes[i]; cur = i; setSegs();
+  $("#sNum").textContent = sc.num; $("#sTtl").textContent = sc.ttl;
+  if (sc.lines) {
+    $("#lines").innerHTML = sc.lines.map(b => b.t === "math"
+      ? `<div class="ln math"><span class="pen">${tex(b.v, true, sc.mark)}</span></div>`
+      : `<div class="ln text"><span class="pen">${mixed(b.v)}</span></div>`).join("");
+  } else $("#lines").innerHTML = sc.html;
+  const words = sc.say.trim().split(/\s+/).filter(Boolean);
+  $("#cap").innerHTML = words.map(w => `<span class="w todo">${esc(w)}</span>`).join(" ");
+  $("#lines").scrollTop = 0;
+  if (!animate) $("#lines").querySelectorAll(".ln").forEach(el => el.classList.add("in"));
+}
+
+const sleep = (ms, id) => new Promise(r => setTimeout(() => r(id === runId), ms));
+
+function speak(text, id, onWord){
+  return new Promise(resolve => {
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const fallbackMs = Math.max(2200, words.length * 420) / rate;
+    let wi = 0, done = false;
+    const finish = () => { if (done) return; done = true; clearInterval(tick); resolve(id === runId); };
+    // כתוביות מתקדמות לפי זמן (גם כשיש קול – גיבוי לדפדפנים בלי אירועי boundary)
+    const per = fallbackMs / Math.max(words.length,1);
+    let gotBoundary = false;
+    const tick = setInterval(() => { if (id !== runId) return finish(); if (!gotBoundary && wi < words.length) onWord(wi++); }, per);
+    if (muted || !heVoice || !("speechSynthesis" in window)) { setTimeout(finish, fallbackMs + 300); return; }
+    const u = new SpeechSynthesisUtterance(text);
+    u.voice = heVoice; u.lang = heVoice.lang; u.rate = 0.95 * rate; u.pitch = 1;
+    u.onboundary = e => { if (e.name && e.name !== "word") return; gotBoundary = true;
+      const idx = text.slice(0, e.charIndex).trim().split(/\s+/).filter(Boolean).length; onWord(Math.min(idx, words.length-1)); };
+    u.onend = () => { onWord(words.length); finish(); };
+    u.onerror = () => setTimeout(finish, 400);
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    setTimeout(finish, fallbackMs * 3 + 8000); // ביטחון: לא נתקעים לעולם
+  });
+}
+
+async function runFrom(i){
+  const id = ++runId; playing = true; $("#bPlay").textContent = "⏸";
+  for (let k = i; k < scenes.length; k++) {
+    drawScene(k);
+    const lns = [...$("#lines").querySelectorAll(".ln")];
+    const capW = [...$("#cap").querySelectorAll(".w")];
+    const mark = n => capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo"));
+    // מילים מופיעות על הלוח במקביל לקריינות
+    const speech = speak(scenes[k].say, id, mark);
+    for (const el of lns) {
+      if (!(await sleep(el === lns[0] ? 250 : 1300 / rate, id))) return;
+      const len = el.textContent.length; el.style.setProperty("--d", Math.min(1.4, .35 + len*.02)/rate + "s");
+      el.classList.add("in");
+      const box = $("#lines"); if (el.offsetTop + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTop = el.offsetTop + el.offsetHeight - box.clientHeight + 10;
+    }
+    if (!(await speech)) return;
+    if (!(await sleep(900 / rate, id))) return;
+    if (k < scenes.length-1) $("#segs").children[k].style.setProperty("--p", 1);
+  }
+  $("#segs").lastElementChild.style.setProperty("--p", 1);
+  playing = false; $("#bPlay").textContent = "↻";
+}
+function stopAll(){ runId++; playing = false; if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
+
+const focusBoard = () => scrollTo({top: $("#board").getBoundingClientRect().top + scrollY - 70, behavior:"smooth"});
+$("#tapStart").onclick = () => { $("#tapStart").hidden = true; focusBoard();
+  if (!heVoice && !muted) $("#lessonNotes").insertAdjacentHTML("beforeend", `<div class="note info">🔈 לא נמצא קול בעברית במכשיר הזה, אז השיעור מוצג עם כתוביות.</div>`);
+  runFrom(0); };
+$("#bPlay").onclick = () => { $("#tapStart").hidden = true;
+  if (playing) { stopAll(); drawScene(cur, false); }
+  else runFrom(cur >= scenes.length-1 && $("#bPlay").textContent === "↻" ? 0 : cur); };
+$("#bNext").onclick = () => { $("#tapStart").hidden = true; if (cur < scenes.length-1) { stopAll(); runFrom(cur+1); } };
+$("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(Math.max(0, cur-1)); };
+$("#bRate").onclick = () => { rate = rate===1 ? 1.25 : rate===1.25 ? 0.8 : 1; $("#bRate").textContent = (rate===0.8?"0.8":rate)+"×"; if (playing) runFrom(cur); };
+$("#bMute").onclick = () => { muted = !muted; store.set("muted", muted?"1":"0"); $("#bMute").textContent = muted ? "🔇" : "🔊"; if (playing) runFrom(cur); };
+document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); drawScene(cur,false); } });
+
+$("#shareBtn").onclick = async () => {
+  const L = window._lesson; if (!L) return;
+  const plain = s => String(s||"").replace(/\\\((.+?)\\\)/gs, "$1");
+  const txt = `📐 ${L.title}\n${plain(L.question)}\n\n💡 ${L.big_idea||""}\n\n` +
+    L.steps.map((s,i)=>`${i+1}. ${s.title} – ${s.say}`).join("\n") +
+    `\n\n🎯 ${L.answer ? L.answer.say : ""}\n\nפשוט להצליח במתמטיקה – צלמו שאלה וקבלו הסבר:\n${location.origin}${location.pathname}`;
+  try { if (navigator.share) { await navigator.share({ title: L.title, text: txt }); return; } } catch(e){ return; }
+  location.href = "https://wa.me/?text=" + encodeURIComponent(txt);
+};
+
+/* KaTeX נטען ב-defer – אם שיעור נפתח לפני כן, מציירים מחדש כשמוכן */
+addEventListener("load", () => { if (!$("#scrLesson").hidden && window._lesson) { renderWritten(window._lesson); if (!playing) drawScene(cur,false); } });
+if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+if (new URLSearchParams(location.search).has("demo")) addEventListener("load", () => $("#demoBtn").click());
+</script>
+</body>
+</html>

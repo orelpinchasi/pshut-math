@@ -188,6 +188,16 @@ body{padding-bottom:env(safe-area-inset-bottom)}
 .install-bar button{border:0;font:inherit;border-radius:999px;padding:8px 16px;cursor:pointer}
 .install-bar .go{background:var(--gold);color:var(--night);font-weight:700}
 .install-bar .x{background:transparent;color:#fff;opacity:.7;padding:8px}
+/* צלמו שאלה */
+nav.links a.snap{background:rgba(245,184,61,.16);border:1px solid rgba(245,184,61,.5);color:#ffd77a;opacity:1;font-weight:700}
+nav.links a{white-space:nowrap}
+@media (max-width:760px){nav.links a.snap{display:inline-block;padding:7px 11px}nav.links a.snap .t{display:none}}
+.snapcta{display:flex;align-items:center;gap:12px;max-width:560px;margin:14px 0 0;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(245,184,61,.45);border-radius:18px;padding:12px 16px;color:#fff;transition:.15s}
+.snapcta:hover{background:rgba(255,255,255,.13)}
+.snapcta .i{font-size:28px;line-height:1}
+.snapcta b{display:block;color:#ffd77a;font-size:16px}
+.snapcta span{font-size:14px;opacity:.85}
+.snapcta .go{margin-inline-start:auto;background:#f5b83d;color:#141b3a;font-weight:700;border-radius:999px;padding:7px 14px;white-space:nowrap;font-size:14px;opacity:1}
 </style>
 </head>
 <body>
@@ -202,6 +212,7 @@ body{padding-bottom:env(safe-area-inset-bottom)}
       <a href="#videos">סרטונים</a>
       <a href="#curriculum">תוכנית הלימודים</a>
       <a href="#method">השיטה</a>
+      <a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>
       <a class="cta" href="#contact">שיעור אישי</a>
     </nav>
   </div>
@@ -218,6 +229,7 @@ body{padding-bottom:env(safe-area-inset-bottom)}
         <input id="q" type="search" placeholder="חפשו נושא, שאלון או מושג… למשל ״הסתברות״ או ״806״" autocomplete="off">
         <button type="submit">חיפוש</button>
       </form>
+      <a class="snapcta" href="solve.html"><span class="i">📸</span><div><b>נתקעתם בשאלה?</b><span>צלמו אותה וקבלו שיעור קצר עם הסבר, שלב אחרי שלב</span></div><span class="go">צלמו ←</span></a>
       <div class="lp-day" id="lpDay"></div>
       <div class="hero-stats">
         <div><b id="statVideos">0</b><span>סרטונים</span></div>
@@ -1785,6 +1797,19 @@ if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWo
   go.onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;bar.hidden=true;};
   x.onclick=()=>{bar.hidden=true;try{localStorage.setItem("installDismissed","1")}catch(e){}};
   addEventListener("appinstalled",()=>bar.hidden=true);
+})();
+</script>
+<!-- solve-entry -->
+<script>
+/* קישור ישיר לנושא או לחיפוש: ?topic=quadratic  או  ?q=אחוזים  (משמש את "צלמו שאלה") */
+(function(){
+  const p=new URLSearchParams(location.search),t=p.get("topic"),q=p.get("q");
+  try{
+    if(t&&typeof TOPICS!=="undefined"&&TOPICS[t]){state.level="all";state.group=null;state.topic=t;render();}
+    else if(q){document.getElementById("q").value=q;state.q=q;render();}
+    else return;
+    addEventListener("load",()=>document.getElementById("videos").scrollIntoView());
+  }catch(e){}
 })();
 </script>
 </body>
