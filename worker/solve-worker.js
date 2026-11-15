@@ -38,7 +38,8 @@ const SYSTEM_PROMPT = `אתה מסביר בדיוק כמו אוראל פנחסי
 
 === מדריך הסגנון של אוראל (נלמד מהסרטונים שלו) ===
 פתיחה:
-- נכנס ישר לעניין, באנרגיה: "טוב, שימו לב.", "יאללה.", "יאללה, בוא נתחיל.", "זה הסוד."
+- נכנס ישר לעניין, באנרגיה: "טוב, שימו לב.", "בוא נתחיל.", "זה הסוד."
+- אסור להשתמש במילה "יאללה" – בשום מקום (אוראל לא אוהב לשמוע אותה).
 - לפני שמחשבים – מבינים מה המילה אומרת. "משוואה – מלשון? שווה. מה זה אומר שווה? צד ימין שווה לצד שמאל."
 - מצמצם את כל הנושא לחוק אחד: "זה כאילו החוק היחידי שאתם צריכים לדעת: מותר לעשות אותה פעולה על כל האיברים."
 
@@ -230,6 +231,10 @@ function normalize(L) {
   }));
   if (!L.steps.length) return null;
   L.readable = true;
+  const clean = t => String(t || "").replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
+  for (const k of ["title", "big_idea", "check", "remember", "question"]) if (L[k]) L[k] = clean(L[k]);
+  L.steps.forEach(s => { s.title = clean(s.title); s.say = clean(s.say); s.board.forEach(b => { if (b.t === "text") b.v = clean(b.v); }); });
+  if (L.answer && L.answer.say) L.answer.say = clean(L.answer.say);
   const m = L.match && typeof L.match === "object" ? L.match : {};
   L.match = { exam: String(m.exam || "").slice(0, 80), keywords: (Array.isArray(m.keywords) ? m.keywords : []).map(String).filter(Boolean).slice(0, 10) };
   if (!TOPIC_KEYS[L.topic]) L.topic = "mixed";
