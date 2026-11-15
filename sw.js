@@ -1,5 +1,5 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v12";
+const CACHE = "pshut-v13";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
@@ -9,6 +9,8 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const req = e.request; if (req.method !== "GET") return;
   const url = new URL(req.url);
+  // סרטונים: תמיד ישירות מהרשת (בקשות Range לא עובדות דרך המטמון, במיוחד באייפון)
+  if (req.headers.has("range") || /\.(mp4|webm|mov)$/i.test(url.pathname)) return;
   // דפים: קודם רשת (כדי לקבל עדכונים), ואם אין אינטרנט – מהמטמון
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put("index.html", c)); return r; })
