@@ -183,7 +183,7 @@ textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);bor
 .ytm .bar{display:flex;justify-content:space-between;align-items:center;color:#fff;margin-top:10px;gap:10px;font-size:14px}
 .ytm .bar a{color:var(--gold2)}
 .ytm .x{border:0;background:#fff;color:var(--night);border-radius:999px;width:38px;height:38px;font-size:18px}
-.vidh{max-width:460px;margin:26px auto 12px;font-size:19px;text-align:center}
+
 .disclaimer{max-width:460px;margin:14px auto 0;color:var(--muted);font-size:12px;text-align:center}
 footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 
@@ -230,6 +230,26 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 @media (min-width:900px){ .only-m{display:none} .only-d{display:block} }
 .wr .st.cur{background:#fffbef;border-radius:12px}
 .fig-card .glow{filter:drop-shadow(0 0 3px rgba(245,184,61,.9))}
+
+/* סרטון + פתרון כתוב באותו מקום */
+.lesson-grid{display:block}
+.player{position:sticky;top:60px;z-index:5;background:var(--paper);padding:6px 0 4px}
+.player .board{max-height:42vh;aspect-ratio:auto;height:42vh;border-width:3px;border-radius:20px}
+.player .controls{margin-top:8px}
+.player .cb{height:40px;min-width:40px}.player .cb.main{height:46px;min-width:56px}
+.synchint{font-size:12px;color:var(--muted);text-align:center;margin:6px 0 0}
+.written{margin-top:12px}
+.wr [data-k]{cursor:pointer;transition:background .25s, box-shadow .25s;border-radius:12px}
+.wr [data-k].now{background:#fff3cf !important;box-shadow:0 0 0 2px var(--gold) inset}
+.wr .ov[data-k].now{box-shadow:0 0 0 3px var(--gold);background:linear-gradient(135deg,#1f2a57,#141b3a) !important}
+@media (min-width:900px){
+  .stage{max-width:1180px}
+  .lesson-grid{display:grid;grid-template-columns:420px minmax(0,1fr);gap:22px;align-items:start}
+  .player{top:72px;padding:0;background:none}
+  .player .board{height:auto;max-height:calc(100vh - 210px);aspect-ratio:9/14}
+  .written{margin-top:0;max-width:none;position:sticky;top:72px;max-height:calc(100vh - 92px);overflow-y:auto;scroll-behavior:smooth}
+  .written.has-side{max-width:none}
+}
 </style>
 </head>
 <body>
@@ -301,32 +321,34 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
     </div>
 
     <div class="vm strong" id="vmTop" hidden></div>
-    <div class="written" id="written">
-      <div class="wr" id="wr"></div>
-    </div>
+    <div class="lesson-grid">
+      <div class="player" id="player">
+      <div class="board" id="board">
+        <div class="segs" id="segs"></div>
+        <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span><button class="figbtn" id="figBtn" hidden>📋 נתונים</button></div>
+        <div class="figpane" id="figPane" hidden></div>
+        <div class="lines" id="lines"></div>
+        <div class="cap" id="cap"></div>
+        <div class="figov" id="figOv"><button class="x" id="figX" aria-label="סגירה">×</button><div id="figOvIn"></div></div>
+        <button class="tap" id="tapStart"><span>▶ התחילו את השיעור</span></button>
+      </div>
 
+      <div class="controls">
+        <button class="cb" id="bNext" aria-label="השלב הבא">⏭</button>
+        <button class="cb main" id="bPlay" aria-label="נגן / עצור">⏸</button>
+        <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
+        <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
+        <button class="cb small" id="bMute" aria-label="קול">🔊</button>
+        <button class="cb small" id="bVoice" aria-label="החלפת קול" hidden>🗣️</button>
+      </div>
+        <div id="voiceToast" class="vtoast" hidden></div>
+        <p class="synchint">👆 לחיצה על שלב בפתרון הכתוב – קופצת אליו בסרטון</p>
+      </div>
+      <div class="written" id="written">
+        <div class="wr" id="wr"></div>
+      </div>
+    </div>
     <div class="vm" id="vmMore" hidden style="margin-top:22px"></div>
-    <h3 class="vidh">🎬 רוצים לראות את זה כהסבר מונפש עם קול?</h3>
-    <div class="board" id="board">
-      <div class="segs" id="segs"></div>
-      <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span><button class="figbtn" id="figBtn" hidden>📋 נתונים</button></div>
-      <div class="figpane" id="figPane" hidden></div>
-      <div class="lines" id="lines"></div>
-      <div class="cap" id="cap"></div>
-      <div class="figov" id="figOv"><button class="x" id="figX" aria-label="סגירה">×</button><div id="figOvIn"></div></div>
-      <button class="tap" id="tapStart"><span>▶ התחילו את השיעור</span></button>
-    </div>
-
-    <div class="controls">
-      <button class="cb" id="bNext" aria-label="השלב הבא">⏭</button>
-      <button class="cb main" id="bPlay" aria-label="נגן / עצור">⏸</button>
-      <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
-      <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
-      <button class="cb small" id="bMute" aria-label="קול">🔊</button>
-      <button class="cb small" id="bVoice" aria-label="החלפת קול" hidden>🗣️</button>
-    </div>
-
-    <div id="voiceToast" class="vtoast" hidden></div>
     <div class="after">
       <a class="gold" id="moreVideos" href="./">🎬 עוד סרטונים בנושא באתר <span>←</span></a>
       <button class="light" id="shareBtn">📤 שליחת הפתרון לחבר / לוואטסאפ <span>←</span></button>
@@ -531,22 +553,22 @@ function playClip(name, id){
 
 function buildScenes(L){
   const out = [];
-  if (L.overview && L.overview.say) out.push({ num:"סקירה", ttl:"🧭 על מה הנושא" + (L.topic_name ? " – " + L.topic_name : ""), overview:true,
+  if (L.overview && L.overview.say) out.push({ key:"overview", num:"סקירה", ttl:"🧭 על מה הנושא" + (L.topic_name ? " – " + L.topic_name : ""), overview:true,
     html:`${L.overview.goal ? `<div class="ln big" style="font-size:clamp(18px,5vw,22px)">🎯 ${mixed(L.overview.goal)}</div>` : ""}
           ${L.overview.what ? `<div class="ln text">${mixed(L.overview.what)}</div>` : ""}
           ${(L.overview.tools||[]).map(t => `<div class="ln text tool-l">🛠️ ${mixed(t)}</div>`).join("")}`,
     say: L.overview.say });
-  out.push({ num:"בואו נתחיל", ttl:L.title || "השאלה", intro:true,
+  out.push({ key:"intro", num:"בואו נתחיל", ttl:L.title || "השאלה", intro:true,
     html:`${L.question ? `<div class="ln text bigq"><span class="k">השאלה כפי שהבנתי</span>${mixed(L.question)}</div>` : ""}
           ${L.big_idea ? `<div class="ln big">💡 ${esc(L.big_idea)}</div>` : ""}`,
     say:`בואו נפתור את זה יחד. ${L.big_idea || ""}` });
   const bfig = figSVG(L.figure, true), bgiv = giversHTML(L, "bgiv");
-  if (bfig || bgiv) out.push({ num:"הנתונים", ttl:"📋 מה נתון ומה מחפשים", hl:"all", html:`<div class="ln text bgiv" style="text-align:right">${bgiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`,
+  if (bfig || bgiv) out.push({ key:"givens", num:"הנתונים", ttl:"📋 מה נתון ומה מחפשים", hl:"all", html:`<div class="ln text bgiv" style="text-align:right">${bgiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`,
     say: (() => { const pl = a => (a || []).map(g => String(g).replace(/\\[()]/g, "").replace(/\\perp/g, "⊥").replace(/\\angle/g, "∠").replace(/\\cdot/g, "·").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "").trim());
       return "בוא נסדר את מה שיש לנו. " + (L.givens && L.givens.length ? "נתון לנו: " + pl(L.givens).join(". ") + ". " : "") + (L.wanted && L.wanted.length ? "ומה מחפשים: " + pl(L.wanted).join(". ") + "." : ""); })() });
-  L.steps.forEach((s,i) => out.push({ num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:s.board||[], mark:s.mark, say:s.say||"",
+  L.steps.forEach((s,i) => out.push({ key:`step-${i}`, num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:s.board||[], mark:s.mark, say:s.say||"",
     hl: [s.title, s.mark, ...(s.board||[]).map(b => b.v)].join(" ") }));
-  if (L.answer) out.push({ num:"התשובה", ttl:"🎯 הגענו!", answer:true,
+  if (L.answer) out.push({ key:"answer", num:"התשובה", ttl:"🎯 הגענו!", answer:true,
     html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
           ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
     say:`${L.answer.say || ""} ${L.check ? "ותמיד כדאי לבדוק: מציבים את התשובה בחזרה בשאלה." : ""}` });
@@ -561,7 +583,7 @@ function buildScenes(L){
   if (markIdx >= 0 && markIdx !== wantIdx) (steps[markIdx].pre = steps[markIdx].pre || []).push("wait");
   if (L.steps.length >= 3) { const mid = Math.floor(L.steps.length / 2); if (!steps[mid].pre) steps[mid].pre = [pick(["wow","wow_b","amazing"])]; }
   const ans = out.find(sc => sc.answer); if (ans) ans.post = [pick(["genius","bravo"])];
-  if (L.remember) out.push({ num:"לקחת הלאה", ttl:"⭐ מה זוכרים", html:`<div class="ln big">${esc(L.remember)}</div><div class="ln text">כל אחד יכול להצליח. רק צריך תנאים נכונים.</div>`,
+  if (L.remember) out.push({ key:"remember", num:"לקחת הלאה", ttl:"⭐ מה זוכרים", html:`<div class="ln big">${esc(L.remember)}</div><div class="ln text">כל אחד יכול להצליח. רק צריך תנאים נכונים.</div>`,
     say:`${L.remember} כל הכבוד שלא ויתרתם!` });
   return out;
 }
@@ -679,31 +701,51 @@ function giversHTML(L, cls){
 }
 
 function renderWritten(L){
-  let top = "";
+  let h = "";
   if (L.overview && (L.overview.goal || L.overview.what)) {
-    top += `<div class="ov"><h5>🧭 רגע לפני – על מה הנושא${L.topic_name ? ": " + esc(L.topic_name) : ""}</h5>`
+    h += `<div class="ov" data-k="overview"><h5>🧭 רגע לפני – על מה הנושא${L.topic_name ? ": " + esc(L.topic_name) : ""}</h5>`
       + (L.overview.goal ? `<p><b>המטרה:</b> ${mixed(L.overview.goal)}</p>` : "")
       + (L.overview.what ? `<p><b>מה עושים:</b> ${mixed(L.overview.what)}</p>` : "")
       + (L.overview.tools && L.overview.tools.length ? `<div class="tools">${L.overview.tools.map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}</div>` : "")
       + `</div>`;
   }
-  let main = L.question ? `<div class="q"><b>השאלה כפי שהבנתי</b>${mixed(L.question)}</div>` : "";
-  if (L.big_idea) main += `<div class="idea"><b>💡 הסיפור בפשטות:</b> ${esc(L.big_idea)}</div>`;
+  h += `<div data-k="intro">`;
+  if (L.question) h += `<div class="q"><b>השאלה כפי שהבנתי</b>${mixed(L.question)}</div>`;
+  if (L.big_idea) h += `<div class="idea"><b>💡 הסיפור בפשטות:</b> ${esc(L.big_idea)}</div>`;
+  h += `</div>`;
+  const giv = giversHTML(L, "giv");
+  if (giv) h += `<div data-k="givens" class="side">${giv}</div>`;
   L.steps.forEach((s,i) => {
-    main += `<div class="st" data-hl="${esc([s.title, s.mark, ...(s.board||[]).map(b => b.v)].join(" "))}"><span class="n">${i+1}</span><div><h4>${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
-    (s.board||[]).forEach(b => main += b.t==="math" ? `<div class="m">${tex(b.v, true, s.mark)}</div>` : `<div class="t">${mixed(b.v)}</div>`);
-    main += `</div></div>`;
+    h += `<div class="st" data-k="step-${i}"><span class="n">${i+1}</span><div><h4>${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
+    (s.board||[]).forEach(b => h += b.t==="math" ? `<div class="m">${tex(b.v, true, s.mark)}</div>` : `<div class="t">${mixed(b.v)}</div>`);
+    h += `</div></div>`;
   });
-  if (L.answer) main += `<div class="ans"><b>🎯 התשובה</b><div class="m">${tex(L.answer.tex)}</div></div>`;
-  if (L.check) main += `<div class="ok">✅ <b>איך בודקים:</b> ${mixed(L.check)}</div>`;
-  if (L.remember) main += `<div class="rem">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}</div>`;
-  const fig = figSVG(L.figure, false), giv = giversHTML(L, "giv");
-  // בטלפון: הציור נדבק לראש המסך ונשאר גלוי לאורך כל הפתרון. במחשב: הציור והנתונים בצד, נדבקים בגלילה.
-  const side = (fig ? `<div class="fig-card figbox only-d">${fig}</div>` : "") + giv;
-  const mainFig = fig ? `<div class="fig-card figbox only-m sticky-fig">${fig}</div>` : "";
-  $("#written").classList.toggle("has-side", !!side);
-  $("#wr").innerHTML = top + (side ? `<div class="wr-grid"><div>${mainFig}${main}</div><aside class="side">${side}</aside></div>` : main);
+  if (L.answer || L.check) {
+    h += `<div data-k="answer">`;
+    if (L.answer) h += `<div class="ans"><b>🎯 התשובה</b><div class="m">${tex(L.answer.tex)}</div></div>`;
+    if (L.check) h += `<div class="ok">✅ <b>איך בודקים:</b> ${mixed(L.check)}</div>`;
+    h += `</div>`;
+  }
+  if (L.remember) h += `<div class="rem" data-k="remember">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}</div>`;
+  $("#written").classList.remove("has-side");
+  $("#wr").innerHTML = h;
 }
+
+/* הסרטון והפתרון הכתוב מסונכרנים: השלב שמתנגן מודגש בטקסט, ולחיצה על שלב בטקסט קופצת אליו בסרטון */
+function syncWritten(sc, scroll){
+  document.querySelectorAll("#wr [data-k].now").forEach(el => el.classList.remove("now"));
+  const el = sc && sc.key && document.querySelector(`#wr [data-k="${sc.key}"]`); if (!el) return;
+  el.classList.add("now");
+  if (!scroll) return;
+  if (innerWidth >= 900) { const box = $("#written"); box.scrollTo({ top: Math.max(0, el.offsetTop - 14), behavior: "smooth" }); return; }
+  const pb = $("#player").getBoundingClientRect().bottom, r = el.getBoundingClientRect();
+  if (r.top < pb + 4 || r.top > innerHeight - 80) scrollTo({ top: scrollY + r.top - pb - 10, behavior: "smooth" });
+}
+document.addEventListener("click", e => {
+  const blk = e.target.closest("#wr [data-k]"); if (!blk || $("#scrLesson").hidden) return;
+  const idx = scenes.findIndex(sc => sc.key === blk.dataset.k); if (idx < 0) return;
+  $("#tapStart").hidden = true; stopAll(); runFrom(idx);
+});
 
 function setSegs(){
   [...$("#segs").children].forEach((el,i) => el.style.setProperty("--p", i<cur ? 1 : 0));
@@ -712,6 +754,7 @@ function drawScene(i, animate=true){
   const sc = scenes[i]; cur = i; setSegs();
   $("#sNum").textContent = sc.num; $("#sTtl").textContent = sc.ttl;
   updateFigPane(sc);
+  syncWritten(sc, playing);
   if (sc.lines) {
     $("#lines").innerHTML = sc.lines.map(b => b.t === "math"
       ? `<div class="ln math"><span class="pen">${tex(b.v, true, sc.mark)}</span></div>`
@@ -888,18 +931,6 @@ document.addEventListener("click", e => {
   $("#ytt").textContent = b.dataset.t; $("#ytl").href = `https://www.youtube.com/watch?v=${b.dataset.id}`;
   $("#ytm").classList.add("on");
 });
-/* בפתרון הכתוב: השלב שנמצא באמצע המסך מדגיש את החלקים שלו בציור */
-let __hlStep = null;
-function syncWrittenFig(){
-  const L = window._lesson; if (!L || !L.figure || $("#scrLesson").hidden) return;
-  const mid = innerHeight * 0.55; let best = null;
-  document.querySelectorAll("#wr .st").forEach(el => { const r = el.getBoundingClientRect(); if (r.top < mid && r.bottom > mid * 0.6) best = el; });
-  if (best === __hlStep) return; __hlStep = best;
-  const svg = figSVG(L.figure, false, best ? hlSet(L.figure, best.dataset.hl) : new Set());
-  document.querySelectorAll("#wr .figbox").forEach(b => b.innerHTML = svg);
-  document.querySelectorAll("#wr .st").forEach(el => el.classList.toggle("cur", el === best));
-}
-addEventListener("scroll", () => requestAnimationFrame(syncWrittenFig), { passive: true });
 $("#figBtn").onclick = () => { $("#figOv").classList.add("on"); };
 $("#figX").onclick = () => { $("#figOv").classList.remove("on"); };
 $("#ytx").onclick = () => { $("#ytm").classList.remove("on"); $("#ytf").src = ""; };
