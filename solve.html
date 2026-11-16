@@ -186,6 +186,39 @@ textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);bor
 .vidh{max-width:460px;margin:26px auto 12px;font-size:19px;text-align:center}
 .disclaimer{max-width:460px;margin:14px auto 0;color:var(--muted);font-size:12px;text-align:center}
 footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
+
+/* ציור, נתונים וסקירה */
+.figbox svg{width:100%;height:auto;display:block}
+.wr-grid{display:flex;flex-direction:column}
+.wr-grid .side{order:-1}
+.side{display:grid;gap:12px;margin:12px 0}
+.fig-card{background:#f7f4ec;border-radius:14px;padding:8px;color:#1d2140}
+.giv{background:#fff8e6;border:1px solid #f3d28d;border-radius:14px;padding:10px 14px;font-size:15px}
+.giv h5{margin:0 0 6px;font-size:14px}
+.giv ul{margin:0;padding-inline-start:18px}.giv li{margin:3px 0}
+.giv.want{background:#eef1fb;border-color:#cfd6f1}
+.ov{background:linear-gradient(135deg,#1f2a57,#141b3a);color:#fff;border-radius:16px;padding:14px 16px;margin:12px 0}
+.ov h5{margin:0 0 6px;font-size:16px;color:var(--gold2);font-family:"Secular One"}
+.ov p{color:#e8e9f3;margin:4px 0;font-size:15px}
+.ov .tools{display:grid;gap:6px;margin-top:8px}
+.ov .tool{background:rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;font-size:14px}
+.ov .katex{color:#fff}
+@media (min-width:900px){
+  .written.has-side{max-width:960px}
+  .written.has-side .wr-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+  .written.has-side .side{position:sticky;top:76px;margin-top:12px;order:0}
+}
+/* בלוח המונפש */
+.figbtn{margin-inline-start:auto;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;font-size:13px;padding:4px 10px}
+.figov{position:absolute;inset:0;z-index:4;background:rgba(14,19,44,.96);padding:16px;overflow:auto;display:none}
+.figov.on{display:block}
+.figov .x{position:absolute;top:10px;left:10px;border:0;background:#fff;color:#141b3a;border-radius:999px;width:32px;height:32px;font-size:16px}
+.bfig{color:#fff;width:100%;max-width:340px;margin:0 auto}
+.bfig svg{width:100%;height:auto;display:block}
+.bgiv{font-size:15px;line-height:1.6;color:#fff}
+.bgiv b{color:var(--gold2)}
+.bgiv .katex{color:#fff}
+.tool-l{background:rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:15px;text-align:right}
 </style>
 </head>
 <body>
@@ -265,9 +298,10 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
     <h3 class="vidh">🎬 רוצים לראות את זה כהסבר מונפש עם קול?</h3>
     <div class="board" id="board">
       <div class="segs" id="segs"></div>
-      <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span></div>
+      <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span><button class="figbtn" id="figBtn" hidden>📐 נתונים וציור</button></div>
       <div class="lines" id="lines"></div>
       <div class="cap" id="cap"></div>
+      <div class="figov" id="figOv"><button class="x" id="figX" aria-label="סגירה">×</button><div id="figOvIn"></div></div>
       <button class="tap" id="tapStart"><span>▶ התחילו את השיעור</span></button>
     </div>
 
@@ -329,7 +363,13 @@ const DEMO = {
   answer:{tex:"x_1=2,\\qquad x_2=3", say:"הפתרונות הם איקס שווה שתיים, ואיקס שווה שלוש."},
   check:"מציבים \\(x=2\\): \\(4-10+6=0\\) ✓ · מציבים \\(x=3\\): \\(9-15+6=0\\) ✓",
   remember:"כשאגף אחד הוא אפס – מנסים לפרק למכפלה. מכפלה שווה אפס אומרת שאחד הגורמים הוא אפס.",
-  match:{exam:"", keywords:["משוואה ריבועית","טרינום","פירוק","שורשים"]}
+  match:{exam:"", keywords:["משוואה ריבועית","טרינום","פירוק","שורשים"]},
+  overview:{goal:"במשוואה ריבועית המטרה למצוא את האיקסים שעבורם הביטוי שווה אפס – אלה בדיוק הנקודות שבהן הפרבולה חותכת את ציר האיקס.",
+    what:"מסדרים את המשוואה כך שאגף אחד יהיה אפס, ואז מפרקים למכפלה או משתמשים בנוסחת השורשים.",
+    tools:["פירוק טרינום: מחפשים שני מספרים – מכפלה \\(c\\), סכום \\(b\\)","מכפלה שווה אפס: \\(a\\cdot b=0\\Rightarrow a=0\\) או \\(b=0\\)","נוסחת השורשים: \\(x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}\\)"],
+    say:"טוב, רגע לפני שפותרים, בוא נבין על מה הנושא. משוואה ריבועית זה משוואה שיש בה איקס בריבוע. המטרה שלנו: למצוא את האיקסים שעבורם כל הביטוי שווה אפס. אם תדמיינו את הפרבולה, אלה בדיוק הנקודות שבהן היא חותכת את ציר האיקס. מה עושים? קודם מסדרים, שאגף אחד יהיה אפס. ואז יש לנו שני כלי עבודה: לפרק למכפלה, בעזרת שני מספרים שהמכפלה שלהם והסכום שלהם מתאימים, או להשתמש בנוסחת השורשים, שעובדת תמיד. והסוד שמחבר הכל: אם מכפלה שווה אפס, אחד הגורמים חייב להיות אפס. סבבה? בוא נתחיל."},
+  givens:["\\(x^2-5x+6=0\\)"], wanted:["כל הפתרונות של \\(x\\)"],
+  figure:{type:"graph", functions:[{expr:"x^2-5x+6", label:"y = x² − 5x + 6"}], xmin:-1, xmax:6, ymin:-1.5, ymax:7, points:[{name:"(2,0)", x:2, y:0},{name:"(3,0)", x:3, y:0}]}
 };
 
 /* ---------- KaTeX ---------- */
@@ -436,6 +476,11 @@ const LETTERS = {a:"איי",b:"בי",c:"סי",d:"די",e:"אי",f:"אף",g:"ג'�
 function speakFix(t){
   return String(t || "")
     .replace(/\\\((.+?)\\\)/gs, " $1 ")
+    .replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, " $1 חלקי $2 ").replace(/\\sqrt\{([^{}]*)\}/g, " שורש של $1 ")
+    .replace(/\^\{?\\circ\}?/g, " מעלות").replace(/\^\{([^{}]*)\}/g, "^$1")
+    .replace(/\\(cdot|times)/g, " כפול ").replace(/\\pi/g, " פאי ").replace(/\\angle/g, " זווית ").replace(/\\(le|leq)\b/g, " קטן או שווה ")
+    .replace(/\\(ge|geq)\b/g, " גדול או שווה ").replace(/\\(ne|neq)\b/g, " שונה מ ").replace(/\\perp/g, " מאונך ל ").replace(/\\parallel/g, " מקביל ל ")
+    .replace(/\\(text|mathrm)\{([^{}]*)\}/g, " $2 ").replace(/\\[a-zA-Z]+/g, " ").replace(/[{}]/g, " ")
     .replace(/√/g, " שורש של ").replace(/\^\s*2\b/g, " בריבוע ").replace(/\^\s*3\b/g, " בשלישית ").replace(/\^\s*(\d+)/g, " בחזקת $1 ")
     .replace(/(\d)([a-zA-Z])/g, "$1 $2").replace(/\b([a-zA-Z])\(([^()]{1,8})\)/g, "$1 של $2")
     .replace(/(\d)\s*%/g, "$1 אחוז").replace(/\s*=\s*/g, " שווה ").replace(/\s*\+\s*/g, " ועוד ")
@@ -474,18 +519,29 @@ function playClip(name, id){
 
 function buildScenes(L){
   const out = [];
+  if (L.overview && L.overview.say) out.push({ num:"סקירה", ttl:"🧭 על מה הנושא" + (L.topic_name ? " – " + L.topic_name : ""), overview:true,
+    html:`${L.overview.goal ? `<div class="ln big" style="font-size:clamp(18px,5vw,22px)">🎯 ${mixed(L.overview.goal)}</div>` : ""}
+          ${L.overview.what ? `<div class="ln text">${mixed(L.overview.what)}</div>` : ""}
+          ${(L.overview.tools||[]).map(t => `<div class="ln text tool-l">🛠️ ${mixed(t)}</div>`).join("")}`,
+    say: L.overview.say });
   out.push({ num:"בואו נתחיל", ttl:L.title || "השאלה", intro:true,
     html:`${L.question ? `<div class="ln text bigq"><span class="k">השאלה כפי שהבנתי</span>${mixed(L.question)}</div>` : ""}
           ${L.big_idea ? `<div class="ln big">💡 ${esc(L.big_idea)}</div>` : ""}`,
     say:`בואו נפתור את זה יחד. ${L.big_idea || ""}` });
+  const bfig = figSVG(L.figure, true), bgiv = giversHTML(L, "bgiv");
+  if (bfig || bgiv) out.push({ num:"הנתונים", ttl:"📋 מה נתון ומה מחפשים", html:`${bfig ? `<div class="ln bfig">${bfig}</div>` : ""}<div class="ln text bgiv" style="text-align:right">${bgiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`,
+    say: (() => { const pl = a => (a || []).map(g => String(g).replace(/\\[()]/g, "").replace(/\\perp/g, "⊥").replace(/\\angle/g, "∠").replace(/\\cdot/g, "·").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "").trim());
+      return "בוא נסדר את מה שיש לנו. " + (L.givens && L.givens.length ? "נתון לנו: " + pl(L.givens).join(". ") + ". " : "") + (L.wanted && L.wanted.length ? "ומה מחפשים: " + pl(L.wanted).join(". ") + "." : ""); })() });
   L.steps.forEach((s,i) => out.push({ num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:s.board||[], mark:s.mark, say:s.say||"" }));
   if (L.answer) out.push({ num:"התשובה", ttl:"🎯 הגענו!", answer:true,
     html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
           ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
     say:`${L.answer.say || ""} ${L.check ? "ותמיד כדאי לבדוק: מציבים את התשובה בחזרה בשאלה." : ""}` });
   // איפה משמיעים את הקול של אוראל
-  out[0].pre = [pick(["open","open_b"]), pick(["rule1","rule1_b","hide","hide_b"])];
-  const steps = out.slice(1, 1 + L.steps.length);
+  out[0].pre = [pick(["open","open_b"])];
+  const qScene = out.find(sc => sc.intro); if (qScene) (qScene.pre = qScene.pre || []).push(pick(["rule1","rule1_b","hide","hide_b"]));
+  const first = out.findIndex(sc => sc.num && sc.num.startsWith("שלב "));
+  const steps = out.slice(first, first + L.steps.length);
   const wantIdx = L.steps.findIndex((st, i) => i > 0 && /רוצים|סעיף/.test(st.title || ""));
   if (wantIdx > 0) (steps[wantIdx].pre = steps[wantIdx].pre || []).push(pick(["want","want_b"]));
   const markIdx = L.steps.findIndex(st => st.mark);
@@ -509,24 +565,128 @@ function openLesson(L, notes=[]){
   $("#bMute").textContent = muted ? "🔇" : "🔊";
   renderWritten(L);
   window._lesson = L;
+  const ovFig = figSVG(L.figure, true), ovGiv = giversHTML(L, "bgiv");
+  $("#figOvIn").innerHTML = (ovFig ? `<div class="bfig">${ovFig}</div>` : "") + `<div class="bgiv">${ovGiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`;
+  $("#figBtn").hidden = !(ovFig || ovGiv); $("#figOv").classList.remove("on");
   showMatches(L);
   drawScene(0, false);
   $("#tapStart").hidden = false;
   show("scrLesson");
 }
 
+
+/* =========================================================
+   ציור התרגיל (SVG) – גאומטריה או גרף פונקציה
+   ========================================================= */
+function safeFn(expr){
+  let e = String(expr || "").toLowerCase().replace(/\s+/g, "").replace(/·|×/g, "*").replace(/−/g, "-");
+  if (!e || e.length > 120) return null;
+  e = e.replace(/(\d)(x|\()/g, "$1*$2").replace(/\)(x|\(|\d)/g, ")*$1").replace(/x\(/g, "x*(").replace(/(\d)(sqrt|ln|log|exp|sin|cos|tan|abs|pi|e\b)/g, "$1*$2");
+  let js = e.replace(/\^/g, "**").replace(/\bln\(/g, "Math.log(").replace(/\blog\(/g, "Math.log10(").replace(/\bsqrt\(/g, "Math.sqrt(")
+    .replace(/\bexp\(/g, "Math.exp(").replace(/\b(sin|cos|tan|abs)\(/g, "Math.$1(").replace(/\bpi\b/g, "Math.PI").replace(/\be\b/g, "Math.E");
+  const rest = js.replace(/Math\.(log10|log|sqrt|exp|sin|cos|tan|abs|PI|E)/g, "").replace(/[x0-9+\-*/().]/g, "");
+  if (rest) return null;
+  try { const f = new Function("x", "return " + js); f(1); return f; } catch(e){ return null; }
+}
+function figSVG(F, dark){
+  if (!F || !F.type || F.type === "none") return "";
+  const W = 320, H = 240, P = 26, ink = dark ? "#ffffff" : "#1d2140", soft = dark ? "rgba(255,255,255,.25)" : "rgba(29,33,64,.18)";
+  const gold = "#f5b83d", cols = ["#f5b83d", "#4fc3d9", "#ef6f6c"];
+  const T = s => esc(String(s ?? "")).slice(0, 14);
+  let o = "";
+  if (F.type === "graph") {
+    const fns = (F.functions || []).slice(0, 3).map(f => ({ f: safeFn(f.expr), label: f.label || f.expr })).filter(f => f.f);
+    let x0 = isFinite(F.xmin) ? +F.xmin : -6, x1 = isFinite(F.xmax) ? +F.xmax : 6; if (x1 <= x0) { x0 = -6; x1 = 6; }
+    let ys = [];
+    fns.forEach(fn => { for (let i = 0; i <= 120; i++) { const y = fn.f(x0 + (x1 - x0) * i / 120); if (isFinite(y)) ys.push(y); } });
+    (F.points || []).forEach(p => isFinite(p.y) && ys.push(+p.y));
+    ys.sort((a, b) => a - b);
+    let y0 = isFinite(F.ymin) ? +F.ymin : (ys.length ? ys[Math.floor(ys.length * .03)] : -5), y1 = isFinite(F.ymax) ? +F.ymax : (ys.length ? ys[Math.ceil(ys.length * .97) - 1] : 5);
+    if (!(y1 > y0)) { y0 -= 1; y1 += 1; }
+    const pad = (y1 - y0) * .08; if (!isFinite(F.ymin)) y0 = Math.min(y0 - pad, 0 > y0 - pad ? y0 - pad : -pad); if (!isFinite(F.ymax)) y1 = Math.max(y1 + pad, pad);
+    const X = x => P + (x - x0) / (x1 - x0) * (W - 2 * P), Y = y => H - P - (y - y0) / (y1 - y0) * (H - 2 * P);
+    const step = (a, b) => { const r = b - a; return r <= 12 ? 1 : r <= 30 ? 5 : r <= 120 ? 10 : Math.pow(10, Math.floor(Math.log10(r / 6))); };
+    const sx = step(x0, x1), sy = step(y0, y1);
+    for (let gx = Math.ceil(x0 / sx) * sx; gx <= x1; gx += sx) { o += `<line x1="${X(gx)}" y1="${P}" x2="${X(gx)}" y2="${H-P}" stroke="${soft}" stroke-width=".6"/>`; if (gx) o += `<text x="${X(gx)}" y="${Math.min(H-P+12, Math.max(P+10, Y(0)+12))}" font-size="9" text-anchor="middle" fill="${ink}" opacity=".7">${+gx.toFixed(2)}</text>`; }
+    for (let gy = Math.ceil(y0 / sy) * sy; gy <= y1; gy += sy) { o += `<line x1="${P}" y1="${Y(gy)}" x2="${W-P}" y2="${Y(gy)}" stroke="${soft}" stroke-width=".6"/>`; if (gy) o += `<text x="${Math.min(W-P-4, Math.max(P+4, X(0)-4))}" y="${Y(gy)+3}" font-size="9" text-anchor="end" fill="${ink}" opacity=".7">${+gy.toFixed(2)}</text>`; }
+    if (y0 <= 0 && y1 >= 0) o += `<line x1="${P-6}" y1="${Y(0)}" x2="${W-P+6}" y2="${Y(0)}" stroke="${ink}" stroke-width="1.2"/><text x="${W-P+8}" y="${Y(0)+4}" font-size="11" fill="${ink}">x</text>`;
+    if (x0 <= 0 && x1 >= 0) o += `<line x1="${X(0)}" y1="${H-P+6}" x2="${X(0)}" y2="${P-6}" stroke="${ink}" stroke-width="1.2"/><text x="${X(0)+4}" y="${P-8}" font-size="11" fill="${ink}">y</text>`;
+    fns.forEach((fn, k) => {
+      let d = "", pen = false, prev = null;
+      for (let i = 0; i <= 300; i++) {
+        const x = x0 + (x1 - x0) * i / 300, y = fn.f(x);
+        if (!isFinite(y) || y < y0 - (y1 - y0) || y > y1 + (y1 - y0) || (prev !== null && Math.abs(y - prev) > (y1 - y0) * .8)) { pen = false; prev = isFinite(y) ? y : null; continue; }
+        d += (pen ? "L" : "M") + X(x).toFixed(1) + " " + Y(y).toFixed(1); pen = true; prev = y;
+      }
+      o += `<path d="${d}" fill="none" stroke="${cols[k]}" stroke-width="2.4" stroke-linecap="round"/>`;
+      o += `<text x="${W-P}" y="${P + 4 + k*14}" font-size="11" text-anchor="end" fill="${cols[k]}" direction="ltr">${esc(String(fn.label)).slice(0, 26)}</text>`;
+    });
+    (F.points || []).slice(0, 8).forEach(p => { if (!isFinite(p.x) || !isFinite(p.y)) return; o += `<circle cx="${X(+p.x)}" cy="${Y(+p.y)}" r="3.5" fill="${gold}"/><text x="${X(+p.x)+6}" y="${Y(+p.y)-6}" font-size="11" fill="${ink}" direction="ltr">${T(p.name || p.label || "")}</text>`; });
+    o = `<clipPath id="cp"><rect x="${P-8}" y="${P-14}" width="${W-2*P+16}" height="${H-2*P+28}"/></clipPath><g clip-path="url(#cp)">${o}</g>`;
+  } else {
+    const pts = {}; (F.points || []).slice(0, 16).forEach(p => { if (p && p.name && isFinite(p.x) && isFinite(p.y)) pts[String(p.name)] = { x: +p.x, y: +p.y }; });
+    const names = Object.keys(pts); if (!names.length) return "";
+    let mx = Infinity, Mx = -Infinity, my = Infinity, My = -Infinity;
+    const grow = (x, y) => { mx = Math.min(mx, x); Mx = Math.max(Mx, x); my = Math.min(my, y); My = Math.max(My, y); };
+    names.forEach(n => grow(pts[n].x, pts[n].y));
+    (F.circles || []).forEach(c => { const C = pts[c.center]; if (C && isFinite(c.r)) { grow(C.x - c.r, C.y - c.r); grow(C.x + c.r, C.y + c.r); } });
+    const w = Math.max(Mx - mx, 1e-6), h = Math.max(My - my, 1e-6), sc = Math.min((W - 2*P) / w, (H - 2*P) / h);
+    const ox = (W - w * sc) / 2, oy = (H - h * sc) / 2;
+    const X = x => ox + (x - mx) * sc, Y = y => H - (oy + (y - my) * sc);
+    const cx = names.reduce((a, n) => a + X(pts[n].x), 0) / names.length, cy = names.reduce((a, n) => a + Y(pts[n].y), 0) / names.length;
+    (F.circles || []).slice(0, 3).forEach(c => { const C = pts[c.center]; if (C && isFinite(c.r)) o += `<circle cx="${X(C.x)}" cy="${Y(C.y)}" r="${c.r * sc}" fill="none" stroke="${ink}" stroke-width="1.6"/>`; });
+    const segs = (F.segments || []).slice(0, 24).filter(sg => Array.isArray(sg) && pts[sg[0]] && pts[sg[1]]);
+    segs.forEach(([a, b]) => o += `<line x1="${X(pts[a].x)}" y1="${Y(pts[a].y)}" x2="${X(pts[b].x)}" y2="${Y(pts[b].y)}" stroke="${ink}" stroke-width="2" stroke-linecap="round"/>`);
+    (F.angles || []).slice(0, 8).forEach(an => {
+      const V = pts[an.at], A = pts[an.from], B = pts[an.to]; if (!V || !A || !B) return;
+      const vx = X(V.x), vy = Y(V.y), u = (P2) => { const dx = X(P2.x) - vx, dy = Y(P2.y) - vy, l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
+      const [ax, ay] = u(A), [bx, by] = u(B);
+      if (an.kind === "right") { const r = 11; o += `<path d="M${vx+ax*r} ${vy+ay*r} L${vx+(ax+bx)*r} ${vy+(ay+by)*r} L${vx+bx*r} ${vy+by*r}" fill="none" stroke="${gold}" stroke-width="1.8"/>`; }
+      else { const r = 20, cross = ax * by - ay * bx; o += `<path d="M${vx+ax*r} ${vy+ay*r} A${r} ${r} 0 0 ${cross > 0 ? 1 : 0} ${vx+bx*r} ${vy+by*r}" fill="none" stroke="${gold}" stroke-width="1.8"/>`;
+        if (an.label) { const mxv = ax + bx, myv = ay + by, l = Math.hypot(mxv, myv) || 1; o += `<text x="${vx + mxv/l*34}" y="${vy + myv/l*34 + 4}" font-size="11" text-anchor="middle" fill="${gold}" direction="ltr">${T(an.label)}</text>`; } }
+    });
+    segs.forEach(([a, b, lab]) => { if (!lab) return;
+      const x1 = X(pts[a].x), y1 = Y(pts[a].y), x2 = X(pts[b].x), y2 = Y(pts[b].y), mxp = (x1+x2)/2, myp = (y1+y2)/2;
+      let nx = -(y2 - y1), ny = x2 - x1; const l = Math.hypot(nx, ny) || 1; nx /= l; ny /= l; if ((mxp - cx) * nx + (myp - cy) * ny < 0) { nx = -nx; ny = -ny; }
+      let lx = mxp + nx*13, ly = myp + ny*13;
+      // אם התווית נופלת על נקודה (למשל אמצע הבסיס) – מזיזים אותה לאורך הקטע
+      if (names.some(n => Math.hypot(X(pts[n].x) - lx, Y(pts[n].y) - ly) < 18)) { const ux = (x2-x1)/(Math.hypot(x2-x1,y2-y1)||1), uy = (y2-y1)/(Math.hypot(x2-x1,y2-y1)||1); lx += ux*28; ly += uy*28; }
+      o += `<text x="${lx}" y="${ly + 4}" font-size="12" font-weight="700" text-anchor="middle" fill="${gold}" direction="ltr">${T(lab)}</text>`; });
+    names.forEach(n => { const x = X(pts[n].x), y = Y(pts[n].y); let dx = x - cx, dy = y - cy; const l = Math.hypot(dx, dy) || 1;
+      o += `<circle cx="${x}" cy="${y}" r="3" fill="${ink}"/><text x="${x + dx/l*14}" y="${y + dy/l*14 + 4}" font-size="13" font-weight="700" text-anchor="middle" fill="${ink}" direction="ltr">${T(n)}</text>`; });
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ציור התרגיל" style="font-family:Rubik,Arial,sans-serif">${o}</svg>`;
+}
+function giversHTML(L, cls){
+  let h = "";
+  if (L.givens && L.givens.length) h += `<div class="${cls}"><h5>📋 נתונים</h5><ul>${L.givens.map(g => `<li>${mixed(g)}</li>`).join("")}</ul></div>`;
+  if (L.wanted && L.wanted.length) h += `<div class="${cls} want"><h5>🎯 מה מחפשים</h5><ul>${L.wanted.map(g => `<li>${mixed(g)}</li>`).join("")}</ul></div>`;
+  return h;
+}
+
 function renderWritten(L){
-  let h = L.question ? `<div class="q"><b>השאלה כפי שהבנתי</b>${mixed(L.question)}</div>` : "";
-  if (L.big_idea) h += `<div class="idea"><b>💡 הסיפור בפשטות:</b> ${esc(L.big_idea)}</div>`;
+  let top = "";
+  if (L.overview && (L.overview.goal || L.overview.what)) {
+    top += `<div class="ov"><h5>🧭 רגע לפני – על מה הנושא${L.topic_name ? ": " + esc(L.topic_name) : ""}</h5>`
+      + (L.overview.goal ? `<p><b>המטרה:</b> ${mixed(L.overview.goal)}</p>` : "")
+      + (L.overview.what ? `<p><b>מה עושים:</b> ${mixed(L.overview.what)}</p>` : "")
+      + (L.overview.tools && L.overview.tools.length ? `<div class="tools">${L.overview.tools.map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}</div>` : "")
+      + `</div>`;
+  }
+  let main = L.question ? `<div class="q"><b>השאלה כפי שהבנתי</b>${mixed(L.question)}</div>` : "";
+  if (L.big_idea) main += `<div class="idea"><b>💡 הסיפור בפשטות:</b> ${esc(L.big_idea)}</div>`;
   L.steps.forEach((s,i) => {
-    h += `<div class="st"><span class="n">${i+1}</span><div><h4>${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
-    (s.board||[]).forEach(b => h += b.t==="math" ? `<div class="m">${tex(b.v, true, s.mark)}</div>` : `<div class="t">${mixed(b.v)}</div>`);
-    h += `</div></div>`;
+    main += `<div class="st"><span class="n">${i+1}</span><div><h4>${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
+    (s.board||[]).forEach(b => main += b.t==="math" ? `<div class="m">${tex(b.v, true, s.mark)}</div>` : `<div class="t">${mixed(b.v)}</div>`);
+    main += `</div></div>`;
   });
-  if (L.answer) h += `<div class="ans"><b>🎯 התשובה</b><div class="m">${tex(L.answer.tex)}</div></div>`;
-  if (L.check) h += `<div class="ok">✅ <b>איך בודקים:</b> ${mixed(L.check)}</div>`;
-  if (L.remember) h += `<div class="rem">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}</div>`;
-  $("#wr").innerHTML = h;
+  if (L.answer) main += `<div class="ans"><b>🎯 התשובה</b><div class="m">${tex(L.answer.tex)}</div></div>`;
+  if (L.check) main += `<div class="ok">✅ <b>איך בודקים:</b> ${mixed(L.check)}</div>`;
+  if (L.remember) main += `<div class="rem">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}</div>`;
+  const fig = figSVG(L.figure, false), giv = giversHTML(L, "giv");
+  const side = (fig ? `<div class="fig-card figbox">${fig}</div>` : "") + giv;
+  $("#written").classList.toggle("has-side", !!side);
+  $("#wr").innerHTML = top + (side ? `<div class="wr-grid"><div>${main}</div><aside class="side">${side}</aside></div>` : main);
 }
 
 function setSegs(){
@@ -692,6 +852,8 @@ document.addEventListener("click", e => {
   $("#ytt").textContent = b.dataset.t; $("#ytl").href = `https://www.youtube.com/watch?v=${b.dataset.id}`;
   $("#ytm").classList.add("on");
 });
+$("#figBtn").onclick = () => { $("#figOv").classList.add("on"); };
+$("#figX").onclick = () => { $("#figOv").classList.remove("on"); };
 $("#ytx").onclick = () => { $("#ytm").classList.remove("on"); $("#ytf").src = ""; };
 $("#ytm").onclick = e => { if (e.target.id === "ytm") $("#ytx").click(); };
 

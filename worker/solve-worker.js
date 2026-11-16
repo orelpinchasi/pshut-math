@@ -152,6 +152,23 @@ const SYSTEM_PROMPT = `אתה מסביר בדיוק כמו אוראל פנחסי
 - תמונה לא קריאה או לא מתמטיקה – readable=false, ובעדינות מה לצלם מחדש.
 - חסר נתון או ספק בקריאת מספר – כתוב את ההנחה בשלב הראשון וסמן confidence נמוך.
 
+=== סקירה על הנושא (overview) – חובה בכל שיעור ===
+לפני הפתרון, כמו שאוראל פותח שיעור: בערך דקה של דיבור (100–150 מילים בסך הכל ב-say) שמסבירה לתלמיד את הנושא של השאלה:
+- goal: מה המטרה של הנושא – למה בכלל לומדים אותו, במשפט-שניים ("בטריגו המטרה למצוא צלעות וזוויות").
+- what: מה בעצם עושים בנושא הזה, בפשטות.
+- tools: 2–5 כלי העבודה של הנושא (משפט, נוסחה, שיטה), כל אחד במשפט קצר; נוסחה בתוך \\( \\). למשל: "פיתגורס: \\(a^2+b^2=c^2\\) – כשיש שתי צלעות במשולש ישר זווית".
+- say: הקריינות של כל הסקירה, בקול של אוראל, מילים בלבד.
+
+=== נתונים ומה מחפשים (givens / wanted) ===
+- givens: כל נתון מהשאלה בשורה נפרדת וקצרה, נוסחאות בתוך \\( \\). למשל "\\(AB = AC\\) (שווה שוקיים)", "\\(BC = 10\\) ס״מ".
+- wanted: מה צריך למצוא/להוכיח, שורה לכל סעיף ("א. \\(AB\\)", "ב. היקף המשולש").
+
+=== ציור (figure) ===
+כשיש בשאלה צורה, ציור, מערכת צירים או פונקציה – צייר אותה. אחרת type="none".
+- type="geometry": points = קודקודים עם קואורדינטות בערך בין 0 ל-10 (לא חייב קנה מידה מדויק, אבל שייראה נכון: ישר זווית נראה ישר, שוקיים שוות נראות שוות). segments = צלעות/קטעים [שם נקודה, שם נקודה, תווית אופציונלית כמו "10" או "x"]. circles = מעגלים (מרכז כנקודה + רדיוס). angles = סימוני זוויות: at = הקודקוד, from/to = השכנים, kind = "right" לזווית ישרה או "arc" עם label.
+- type="graph": functions = ביטויים ב-x בכתיב פשוט של מחשבון (x^2-5*x+6, sqrt(x), ln(x), exp(x), sin(x)), עם label; xmin/xmax/ymin/ymax שמראים את החלק המעניין; points = נקודות חשובות (חיתוכים, קיצון) עם label.
+- לא להמציא נתונים שלא בשאלה. הציור עוזר להבין, לא מחליף את הפתרון.
+
 === פורמט הלוח ===
 - כל שורה: {"t":"math","v":"LaTeX"} או {"t":"text","v":"טקסט קצר בעברית"}.
 - LaTeX תקני של KaTeX בלבד, בלי $. שברים \\frac, כפל \\cdot.
@@ -180,6 +197,29 @@ const LESSON_TOOL = {
       topic: { type: "string", enum: Object.keys(TOPIC_KEYS) },
       level: { type: "string", enum: ["חטיבת ביניים", "3 יח״ל", "4 יח״ל", "5 יח״ל", "אחר"] },
       big_idea: { type: "string", description: "לפשט את הסיפור: משפט אחד – מה בעצם שואלים ומה הרעיון שיפתור את זה. עברית מדוברת בלבד, בלי נוסחאות (זה גם מוקרא בקול)" },
+      overview: {
+        type: "object",
+        description: "סקירה של דקה על הנושא לפני הפתרון",
+        properties: {
+          goal: { type: "string" }, what: { type: "string" },
+          tools: { type: "array", maxItems: 5, items: { type: "string" } },
+          say: { type: "string", description: "קריינות הסקירה, 100–150 מילים, מילים בלבד" },
+        },
+      },
+      givens: { type: "array", maxItems: 10, items: { type: "string" }, description: "הנתונים, שורה לכל נתון, נוסחאות בתוך \\( \\)" },
+      wanted: { type: "array", maxItems: 6, items: { type: "string" }, description: "מה מחפשים, שורה לכל סעיף" },
+      figure: {
+        type: "object",
+        properties: {
+          type: { type: "string", enum: ["none", "geometry", "graph"] },
+          points: { type: "array", items: { type: "object", properties: { name: { type: "string" }, x: { type: "number" }, y: { type: "number" } } } },
+          segments: { type: "array", items: { type: "array", items: { type: "string" } } },
+          circles: { type: "array", items: { type: "object", properties: { center: { type: "string" }, r: { type: "number" } } } },
+          angles: { type: "array", items: { type: "object", properties: { at: { type: "string" }, from: { type: "string" }, to: { type: "string" }, kind: { type: "string" }, label: { type: "string" } } } },
+          functions: { type: "array", items: { type: "object", properties: { expr: { type: "string" }, label: { type: "string" } } } },
+          xmin: { type: "number" }, xmax: { type: "number" }, ymin: { type: "number" }, ymax: { type: "number" },
+        },
+      },
       steps: {
         type: "array",
         minItems: 2,
@@ -323,8 +363,16 @@ function normalize(L) {
   }));
   if (!L.steps.length) return null;
   L.readable = true;
+  const arrS = (a, n) => (Array.isArray(a) ? a : []).map(String).filter(Boolean).slice(0, n);
+  L.givens = arrS(L.givens, 10); L.wanted = arrS(L.wanted, 6);
+  if (L.overview && typeof L.overview === "object") {
+    const o = L.overview; L.overview = { goal: String(o.goal || ""), what: String(o.what || ""), tools: arrS(o.tools, 5), say: String(o.say || "") };
+  } else delete L.overview;
+  const F = L.figure && typeof L.figure === "object" ? L.figure : null;
+  if (!F || !["geometry", "graph"].includes(F.type)) delete L.figure;
   const clean = t => String(t || "").replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
   for (const k of ["title", "big_idea", "check", "remember", "question"]) if (L[k]) L[k] = clean(L[k]);
+  if (L.overview) for (const k of ["goal", "what", "say"]) L.overview[k] = clean(L.overview[k]);
   L.steps.forEach(s => { s.title = clean(s.title); s.say = clean(s.say); s.board.forEach(b => { if (b.t === "text") b.v = clean(b.v); }); });
   if (L.answer && L.answer.say) L.answer.say = clean(L.answer.say);
   const m = L.match && typeof L.match === "object" ? L.match : {};
