@@ -306,7 +306,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   <div class="wrap loading">
     <div class="orbit"><div class="planet"></div><div class="star">⭐</div></div>
     <div class="msg" id="loadMsg">קורא את השאלה…</div>
-    <div class="sub">זה לוקח בדרך כלל דקה עד דקה וחצי – אל תסגרו את הדף. נשימה עמוקה 🙂</div>
+    <div class="sub">זה לוקח בדרך כלל דקה עד דקה וחצי – אל תסגרו את הדף ואל תכבו את המסך. נשימה עמוקה 🙂</div>
   </div>
 </section>
 
@@ -466,14 +466,32 @@ $("#goBtn").onclick = async () => {
   if (!photo) return;
   if (!WORKER_URL) { openLesson(DEMO, [{cls:"info", html:"🛠️ <b>מצב הדגמה:</b> הפתרון האוטומטי עוד לא מחובר לשרת, אז הנה שיעור לדוגמה שמראה איך זה ייראה."}]); return; }
   startLoading();
+  let wl = null; try { if (navigator.wakeLock) wl = await navigator.wakeLock.request("screen"); } catch(_) {}
+  let hidden = false; const onVis = () => { if (document.hidden) hidden = true; };
+  document.addEventListener("visibilitychange", onVis);
+  const done = () => { document.removeEventListener("visibilitychange", onVis); try { wl && wl.release(); } catch(_) {} };
   try {
-    const ctrl = ("AbortController" in window) ? new AbortController() : null;
-    const tmo = setTimeout(() => ctrl && ctrl.abort(), 180000);
-    let r;
-    try {
-      r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, signal: ctrl ? ctrl.signal : undefined,
-        body: JSON.stringify({ image: photo.data, mediaType: photo.type, level, note: $("#note").value.trim() }) });
-    } catch(e) { clearTimeout(tmo); const er = new Error(e && e.name === "AbortError" ? "זה לקח יותר מדי זמן. נסו שוב – לפעמים זה עובד בניסיון השני." : "אין חיבור לשרת כרגע. בדקו את האינטרנט ונסו שוב."); er.tech = String(e && (e.name + ": " + e.message)); throw er; }
+    const body = JSON.stringify({ image: photo.data, mediaType: photo.type, level, note: $("#note").value.trim() });
+    let r, tmo, t0 = Date.now(), lastErr;
+    for (let attempt = 1; attempt <= 3 && !r; attempt++) {
+      const ctrl = ("AbortController" in window) ? new AbortController() : null;
+      tmo = setTimeout(() => ctrl && ctrl.abort(), 180000);
+      try {
+        r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, signal: ctrl ? ctrl.signal : undefined, body });
+      } catch(e) {
+        clearTimeout(tmo); lastErr = e;
+        if (e && e.name === "AbortError") break;
+        if (attempt < 3) { $("#loadMsg").textContent = "החיבור נקטע – מנסה שוב אוטומטית…"; await new Promise(res => setTimeout(res, 2500)); }
+      }
+    }
+    if (!r) {
+      const e = lastErr, secs = Math.round((Date.now() - t0) / 1000);
+      const er = new Error(e && e.name === "AbortError" ? "זה לקח יותר מדי זמן. נסו שוב – לפעמים זה עובד בניסיון השני."
+        : hidden ? "החיבור נקטע כי יצאתם מהדף או שהמסך כבה בזמן ההמתנה. נסו שוב ותשאירו את הדף פתוח עד שהפתרון מגיע (בערך דקה)."
+        : "אין חיבור לשרת כרגע. בדקו את האינטרנט ונסו שוב.");
+      er.tech = String(e && (e.name + ": " + e.message)) + " · " + secs + "s · " + Math.round(body.length/1024) + "KB · hidden=" + hidden + " · " + navigator.userAgent.slice(0, 120);
+      throw er;
+    }
     clearTimeout(tmo);
     const j = await r.json().catch(()=>({}));
     stopLoading();
@@ -492,7 +510,7 @@ $("#goBtn").onclick = async () => {
     stopLoading(); show("scrCapture");
     $("#captureMsg").innerHTML = `<div class="note err">😕 ${esc(err.message || "אין חיבור כרגע.")} <button onclick="document.getElementById('goBtn').click()">ניסיון נוסף</button></div>`
       + (err.tech ? `<details style="font-size:11px;color:#888;margin-top:4px"><summary>פרטים טכניים (לאוראל)</summary><code dir="ltr">${esc(err.tech)}</code></details>` : "");
-  }
+  } finally { done(); }
 };
 $("#demoBtn").onclick = () => openLesson(DEMO, [{cls:"info", html:"▶ זה שיעור לדוגמה. כך ייראה ההסבר לשאלה שתצלמו."}]);
 $("#againBtn").onclick = () => { stopAll(); photo=null; $("#prevBox").hidden=true; $("#pickBox").hidden=false; $("#captureMsg").innerHTML=""; $("#note").value=""; show("scrCapture"); };

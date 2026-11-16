@@ -1,5 +1,5 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v14";
+const CACHE = "pshut-v15";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
