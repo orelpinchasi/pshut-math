@@ -315,9 +315,11 @@ async function solveWithGemini(env, image, mediaType, userText) {
   const started = Date.now();
   let last;
   for (const model of [...new Set(models)]) {
-    if (Date.now() - started > 85000) break; // לא להשאיר תלמיד לחכות יותר מדי
+    // התשובה נשלחת בזרם (עם "דופק" כל כמה שניות), אז אין מגבלת 100 שניות של Cloudflare.
+    const left = 165000 - (Date.now() - started);
+    if (left < 20000) break; // לא להשאיר תלמיד לחכות יותר מדי
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 50000);
+    const timer = setTimeout(() => ctrl.abort(), Math.min(80000, left));
     let res;
     try {
     res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
@@ -383,7 +385,7 @@ function normalize(L) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
     const allowed = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(",").map(s => s.trim()) : DEFAULT_ORIGINS;
     const cors = {
@@ -431,26 +433,37 @@ export default {
     if (env.ANTHROPIC_API_KEY) order.push("claude");
     if (env.PROVIDER && order.includes(env.PROVIDER)) order = [env.PROVIDER];
 
-    let lesson = null, quota = false; const fails = [];
-    for (const p of order) {
-      try {
-        const raw = p === "gemini"
-          ? await solveWithGemini(env, image, mediaType, userText)
-          : await solveWithClaude(env, image, mediaType, userText);
-        lesson = normalize(raw);
-        if (lesson) { lesson.provider = p; break; }
-      } catch (e) {
-        if (e.status === 429) quota = true;
-        fails.push(`${e.message} (${e.status || "?"}): ${e.detail || ""}`);
-        console.log("provider failed", p, e.status, e.message);
+    // שולחים כותרות מיד ו"דופק" (רווח) כל 10 שניות – כך הדפדפן, הרשת הסלולרית ו-Cloudflare
+    // לא מנתקים את החיבור בזמן שהמודל חושב (בעבר: ניתוק 524 אחרי 100 שניות → "אין חיבור לשרת").
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter(), enc = new TextEncoder();
+    const beat = setInterval(() => writer.write(enc.encode(" ")).catch(() => {}), 10000);
+    const finish = async obj => { clearInterval(beat); try { await writer.write(enc.encode(JSON.stringify(obj))); await writer.close(); } catch {} };
+    const work = (async () => {
+      let lesson = null, quota = false; const fails = [];
+      for (const p of order) {
+        try {
+          const raw = p === "gemini"
+            ? await solveWithGemini(env, image, mediaType, userText)
+            : await solveWithClaude(env, image, mediaType, userText);
+          lesson = normalize(raw);
+          if (lesson) { lesson.provider = p; break; }
+          fails.push(`${p}: lesson invalid`);
+        } catch (e) {
+          if (e.status === 429) quota = true;
+          fails.push(`${e.message} (${e.status || "?"}): ${String(e.detail || "").slice(0, 200)}`);
+          console.log("provider failed", p, e.status, e.message);
+        }
       }
-    }
-    if (!lesson) {
-      return quota
-        ? json({ error: "quota", message: "המורה הדיגיטלי ענה על הרבה שאלות היום 🙂 נסו שוב מחר, או כתבו לאוראל בוואטסאפ." }, 429)
-        : json({ error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב, או נסו בעוד דקה.", detail: fails }, 502);
-    }
-    if (quotaKey && lesson.readable !== false) await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 });
-    return json({ lesson });
+      if (!lesson) {
+        return finish(quota
+          ? { error: "quota", message: "המורה הדיגיטלי ענה על הרבה שאלות היום 🙂 נסו שוב מחר, או כתבו לאוראל בוואטסאפ." }
+          : { error: "upstream", message: "לא הצלחתי לבנות הסבר הפעם. נסו לצלם שוב (רק את השאלה, מקרוב), או נסו בעוד דקה.", detail: fails });
+      }
+      if (quotaKey && lesson.readable !== false) { try { await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 }); } catch {} }
+      return finish({ lesson });
+    })().catch(e => finish({ error: "crash", message: "משהו השתבש. נסו שוב בעוד רגע.", detail: [String(e && e.message)] }));
+    if (ctx && ctx.waitUntil) ctx.waitUntil(work);
+    return new Response(readable, { status: 200, headers: { ...cors, "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
   },
 };
