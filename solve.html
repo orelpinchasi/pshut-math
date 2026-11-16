@@ -447,6 +447,31 @@ function speakFix(t){
 }
 if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 
+/* ===== קטעים בקול האמיתי של אוראל (מתוך הסרטונים שלו) ===== */
+const CLIPS = {
+  open:"טוב, שימו לב.", open_b:"טוב, שימו לב.",
+  rule1:"דבר ראשון: התשובות נמצאות בנתונים – זה כלל הבסיס של הבסיס של הבסיס.", rule1_b:"התשובות נמצאות בנתונים.",
+  hide:"אנחנו נסתיר את השאלות, לא מעניין בכלל – אנחנו נביא הכל.", hide_b:"רגע, בוא נעיף את השאלות.",
+  gives:"מה זה נותן לנו?", want:"בוא נראה מה הם רוצים.", want_b:"בוא נראה מה הם רוצים.",
+  wait:"רגע, רגע, רגע…", wow:"מהמם.", wow_b:"מהמם.", amazing:"מדהים.",
+  genius:"אתם גאונים, כל הכבוד!", bravo:"כל הכבוד!", breathe:"נשימה עמוקה."
+};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const VA = new Audio(); VA.preload = "auto";
+function playClip(name, id){
+  return new Promise(resolve => {
+    if (muted || !CLIPS[name]) return resolve(id === runId);
+    const cap = $("#cap"), keep = cap.innerHTML;
+    cap.innerHTML = `<span class="w on">🎙️ ${esc(CLIPS[name])}</span>`;
+    let done = false;
+    const finish = () => { if (done) return; done = true; VA.onended = VA.onerror = null; clearTimeout(t); if (id === runId) cap.innerHTML = keep; resolve(id === runId); };
+    const t = setTimeout(finish, 9000);
+    VA.onended = finish; VA.onerror = finish;
+    VA.src = `voice/${name}.mp3`; VA.playbackRate = 1;
+    const pr = VA.play(); if (pr && pr.catch) pr.catch(finish);
+  });
+}
+
 function buildScenes(L){
   const out = [];
   out.push({ num:"בואו נתחיל", ttl:L.title || "השאלה", intro:true,
@@ -458,6 +483,15 @@ function buildScenes(L){
     html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
           ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
     say:`${L.answer.say || ""} ${L.check ? "ותמיד כדאי לבדוק: מציבים את התשובה בחזרה בשאלה." : ""}` });
+  // איפה משמיעים את הקול של אוראל
+  out[0].pre = [pick(["open","open_b"]), pick(["rule1","rule1_b","hide","hide_b"])];
+  const steps = out.slice(1, 1 + L.steps.length);
+  const wantIdx = L.steps.findIndex((st, i) => i > 0 && /רוצים|סעיף/.test(st.title || ""));
+  if (wantIdx > 0) (steps[wantIdx].pre = steps[wantIdx].pre || []).push(pick(["want","want_b"]));
+  const markIdx = L.steps.findIndex(st => st.mark);
+  if (markIdx >= 0 && markIdx !== wantIdx) (steps[markIdx].pre = steps[markIdx].pre || []).push("wait");
+  if (L.steps.length >= 3) { const mid = Math.floor(L.steps.length / 2); if (!steps[mid].pre) steps[mid].pre = [pick(["wow","wow_b","amazing"])]; }
+  const ans = out.find(sc => sc.answer); if (ans) ans.post = [pick(["genius","bravo"])];
   if (L.remember) out.push({ num:"לקחת הלאה", ttl:"⭐ מה זוכרים", html:`<div class="ln big">${esc(L.remember)}</div><div class="ln text">כל אחד יכול להצליח. רק צריך תנאים נכונים.</div>`,
     say:`${L.remember} כל הכבוד שלא ויתרתם!` });
   return out;
@@ -541,6 +575,7 @@ async function runFrom(i){
   const id = ++runId; playing = true; $("#bPlay").textContent = "⏸";
   for (let k = i; k < scenes.length; k++) {
     drawScene(k);
+    for (const c of (scenes[k].pre || [])) if (!(await playClip(c, id))) return;
     const lns = [...$("#lines").querySelectorAll(".ln")];
     const capW = [...$("#cap").querySelectorAll(".w")];
     const mark = n => capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo"));
@@ -553,17 +588,19 @@ async function runFrom(i){
       const box = $("#lines"); if (el.offsetTop + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTop = el.offsetTop + el.offsetHeight - box.clientHeight + 10;
     }
     if (!(await speech)) return;
+    for (const c of (scenes[k].post || [])) if (!(await playClip(c, id))) return;
     if (!(await sleep(900 / rate, id))) return;
     if (k < scenes.length-1) $("#segs").children[k].style.setProperty("--p", 1);
   }
   $("#segs").lastElementChild.style.setProperty("--p", 1);
   playing = false; $("#bPlay").textContent = "↻";
 }
-function stopAll(){ runId++; playing = false; if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
+function stopAll(){ runId++; playing = false; try { VA.pause(); } catch(e){} if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
 
 const focusBoard = () => scrollTo({top: $("#board").getBoundingClientRect().top + scrollY - 70, behavior:"smooth"});
 $("#tapStart").onclick = () => { $("#tapStart").hidden = true; focusBoard();
   if (!heVoice && !muted) $("#lessonNotes").insertAdjacentHTML("beforeend", `<div class="note info">🔈 לא נמצא קול בעברית במכשיר הזה, אז השיעור מוצג עם כתוביות.</div>`);
+  try { if ("speechSynthesis" in window) speechSynthesis.speak(new SpeechSynthesisUtterance(" ")); } catch(e){} // פתיחת הקול באייפון
   runFrom(0); };
 $("#bPlay").onclick = () => { $("#tapStart").hidden = true;
   if (playing) { stopAll(); drawScene(cur, false); }
