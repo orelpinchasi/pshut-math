@@ -306,7 +306,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   <div class="wrap loading">
     <div class="orbit"><div class="planet"></div><div class="star">⭐</div></div>
     <div class="msg" id="loadMsg">קורא את השאלה…</div>
-    <div class="sub">זה לוקח בדרך כלל חצי דקה עד דקה. נשימה עמוקה 🙂</div>
+    <div class="sub">זה לוקח בדרך כלל דקה עד דקה וחצי – אל תסגרו את הדף. נשימה עמוקה 🙂</div>
   </div>
 </section>
 
@@ -456,10 +456,10 @@ async function onPick(e){
 $("#inCam").onchange = onPick; $("#inGal").onchange = onPick;
 $("#redo").onclick = () => { photo = null; $("#prevBox").hidden = true; $("#pickBox").hidden = false; };
 
-const LOAD_MSGS = ["קורא את השאלה…","מבין מה בעצם שואלים…","מפרק לשלבים קטנים…","פותר בטיוטה…","בודק את התשובה פעמיים…","מכין את הלוח…"];
+const LOAD_MSGS = ["קורא את השאלה…","מבין מה בעצם שואלים…","מכין סקירה על הנושא…","מצייר את התרגיל…","מפרק לשלבים קטנים…","פותר בטיוטה…","בודק את התשובה פעמיים…","מכין את הלוח…","עוד כמה שניות – שאלות ארוכות לוקחות קצת יותר זמן 🙂","כמעט מוכן…"];
 let loadTimer;
 function startLoading(){ let i=0; $("#loadMsg").textContent = LOAD_MSGS[0]; show("scrLoading");
-  loadTimer = setInterval(()=>{ i=Math.min(i+1,LOAD_MSGS.length-1); $("#loadMsg").textContent = LOAD_MSGS[i]; }, 3800); }
+  loadTimer = setInterval(()=>{ i=Math.min(i+1,LOAD_MSGS.length-1); $("#loadMsg").textContent = LOAD_MSGS[i]; }, 7000); }
 function stopLoading(){ clearInterval(loadTimer); }
 
 $("#goBtn").onclick = async () => {
@@ -467,11 +467,17 @@ $("#goBtn").onclick = async () => {
   if (!WORKER_URL) { openLesson(DEMO, [{cls:"info", html:"🛠️ <b>מצב הדגמה:</b> הפתרון האוטומטי עוד לא מחובר לשרת, אז הנה שיעור לדוגמה שמראה איך זה ייראה."}]); return; }
   startLoading();
   try {
-    const r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ image: photo.data, mediaType: photo.type, level, note: $("#note").value.trim() }) });
+    const ctrl = ("AbortController" in window) ? new AbortController() : null;
+    const tmo = setTimeout(() => ctrl && ctrl.abort(), 180000);
+    let r;
+    try {
+      r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, signal: ctrl ? ctrl.signal : undefined,
+        body: JSON.stringify({ image: photo.data, mediaType: photo.type, level, note: $("#note").value.trim() }) });
+    } catch(e) { clearTimeout(tmo); const er = new Error(e && e.name === "AbortError" ? "זה לקח יותר מדי זמן. נסו שוב – לפעמים זה עובד בניסיון השני." : "אין חיבור לשרת כרגע. בדקו את האינטרנט ונסו שוב."); er.tech = String(e && (e.name + ": " + e.message)); throw er; }
+    clearTimeout(tmo);
     const j = await r.json().catch(()=>({}));
     stopLoading();
-    if (!r.ok || !j.lesson) throw new Error(j.message || "משהו השתבש. נסו שוב בעוד רגע.");
+    if (!r.ok || !j.lesson) { const er = new Error(j.message || "משהו השתבש. נסו שוב בעוד רגע."); er.tech = "HTTP " + r.status + (j.error ? " · " + j.error : "") + (j.detail ? " · " + JSON.stringify(j.detail).slice(0, 300) : ""); throw er; }
     const L = j.lesson;
     if (L.readable === false || !Array.isArray(L.steps) || !L.steps.length) {
       show("scrCapture");
@@ -484,7 +490,8 @@ $("#goBtn").onclick = async () => {
     openLesson(L, notes);
   } catch(err) {
     stopLoading(); show("scrCapture");
-    $("#captureMsg").innerHTML = `<div class="note err">😕 ${esc(err.message || "אין חיבור כרגע.")} <button onclick="document.getElementById('goBtn').click()">ניסיון נוסף</button></div>`;
+    $("#captureMsg").innerHTML = `<div class="note err">😕 ${esc(err.message || "אין חיבור כרגע.")} <button onclick="document.getElementById('goBtn').click()">ניסיון נוסף</button></div>`
+      + (err.tech ? `<details style="font-size:11px;color:#888;margin-top:4px"><summary>פרטים טכניים (לאוראל)</summary><code dir="ltr">${esc(err.tech)}</code></details>` : "");
   }
 };
 $("#demoBtn").onclick = () => openLesson(DEMO, [{cls:"info", html:"▶ זה שיעור לדוגמה. כך ייראה ההסבר לשאלה שתצלמו."}]);
@@ -521,7 +528,7 @@ function speakFix(t){
     .replace(/(\d|[a-zA-Z])\s*[−–-]\s*(?=[\da-zA-Z(])/g, "$1 פחות ").replace(/(^|\s)[−–-]\s*(?=[\da-zA-Z(])/g, "$1 מינוס ").replace(/\s*[·×*]\s*/g, " כפול ").replace(/(\d)\s*\/\s*(\d)/g, "$1 חלקי $2")
     .replace(/\b(sin|cos|tan|ln|log)\b/gi, m => ({sin:"סינוס",cos:"קוסינוס",tan:"טנגנס",ln:"לן",log:"לוג"})[m.toLowerCase()])
     .replace(/\b[A-Za-z]{1,4}\b/g, w => w.split("").map(ch => LETTERS[ch.toLowerCase()] || ch).join(" "))
-    .replace(/[A-Za-z](?=[\u0590-\u05FF])|(?<=[\u0590-\u05FF-])[A-Za-z]\b/g, ch => " " + (LETTERS[ch.toLowerCase()] || ch) + " ")
+    .replace(/([\u0590-\u05FF-])([A-Za-z])\b/g, (m, h, ch) => h + " " + (LETTERS[ch.toLowerCase()] || ch) + " ").replace(/[A-Za-z](?=[\u0590-\u05FF])/g, ch => " " + (LETTERS[ch.toLowerCase()] || ch) + " ")
     .replace(/\s{2,}/g, " ").trim();
 }
 if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
