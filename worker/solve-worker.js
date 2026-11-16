@@ -204,7 +204,7 @@ const LESSON_TOOL = {
       answer: {
         type: "object",
         properties: {
-          tex: { type: "string", description: "התשובה הסופית ב-LaTeX" },
+          tex: { type: "string", description: "התשובה הסופית ב-LaTeX – נוסחה בלבד, בלי מילים ובלי יחידות (גם לא באנגלית). כמה סעיפים: AB=13,\\quad P=36" },
           say: { type: "string", description: "התשובה במילים לקריינות" },
         },
         required: ["tex", "say"],
