@@ -142,6 +142,7 @@ textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);bor
 .cb.main{background:var(--night);color:#fff;min-width:64px;height:56px;font-size:22px}
 .cb.small{font-size:13px;font-weight:700;height:38px;min-width:46px}
 
+.vtoast{max-width:460px;margin:8px auto 0;text-align:center;font-size:13px;color:var(--muted)}
 .after{max-width:460px;margin:18px auto 0;display:grid;gap:10px}
 .after a,.after button{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;background:var(--night);color:#fff;padding:14px 16px;border-radius:14px;font-weight:700;border:0;width:100%;text-align:right}
 .after .light{background:#fff;color:var(--night);box-shadow:0 4px 14px rgba(29,33,64,.08)}
@@ -276,8 +277,10 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
       <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
       <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
       <button class="cb small" id="bMute" aria-label="קול">🔊</button>
+      <button class="cb small" id="bVoice" aria-label="החלפת קול" hidden>🗣️</button>
     </div>
 
+    <div id="voiceToast" class="vtoast" hidden></div>
     <div class="after">
       <a class="gold" id="moreVideos" href="./">🎬 עוד סרטונים בנושא באתר <span>←</span></a>
       <button class="light" id="shareBtn">📤 שליחת הפתרון לחבר / לוואטסאפ <span>←</span></button>
@@ -418,9 +421,29 @@ $("#againBtn").onclick = () => { stopAll(); photo=null; $("#prevBox").hidden=tru
    ========================================================= */
 let scenes = [], cur = 0, playing = false, runId = 0, rate = 1, muted = store.get("muted")==="1", heVoice = null;
 
+let heVoices = [];
 function pickVoice(){
-  const vs = speechSynthesis.getVoices().filter(v => /^(he|iw)/i.test(v.lang));
-  heVoice = vs.find(v => /google/i.test(v.name)) || vs.find(v => /carmit/i.test(v.name)) || vs[0] || null;
+  heVoices = speechSynthesis.getVoices().filter(v => /^(he|iw)/i.test(v.lang));
+  const saved = store.get("voice");
+  heVoice = heVoices.find(v => v.name === saved) || heVoices.find(v => /natural|online|neural/i.test(v.name))
+         || heVoices.find(v => /google/i.test(v.name)) || heVoices.find(v => /carmit/i.test(v.name)) || heVoices[0] || null;
+  const b = document.getElementById("bVoice");
+  if (b) { b.hidden = heVoices.length < 2; b.title = heVoice ? heVoice.name : ""; }
+}
+
+/* הגייה נכונה: מנוע הדיבור בעברית לא יודע לקרוא אותיות באנגלית וסימנים – מתרגמים למילים */
+const LETTERS = {a:"איי",b:"בי",c:"סי",d:"די",e:"אי",f:"אף",g:"ג'י",h:"אייץ'",i:"איי",j:"ג'יי",k:"קיי",l:"אל",m:"אם",n:"אן",o:"או",p:"פי",q:"קיו",r:"אר",s:"אס",t:"טי",u:"יו",v:"וי",w:"דאבל יו",x:"איקס",y:"וואי",z:"זד"};
+function speakFix(t){
+  return String(t || "")
+    .replace(/\\\((.+?)\\\)/gs, " $1 ")
+    .replace(/√/g, " שורש של ").replace(/\^\s*2\b/g, " בריבוע ").replace(/\^\s*3\b/g, " בשלישית ").replace(/\^\s*(\d+)/g, " בחזקת $1 ")
+    .replace(/(\d)([a-zA-Z])/g, "$1 $2").replace(/\b([a-zA-Z])\(([^()]{1,8})\)/g, "$1 של $2")
+    .replace(/(\d)\s*%/g, "$1 אחוז").replace(/\s*=\s*/g, " שווה ").replace(/\s*\+\s*/g, " ועוד ")
+    .replace(/(\d|[a-zA-Z])\s*[−–-]\s*(?=[\da-zA-Z(])/g, "$1 פחות ").replace(/(^|\s)[−–-]\s*(?=[\da-zA-Z(])/g, "$1 מינוס ").replace(/\s*[·×*]\s*/g, " כפול ").replace(/(\d)\s*\/\s*(\d)/g, "$1 חלקי $2")
+    .replace(/\b(sin|cos|tan|ln|log)\b/gi, m => ({sin:"סינוס",cos:"קוסינוס",tan:"טנגנס",ln:"לן",log:"לוג"})[m.toLowerCase()])
+    .replace(/\b[A-Za-z]{1,4}\b/g, w => w.split("").map(ch => LETTERS[ch.toLowerCase()] || ch).join(" "))
+    .replace(/[A-Za-z](?=[\u0590-\u05FF])|(?<=[\u0590-\u05FF-])[A-Za-z]\b/g, ch => " " + (LETTERS[ch.toLowerCase()] || ch) + " ")
+    .replace(/\s{2,}/g, " ").trim();
 }
 if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 
@@ -502,9 +525,10 @@ function speak(text, id, onWord){
     let gotBoundary = false;
     const tick = setInterval(() => { if (id !== runId) return finish(); if (!gotBoundary && wi < words.length) onWord(wi++); }, per);
     if (muted || !heVoice || !("speechSynthesis" in window)) { setTimeout(finish, fallbackMs + 300); return; }
-    const u = new SpeechSynthesisUtterance(text);
+    const spoken = speakFix(text), same = spoken === text.trim();
+    const u = new SpeechSynthesisUtterance(spoken);
     u.voice = heVoice; u.lang = heVoice.lang; u.rate = 0.95 * rate; u.pitch = 1;
-    u.onboundary = e => { if (e.name && e.name !== "word") return; gotBoundary = true;
+    u.onboundary = e => { if (!same || (e.name && e.name !== "word")) return; gotBoundary = true;
       const idx = text.slice(0, e.charIndex).trim().split(/\s+/).filter(Boolean).length; onWord(Math.min(idx, words.length-1)); };
     u.onend = () => { onWord(words.length); finish(); };
     u.onerror = () => setTimeout(finish, 400);
@@ -547,6 +571,14 @@ $("#bPlay").onclick = () => { $("#tapStart").hidden = true;
 $("#bNext").onclick = () => { $("#tapStart").hidden = true; if (cur < scenes.length-1) { stopAll(); runFrom(cur+1); } };
 $("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(Math.max(0, cur-1)); };
 $("#bRate").onclick = () => { rate = rate===1 ? 1.25 : rate===1.25 ? 0.8 : 1; $("#bRate").textContent = (rate===0.8?"0.8":rate)+"×"; if (playing) runFrom(cur); };
+$("#bVoice").onclick = () => {
+  if (heVoices.length < 2) return;
+  heVoice = heVoices[(heVoices.indexOf(heVoice) + 1) % heVoices.length];
+  store.set("voice", heVoice.name); $("#bVoice").title = heVoice.name;
+  const n = document.getElementById("voiceToast"); n.textContent = "🗣️ " + heVoice.name.replace(/Microsoft|Google|Online|\(Natural\)|-.*$/g, "").trim(); n.hidden = false;
+  clearTimeout(window.__vt); window.__vt = setTimeout(() => n.hidden = true, 2500);
+  if (playing) runFrom(cur); else { const u = new SpeechSynthesisUtterance("שלום, ככה אני נשמע"); u.voice = heVoice; u.lang = heVoice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+};
 $("#bMute").onclick = () => { muted = !muted; store.set("muted", muted?"1":"0"); $("#bMute").textContent = muted ? "🔇" : "🔊"; if (playing) runFrom(cur); };
 document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); drawScene(cur,false); } });
 
