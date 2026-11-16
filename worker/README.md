@@ -32,7 +32,7 @@
 1. **Storage & Databases** ← **KV** ← **Create** ← שם `LIMITS`.
 2. ב-Worker: **Settings** ← **Bindings** ← **Add** ← **KV namespace** ← Variable name: `LIMITS`.
 
-ברירת המחדל היא 15 שאלות ביום לתלמיד. אפשר לשנות עם המשתנה `DAILY_LIMIT`, למשל `3`.
+כרגע מוגדר 50 שאלות ביום לתלמיד. אפשר לשנות עם המשתנה `DAILY_LIMIT`, למשל `3`.
 
 ## בעתיד: Claude כגיבוי או כספק ראשי (בתשלום)
 מוסיפים Secret נוסף בשם `ANTHROPIC_API_KEY`, עם מפתח מ-https://console.anthropic.com (שם גם כדאי להגדיר תקרת הוצאה חודשית).
