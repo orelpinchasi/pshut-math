@@ -179,7 +179,11 @@ const SYSTEM_PROMPT = `אתה מסביר בדיוק כמו אוראל פנחסי
 === פורמט הקריינות (say) ===
 - מוקרא בקול: רק מילים. "איקס בריבוע", "שלוש חלקי ארבע", "שורש של שמונה". בלי סימנים.
 - אותיות באנגלית כותבים בעברית כמו שאומרים אותן: x = "איקס", y = "וואי", AB = "איי בי", f(x) = "אף של איקס", sin = "סינוס". אף פעם לא אות לועזית בתוך say.
-- 1–3 משפטים לשלב, בקול של אוראל (הביטויים למעלה), בלי להגזים בסלנג.
+- 2–4 משפטים לשלב, בקול של אוראל (הביטויים למעלה), בלי להגזים בסלנג.
+- זו שיחה, לא הקראה! כתוב כמו שמורה מדבר עם תלמיד אחד שיושב לידו: גוף שני ("תסתכל", "שים לב", "מה אתה רואה כאן?"),
+  משפטים קצרים וטבעיים, שאלה קטנה ואז תשובה ("אז מה עושים עכשיו? פותחים סוגריים."), חיבור לשלב הקודם ("עכשיו, כשיש לנו את זה...").
+- אל תקריא את הלוח סימן אחרי סימן – תסביר במילים מה עושים ולמה. את החישוב עצמו התלמיד רואה על הלוח.
+- אסור לפתוח כל שלב באותה מילה. בלי "כעת", "לפיכך", "נבצע" – עברית מדוברת של כיתה, לא של ספר.
 
 התאמה לגיל: חטיבת ביניים – מילים פשוטות מאוד ודוגמאות מהחיים. 5 יח״ל – מונחים מדויקים, אבל עדיין צעדים קטנים ואותו טון.`;
 
@@ -311,6 +315,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
   // gemini-flash-latest ראשון – נבדק ועונה תוך 20–40 שניות. מודלים איטיים מדי נעצרים אחרי 50 שניות.
   const models = [env.GEMINI_MODEL,
     "gemini-flash-latest", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-3.6-flash", "gemini-3.8-flash",
+    "gemini-3.7-flash", "gemini-3.5-flash", "gemini-4-hydrogen",
     "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"].filter(Boolean);
   const started = Date.now();
   let last;
@@ -329,7 +334,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
         contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 12000 },
+        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 },
       }),
     });
     } catch (e) { clearTimeout(timer); last = new ProviderError(504, `gemini ${model}`, "timeout"); continue; }
@@ -340,7 +345,8 @@ async function solveWithGemini(env, image, mediaType, userText) {
     const data = await res.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
     const lesson = parseJsonLoose(text);
-    if (!lesson) { console.log("gemini bad json", text.slice(0, 300)); throw new ProviderError(502, `gemini ${model}: bad json`, text.slice(0, 300)); }
+    // JSON שבור (למשל נקטע באמצע) – לא עוצרים! עוברים למודל הבא ברשימה.
+    if (!lesson) { console.log("gemini bad json", model, data.candidates?.[0]?.finishReason, text.slice(0, 200)); last = new ProviderError(502, `gemini ${model}: bad json (${data.candidates?.[0]?.finishReason || "?"})`, text.slice(-200)); continue; }
     return lesson;
   }
   throw last || new ProviderError(502, "gemini: no model");
@@ -350,7 +356,15 @@ function parseJsonLoose(text) {
   const t = String(text || "").replace(/^\s*```(?:json)?/i, "").replace(/```\s*$/, "");
   const a = t.indexOf("{"), b = t.lastIndexOf("}");
   if (a < 0 || b < a) return null;
-  try { return JSON.parse(t.slice(a, b + 1)); } catch { return null; }
+  const body = t.slice(a, b + 1);
+  // \frac שנכתב עם לוכסן אחד הופך ל-formfeed+"rac" – מחזירים ל-LaTeX
+  const fix = (k, v) => typeof v === "string" ? v.replace(/[\f\t\b\r](?=[a-zA-Z])/g, c => "\\" + ({ "\f": "f", "\t": "t", "\b": "b", "\r": "r" })[c]) : v;
+  try { return JSON.parse(body, fix); } catch {}
+  // תיקון נפוץ: LaTeX עם לוכסן בודד (\le, \sqrt, \cdot) – מכפילים כל לוכסן שאינו escape חוקי
+  try { return JSON.parse(body.replace(/\\(?!["\\/bfnrtu])/g, "\\\\"), fix); } catch {}
+  // גם \frac / \times / \beta נראים כמו escape חוקי (\f \t \b) – מכפילים אם אחריהם אות
+  try { return JSON.parse(body.replace(/\\\\/g, "\u0000").replace(/\\([bfnrt])(?=[a-zA-Z])/g, "\\\\$1").replace(/\\(?!["\\/bfnrtu])/g, "\\\\").replace(/\u0000/g, "\\\\")); } catch {}
+  return null;
 }
 
 /* מנקה ומוודא שהשיעור תקין לפני שמחזירים לדף */
@@ -384,6 +398,56 @@ function normalize(L) {
   return L;
 }
 
+
+/* ---------- קול טבעי: Gemini Live (native audio) ---------- */
+function b64ToBytes(b64) { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+function pcmToWav(chunks, rate = 24000) {
+  const len = chunks.reduce((n, c) => n + c.length, 0);
+  const buf = new Uint8Array(44 + len), dv = new DataView(buf.buffer);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) buf[o + i] = s.charCodeAt(i); };
+  w(0, "RIFF"); dv.setUint32(4, 36 + len, true); w(8, "WAVE"); w(12, "fmt "); dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true);
+  dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); w(36, "data"); dv.setUint32(40, len, true);
+  let o = 44; for (const c of chunks) { buf.set(c, o); o += c.length; }
+  return buf;
+}
+const VOICE_PROMPT = `אתה קריין. התפקיד היחיד שלך: להקריא בקול את הטקסט שהמשתמש שולח – מילה במילה, בעברית, בלי להוסיף, בלי להשמיט ובלי לענות עליו.
+הקול: מורה למתמטיקה ישראלי, חם, רגוע ובטוח, שמדבר עם תלמיד אחד כמו בשיעור פרטי – שיחה טבעית, לא הקראה. קצב נינוח, הפסקות קטנות אחרי פסיקים, חיוך בקול.`;
+async function liveSpeak(env, text, { model = "gemini-3.1-flash-live-preview", voice = "Puck", timeoutMs = 45000 } = {}) {
+  const url = "https://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=" + encodeURIComponent(String(env.GEMINI_API_KEY).trim());
+  const resp = await fetch(url, { headers: { Upgrade: "websocket", "x-goog-api-key": String(env.GEMINI_API_KEY).trim() } });
+  const ws = resp.webSocket;
+  if (!ws) throw new Error("live: no websocket (" + resp.status + ") " + (await resp.text()).slice(0, 200));
+  ws.accept();
+  const chunks = []; let setupDone = false;
+  const done = new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("live: timeout")), timeoutMs);
+    ws.addEventListener("message", async ev => {
+      let s = ev.data; if (typeof s !== "string") s = new TextDecoder().decode(s instanceof ArrayBuffer ? s : await new Response(s).arrayBuffer());
+      let m; try { m = JSON.parse(s); } catch { return; }
+      if (m.setupComplete && !setupDone) {
+        setupDone = true;
+        ws.send(JSON.stringify({ clientContent: { turns: [{ role: "user", parts: [{ text: "הקרא בדיוק את הטקסט הזה:\n" + text }] }], turnComplete: true } }));
+      }
+      for (const p of m.serverContent?.modelTurn?.parts || []) if (p.inlineData?.data) chunks.push(b64ToBytes(p.inlineData.data));
+      if (m.serverContent?.turnComplete || m.serverContent?.generationComplete && chunks.length) { clearTimeout(t); resolve(); }
+      if (m.error) { clearTimeout(t); reject(new Error("live: " + JSON.stringify(m.error).slice(0, 200))); }
+    });
+    ws.addEventListener("close", ev => { clearTimeout(t); chunks.length ? resolve() : reject(new Error("live closed " + ev.code + " " + ev.reason)); });
+  });
+  ws.send(JSON.stringify({ setup: {
+    model: "models/" + model,
+    generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
+    systemInstruction: { parts: [{ text: VOICE_PROMPT }] },
+  } }));
+  try { await done; } finally { try { ws.close(); } catch {} }
+  // 24kHz → 16kHz (קובץ קטן יותר לטלפון)
+  const len = chunks.reduce((n, c) => n + c.length, 0), all = new Uint8Array(len); let o = 0; for (const c of chunks) { all.set(c, o); o += c.length; }
+  const src = new Int16Array(all.buffer, 0, len >> 1), n = Math.floor(src.length * 2 / 3), out = new Int16Array(n);
+  for (let i = 0; i < n; i++) { const x = i * 1.5, k = Math.floor(x), f = x - k; out[i] = src[k] * (1 - f) + (src[k + 1] ?? src[k]) * f; }
+  return pcmToWav([new Uint8Array(out.buffer)], 16000);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -403,6 +467,23 @@ export default {
     if (!allowed.includes(origin)) return json({ error: "origin", message: "הבקשה הגיעה מאתר לא מורשה." }, 403);
     if (!env.ANTHROPIC_API_KEY && !env.GEMINI_API_KEY) return json({ error: "config", message: "השרת עוד לא הוגדר (חסר מפתח API)." }, 500);
 
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "bad_json" }, 400); }
+
+    // קול טבעי לשלב אחד בשיעור: { tts: "טקסט", voice: "Puck" } → audio/wav
+    if (body && typeof body.tts === "string") {
+      const text = body.tts.slice(0, 1500).trim();
+      if (!text) return json({ error: "no_text" }, 400);
+      const VOICES = ["Puck", "Charon", "Orus", "Fenrir", "Kore", "Aoede"];
+      const voice = VOICES.includes(body.voice) ? body.voice : "Puck";
+      for (const model of ["gemini-3.1-flash-live-preview", "gemini-3.8-live"]) {
+        try { const wav = await liveSpeak(env, text, { model, voice, timeoutMs: 40000 });
+          if (wav.length > 2000) return new Response(wav, { headers: { ...cors, "Content-Type": "audio/wav", "Cache-Control": "no-store" } });
+        } catch (e) { console.log("tts failed", model, e.message); }
+      }
+      return json({ error: "tts" }, 502);
+    }
+
     // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS). נספרות רק שאלות שקיבלו תשובה.
     let quotaKey = null, used = 0;
     if (env.LIMITS) {
@@ -413,8 +494,6 @@ export default {
       if (used >= limit) return json({ error: "limit", message: `הגעת למכסה היומית (${limit} שאלות). נתראה מחר! 🌟` }, 429);
     }
 
-    let body;
-    try { body = await request.json(); } catch { return json({ error: "bad_json" }, 400); }
     const { image, mediaType = "image/jpeg", note = "", level = "" } = body || {};
     if (typeof image !== "string" || image.length < 100) return json({ error: "no_image", message: "לא התקבלה תמונה." }, 400);
     if (image.length > MAX_IMAGE_BYTES) return json({ error: "too_big", message: "התמונה גדולה מדי." }, 413);
