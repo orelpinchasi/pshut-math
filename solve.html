@@ -19,7 +19,7 @@
 <title>צלמו שאלה – פשוט להצליח במתמטיקה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&family=Playpen+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <style>
@@ -131,6 +131,7 @@ textarea{width:100%;font:inherit;font-size:15px;border:1px solid var(--line);bor
 .answer-box .ln.math{font-size:clamp(20px,6vw,28px)}
 .cap{position:relative;z-index:1;margin:0 12px 12px;background:rgba(10,14,34,.72);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.5;min-height:3.2em}
 .cap .w{transition:color .15s}
+.cap.waiting::before{content:"🎙️ מכין את הקול…";display:block;font-size:12px;opacity:.7}
 .cap .w.on{color:var(--gold2)}
 .cap .w.done{color:#fff}
 .cap .w.todo{color:rgba(255,255,255,.55)}
@@ -250,6 +251,54 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   .written{margin-top:0;max-width:none;position:sticky;top:72px;max-height:calc(100vh - 92px);overflow-y:auto;scroll-behavior:smooth}
   .written.has-side{max-width:none}
 }
+/* ===== השאלה למעלה, הפתרון מתחת – כמו דף מחברת ===== */
+.qcard{position:relative;background:#fff;border-radius:16px 16px 0 0;border:2px solid #e9e2cf;border-bottom:0;max-width:460px;margin:0 auto;padding:6px 8px 4px;box-shadow:0 6px 18px rgba(29,33,64,.08)}
+.qcard .qlbl{position:absolute;top:6px;right:10px;font-size:11px;background:#f5b83d;color:#141b3a;border-radius:999px;padding:1px 8px;font-weight:700;z-index:1}
+.qcard .qin{max-height:19vh;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.qcard .qin img{max-width:100%;max-height:19vh;object-fit:contain;display:block;border-radius:8px}
+.qcard .qin .qtxt{font-family:"Playpen Sans Hebrew",Rubik,sans-serif;font-size:14px;padding:18px 6px 4px;text-align:center;line-height:1.5}
+.qcard .qz{position:absolute;bottom:6px;left:8px;border:0;background:#141b3a;color:#fff;border-radius:999px;width:30px;height:30px;font-size:14px}
+.qcard:not([hidden]) + .board{border-radius:0 0 20px 20px;border-top-width:2px}
+.qbig{position:fixed;inset:0;z-index:60;background:rgba(14,19,44,.94);overflow:auto;padding:50px 10px 20px;display:flex;align-items:flex-start;justify-content:center}
+.qbig[hidden]{display:none}
+.qbig img{max-width:100%;height:auto;border-radius:10px;background:#fff}
+.qbig .x{position:fixed;top:12px;left:12px;border:0;background:#fff;color:#141b3a;border-radius:999px;width:36px;height:36px;font-size:18px}
+.qbig .qtxt{background:#fff;border-radius:14px;padding:16px;max-width:600px;font-size:17px}
+/* הלוח = דף מחברת עם כתב יד */
+.board{background:#fffdf6;background-image:repeating-linear-gradient(180deg,transparent 0 27px,#dfe7f5 27px 28px);color:#1d2a6b;border:3px solid #e9e2cf;box-shadow:0 10px 30px rgba(20,27,58,.14)}
+.board::before{display:none}
+.board::after{content:"";position:absolute;top:0;bottom:0;right:30px;width:2px;background:rgba(239,111,108,.35);pointer-events:none}
+.board .katex{color:#1d2a6b}
+.segs i{background:rgba(29,42,107,.15)}
+.scene-top .ttl{font-family:"Gveret Levin","Playpen Sans Hebrew",Rubik;font-size:21px;color:#1d2a6b}
+.scene-top .num{font-size:11px}
+.lines{gap:8px;padding:6px 40px 6px 14px}
+.ln.text{font-family:"Playpen Sans Hebrew",Rubik,sans-serif;font-size:clamp(13px,3.7vw,16px)}
+.ln.text.in{opacity:1}
+.ln.math{font-size:clamp(15px,4.3vw,20px)}
+.big{font-family:"Gveret Levin","Playpen Sans Hebrew";font-size:clamp(18px,5vw,23px);color:#1d2a6b}
+.bigq{background:#fff;border:1px dashed #c9cfe0;font-size:14px}
+.bigq .k,.answer-box .k{color:#b07d10}
+.answer-box{background:#fff3cf}
+.answer-box .ln.math{font-size:clamp(17px,5vw,23px)}
+.hl{color:#1d2a6b;background:linear-gradient(transparent 55%,#ffe27a 55%);border-radius:3px}
+.cap{background:rgba(255,255,255,.92);border:1px solid #e3e6f0;color:#1d2a6b;font-size:13.5px;line-height:1.5;padding:5px 10px;min-height:0;height:calc(3em + 10px);overflow:hidden;margin:0 10px 8px;flex:0 0 auto}
+.cap .w.on{color:#b07d10;font-weight:700}.cap .w.done{color:#1d2a6b}.cap .w.todo{color:rgba(29,42,107,.45)}
+.figpane{color:#1d2a6b;border-bottom:1px dashed rgba(29,42,107,.2);height:30%}
+.figbtn{border-color:rgba(29,42,107,.35);background:#fff;color:#1d2a6b}
+.bgiv,.bgiv .katex{color:#1d2a6b}.bgiv b{color:#b07d10}
+.tool-l{background:#f3f5fb}
+.figov{background:rgba(255,253,246,.98)}
+.figov .x{background:#141b3a;color:#fff}
+.tap{background:rgba(255,253,246,.55)}
+.player .board{height:31vh;max-height:31vh}
+.wr .st h4,.wr .ans b{font-family:"Gveret Levin",Rubik}
+.wr .st h4{font-size:20px}
+.wr .st p,.wr .t,.wr .q,.wr .idea{font-size:13.5px}
+.wr .m{font-size:15px}
+@media (min-width:900px){
+  .player .board{height:auto;max-height:calc(100vh - 200px - 21vh);aspect-ratio:9/11}
+}
 </style>
 </head>
 <body>
@@ -268,7 +317,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 <section id="scrCapture">
   <div class="hero">
     <div class="wrap">
-      <span class="eyebrow">📸 צלמו שאלה · קבלו הסבר · בחינם</span>
+      <span class="eyebrow">📱 צלמו שאלה בטלפון · קבלו הסבר · בחינם</span>
       <h1>נתקעתם בשאלה?<br><em>צלמו אותה.</em></h1>
       <p>תוך כמה שניות תקבלו פתרון מפורט, שלב אחרי שלב, בשיטה של פשוט להצליח: קודם מבינים, ואז זה נהיה פשוט. ואם בא לכם, גם הסבר מונפש עם קול.</p>
     </div>
@@ -277,8 +326,8 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
     <div class="panel">
       <div id="pickBox">
         <div class="shoot">
-          <label class="cam"><span class="ic">📷</span>צלמו שאלה<input type="file" accept="image/*" capture="environment" id="inCam"></label>
-          <label class="gal"><span class="ic">🖼️</span>העלאה מהגלריה<input type="file" accept="image/*" id="inGal"></label>
+          <label class="cam"><span class="ic"><svg width="38" height="38" viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="3" width="24" height="42" rx="5" fill="#1d2140"/><rect x="15" y="9" width="18" height="28" rx="2" fill="#fff"/><circle cx="24" cy="41" r="1.8" fill="#f5b83d"/><path d="M18 17h12M18 22h8M18 27h11" stroke="#1d2140" stroke-width="1.6" stroke-linecap="round"/><text x="24" y="34.5" font-size="6.5" font-family="Arial" font-weight="700" text-anchor="middle" fill="#d99a22">x²</text></svg></span>צלמו בטלפון<input type="file" accept="image/*" capture="environment" id="inCam"></label>
+          <label class="gal"><span class="ic"><svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 4h21l9 9v31H10z" fill="#fff" stroke="#1d2140" stroke-width="2.2" stroke-linejoin="round"/><path d="M31 4v9h9" fill="none" stroke="#1d2140" stroke-width="2.2" stroke-linejoin="round"/><text x="25" y="28" font-size="11" font-family="Arial" font-weight="700" text-anchor="middle" fill="#1d2140">π √x</text><path d="M16 35h18" stroke="#f5b83d" stroke-width="2.4" stroke-linecap="round"/></svg></span>שאלה ששמורה בטלפון<input type="file" accept="image/*" id="inGal"></label>
         </div>
         <div class="tips"><span>☀️ באור טוב</span><span>📐 ישר מלמעלה</span><span>1️⃣ שאלה אחת בכל פעם</span></div>
       </div>
@@ -323,6 +372,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
     <div class="vm strong" id="vmTop" hidden></div>
     <div class="lesson-grid">
       <div class="player" id="player">
+      <div class="qcard" id="qCard" hidden><span class="qlbl">📄 השאלה שלך</span><div class="qin" id="qIn"></div><button class="qz" id="qZoom" aria-label="הגדלת השאלה">🔍</button></div>
       <div class="board" id="board">
         <div class="segs" id="segs"></div>
         <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span><button class="figbtn" id="figBtn" hidden>📋 נתונים</button></div>
@@ -339,7 +389,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
         <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
         <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
         <button class="cb small" id="bMute" aria-label="קול">🔊</button>
-        <button class="cb small" id="bVoice" aria-label="החלפת קול" hidden>🗣️</button>
+        <button class="cb small" id="bVoice" aria-label="החלפת קול">🗣️</button>
       </div>
         <div id="voiceToast" class="vtoast" hidden></div>
         <p class="synchint">👆 לחיצה על שלב בפתרון הכתוב – קופצת אליו בסרטון</p>
@@ -359,6 +409,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   </div>
 </section>
 
+<div class="qbig" id="qBig" hidden><button class="x" id="qBigX" aria-label="סגירה">×</button><div id="qBigIn"></div></div>
 <div class="ytm" id="ytm"><div class="box"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="סרטון"></iframe>
   <div class="bar"><span id="ytt"></span><span><a id="ytl" target="_blank" rel="noopener">ביוטיוב ↗</a> <button class="x" id="ytx" aria-label="סגירה">×</button></span></div></div></div>
 
@@ -505,7 +556,7 @@ $("#goBtn").onclick = async () => {
     const notes = [];
     if (L.confidence === "low") notes.push({cls:"warn", html:"⚠️ <b>שימו לב:</b> לא הייתי בטוח בקריאה של חלק מהשאלה. בדקו בפתיחה שהשאלה שהבנתי היא באמת השאלה שלכם."});
     store.set("last", JSON.stringify(L));
-    openLesson(L, notes);
+    openLesson(L, notes, photo && photo.url);
   } catch(err) {
     stopLoading(); show("scrCapture");
     $("#captureMsg").innerHTML = `<div class="note err">😕 ${esc(err.message || "אין חיבור כרגע.")} <button onclick="document.getElementById('goBtn').click()">ניסיון נוסף</button></div>`
@@ -527,7 +578,7 @@ function pickVoice(){
   heVoice = heVoices.find(v => v.name === saved) || heVoices.find(v => /natural|online|neural/i.test(v.name))
          || heVoices.find(v => /google/i.test(v.name)) || heVoices.find(v => /carmit/i.test(v.name)) || heVoices[0] || null;
   const b = document.getElementById("bVoice");
-  if (b) { b.hidden = heVoices.length < 2; b.title = heVoice ? heVoice.name : ""; }
+  if (b) { b.hidden = false; b.title = "החלפת קול"; }
 }
 
 /* הגייה נכונה: מנוע הדיבור בעברית לא יודע לקרוא אותיות באנגלית וסימנים – מתרגמים למילים */
@@ -587,7 +638,7 @@ function buildScenes(L){
     html:`${L.question ? `<div class="ln text bigq"><span class="k">השאלה כפי שהבנתי</span>${mixed(L.question)}</div>` : ""}
           ${L.big_idea ? `<div class="ln big">💡 ${esc(L.big_idea)}</div>` : ""}`,
     say:`בואו נפתור את זה יחד. ${L.big_idea || ""}` });
-  const bfig = figSVG(L.figure, true), bgiv = giversHTML(L, "bgiv");
+  const bfig = figSVG(L.figure, false), bgiv = giversHTML(L, "bgiv");
   if (bfig || bgiv) out.push({ key:"givens", num:"הנתונים", ttl:"📋 מה נתון ומה מחפשים", hl:"all", html:`<div class="ln text bgiv" style="text-align:right">${bgiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`,
     say: (() => { const pl = a => (a || []).map(g => String(g).replace(/\\[()]/g, "").replace(/\\perp/g, "⊥").replace(/\\angle/g, "∠").replace(/\\cdot/g, "·").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "").trim());
       return "בוא נסדר את מה שיש לנו. " + (L.givens && L.givens.length ? "נתון לנו: " + pl(L.givens).join(". ") + ". " : "") + (L.wanted && L.wanted.length ? "ומה מחפשים: " + pl(L.wanted).join(". ") + "." : ""); })() });
@@ -613,8 +664,13 @@ function buildScenes(L){
   return out;
 }
 
-function openLesson(L, notes=[]){
-  stopAll();
+function openLesson(L, notes=[], img=null){
+  stopAll(); ttsReset();
+  // השאלה של התלמיד – תמיד למעלה, מעל הפתרון
+  const qtxt = L.question ? `<div class="qtxt">${mixed(L.question)}</div>` : "";
+  $("#qIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : qtxt;
+  $("#qBigIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : qtxt;
+  $("#qCard").hidden = !(img || qtxt);
   scenes = buildScenes(L); cur = 0;
   $("#lessonNotes").innerHTML = notes.map(n => `<div class="note ${n.cls}">${n.html}</div>`).join("");
   $("#lTitle").textContent = L.title || "השיעור שלך";
@@ -625,11 +681,12 @@ function openLesson(L, notes=[]){
   $("#bMute").textContent = muted ? "🔇" : "🔊";
   renderWritten(L);
   window._lesson = L;
-  const ovFig = figSVG(L.figure, true), ovGiv = giversHTML(L, "bgiv");
+  const ovFig = figSVG(L.figure, false), ovGiv = giversHTML(L, "bgiv");
   $("#figOvIn").innerHTML = (ovFig ? `<div class="bfig">${ovFig}</div>` : "") + `<div class="bgiv">${ovGiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`;
   $("#figBtn").hidden = !(ovFig || ovGiv); $("#figOv").classList.remove("on");
   showMatches(L);
   drawScene(0, false);
+  ttsPrefetch(0);
   $("#tapStart").hidden = false;
   show("scrLesson");
 }
@@ -808,11 +865,63 @@ function updateFigPane(sc){
   let hl = new Set();
   if (sc.hl === "all") hl = new Set();
   else if (sc.hl) hl = hlSet(L.figure, sc.hl);
-  pane.innerHTML = figSVG(L.figure, true, hl); pane.hidden = false;
+  pane.innerHTML = figSVG(L.figure, false, hl); pane.hidden = false;
 }
 const sleep = (ms, id) => new Promise(r => setTimeout(() => r(id === runId), ms));
 
-function speak(text, id, onWord){
+/* ===== קול טבעי (Gemini) – כל שלב מוקלט בשרת, עם גיבוי לקול של המכשיר ===== */
+const NAT_VOICES = [["Puck","קול טבעי 1"],["Charon","קול טבעי 2"],["Orus","קול טבעי 3"],["Fenrir","קול טבעי 4"]];
+let natVoice = store.get("natVoice") || "Puck"; // "device" = הקול של המכשיר
+let ttsCache = {}, ttsQueue = [], ttsBusy = 0, ttsFails = 0;
+const NA = new Audio(); NA.preload = "auto";
+function ttsReset(){ Object.values(ttsCache).forEach(e => e.url && URL.revokeObjectURL(e.url)); ttsCache = {}; ttsQueue = []; ttsFails = 0; }
+function ttsWanted(){ return WORKER_URL && natVoice !== "device" && ttsFails < 3; }
+function ttsGet(k){
+  if (!ttsWanted() || !scenes[k] || !scenes[k].say.trim()) return null;
+  const key = k + "|" + natVoice;
+  if (ttsCache[key]) return ttsCache[key].p;
+  const e = ttsCache[key] = {};
+  e.p = new Promise(res => { ttsQueue.push({ k, e, res, voice: natVoice }); ttsPump(); });
+  return e.p;
+}
+function ttsPump(){
+  while (ttsBusy < 2 && ttsQueue.length) {
+    const job = ttsQueue.shift(); ttsBusy++;
+    const ctrl = ("AbortController" in window) ? new AbortController() : null; const t = setTimeout(() => ctrl && ctrl.abort(), 45000);
+    fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, signal: ctrl ? ctrl.signal : undefined,
+      body: JSON.stringify({ tts: speakFix(scenes[job.k].say), voice: job.voice }) })
+      .then(r => r.ok && /audio/.test(r.headers.get("content-type") || "") ? r.blob() : Promise.reject(r.status))
+      .then(b => { job.e.url = URL.createObjectURL(b); ttsFails = 0; job.res(job.e.url); })
+      .catch(() => { ttsFails++; job.res(null); })
+      .finally(() => { clearTimeout(t); ttsBusy--; ttsPump(); });
+  }
+}
+function ttsPrefetch(k){ for (let j = k; j < Math.min(scenes.length, k + 3); j++) ttsGet(j); }
+function playNatural(url, id, words, onWord){
+  return new Promise(resolve => {
+    let done = false, tick;
+    const finish = ok => { if (done) return; done = true; clearInterval(tick); NA.onended = NA.onerror = null; resolve(ok); };
+    NA.onended = () => { onWord(words.length); finish(true); };
+    NA.onerror = () => finish(false);
+    NA.src = url; NA.playbackRate = rate;
+    tick = setInterval(() => { if (id !== runId) { NA.pause(); return finish(true); }
+      if (NA.duration > 0) onWord(Math.min(words.length - 1, Math.floor(NA.currentTime / NA.duration * words.length))); }, 120);
+    const pr = NA.play(); if (pr && pr.catch) pr.catch(() => finish(false));
+  });
+}
+async function speak(text, id, onWord, k){
+  if (!muted && ttsWanted() && k != null) {
+    ttsPrefetch(k);
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const cap = $("#cap"); let got = false; const slow = setTimeout(() => { if (!got && id === runId) cap.classList.add("waiting"); }, 600);
+    const url = await Promise.race([ttsGet(k), new Promise(r => setTimeout(() => r(null), 20000))]); got = true;
+    clearTimeout(slow); cap.classList.remove("waiting");
+    if (id !== runId) return false;
+    if (url && await playNatural(url, id, words, onWord)) return id === runId;
+  }
+  return speakDevice(text, id, onWord);
+}
+function speakDevice(text, id, onWord){
   return new Promise(resolve => {
     const words = text.trim().split(/\s+/).filter(Boolean);
     const fallbackMs = Math.max(2200, words.length * 420) / rate;
@@ -842,9 +951,9 @@ async function runFrom(i){
     for (const c of (scenes[k].pre || [])) if (!(await playClip(c, id))) return;
     const lns = [...$("#lines").querySelectorAll(".ln")];
     const capW = [...$("#cap").querySelectorAll(".w")];
-    const mark = n => capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo"));
+    const mark = n => { capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo")); const w = capW[Math.min(n, capW.length-1)], c = $("#cap"); if (w) c.scrollTop = Math.max(0, w.offsetTop - 5); };
     // מילים מופיעות על הלוח במקביל לקריינות
-    const speech = speak(scenes[k].say, id, mark);
+    const speech = speak(scenes[k].say, id, mark, k);
     for (const el of lns) {
       if (!(await sleep(el === lns[0] ? 250 : 1300 / rate, id))) return;
       const len = el.textContent.length; el.style.setProperty("--d", Math.min(1.4, .35 + len*.02)/rate + "s");
@@ -859,12 +968,16 @@ async function runFrom(i){
   $("#segs").lastElementChild.style.setProperty("--p", 1);
   playing = false; $("#bPlay").textContent = "↻";
 }
-function stopAll(){ runId++; playing = false; try { VA.pause(); } catch(e){} if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
+function stopAll(){ runId++; playing = false; try { VA.pause(); NA.pause(); } catch(e){} if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
 
+$("#qZoom").onclick = () => { $("#qBig").hidden = false; };
+$("#qIn").onclick = () => { $("#qBig").hidden = false; };
+$("#qBigX").onclick = () => { $("#qBig").hidden = true; };
 const focusBoard = () => scrollTo({top: $("#board").getBoundingClientRect().top + scrollY - 70, behavior:"smooth"});
 $("#tapStart").onclick = () => { $("#tapStart").hidden = true; focusBoard();
-  if (!heVoice && !muted) $("#lessonNotes").insertAdjacentHTML("beforeend", `<div class="note info">🔈 לא נמצא קול בעברית במכשיר הזה, אז השיעור מוצג עם כתוביות.</div>`);
+  if (!heVoice && !muted && !ttsWanted()) $("#lessonNotes").insertAdjacentHTML("beforeend", `<div class="note info">🔈 לא נמצא קול בעברית במכשיר הזה, אז השיעור מוצג עם כתוביות.</div>`);
   try { if ("speechSynthesis" in window) speechSynthesis.speak(new SpeechSynthesisUtterance(" ")); } catch(e){} // פתיחת הקול באייפון
+  try { NA.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="; const p = NA.play(); p && p.catch && p.catch(()=>{}); } catch(e){}
   runFrom(0); };
 $("#bPlay").onclick = () => { $("#tapStart").hidden = true;
   if (playing) { stopAll(); drawScene(cur, false); }
@@ -873,12 +986,12 @@ $("#bNext").onclick = () => { $("#tapStart").hidden = true; if (cur < scenes.len
 $("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(Math.max(0, cur-1)); };
 $("#bRate").onclick = () => { rate = rate===1 ? 1.25 : rate===1.25 ? 0.8 : 1; $("#bRate").textContent = (rate===0.8?"0.8":rate)+"×"; if (playing) runFrom(cur); };
 $("#bVoice").onclick = () => {
-  if (heVoices.length < 2) return;
-  heVoice = heVoices[(heVoices.indexOf(heVoice) + 1) % heVoices.length];
-  store.set("voice", heVoice.name); $("#bVoice").title = heVoice.name;
-  const n = document.getElementById("voiceToast"); n.textContent = "🗣️ " + heVoice.name.replace(/Microsoft|Google|Online|\(Natural\)|-.*$/g, "").trim(); n.hidden = false;
+  const opts = NAT_VOICES.map(v => v[0]).concat(heVoices.length ? ["device"] : []);
+  natVoice = opts[(opts.indexOf(natVoice) + 1) % opts.length]; store.set("natVoice", natVoice); ttsFails = 0;
+  const label = natVoice === "device" ? "קול המכשיר" + (heVoice ? " (" + heVoice.name.replace(/Microsoft|Google|Online|\(Natural\)|-.*$/g, "").trim() + ")" : "") : NAT_VOICES.find(v => v[0] === natVoice)[1];
+  const n = document.getElementById("voiceToast"); n.textContent = "🗣️ " + label; n.hidden = false;
   clearTimeout(window.__vt); window.__vt = setTimeout(() => n.hidden = true, 2500);
-  if (playing) runFrom(cur); else { const u = new SpeechSynthesisUtterance("שלום, ככה אני נשמע"); u.voice = heVoice; u.lang = heVoice.lang; speechSynthesis.cancel(); speechSynthesis.speak(u); }
+  if (playing) runFrom(cur); else ttsPrefetch(cur);
 };
 $("#bMute").onclick = () => { muted = !muted; store.set("muted", muted?"1":"0"); $("#bMute").textContent = muted ? "🔇" : "🔊"; if (playing) runFrom(cur); };
 document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); drawScene(cur,false); } });
