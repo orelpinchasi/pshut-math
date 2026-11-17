@@ -409,8 +409,8 @@ function pcmToWav(chunks, rate = 24000) {
 const VOICE_PROMPT = `אתה קריין. התפקיד היחיד שלך: להקריא בקול את הטקסט שהמשתמש שולח – מילה במילה, בעברית, בלי להוסיף, בלי להשמיט ובלי לענות עליו.
 הקול: מורה למתמטיקה ישראלי, חם, רגוע ובטוח, שמדבר עם תלמיד אחד כמו בשיעור פרטי – שיחה טבעית, לא הקראה. קצב נינוח, הפסקות קטנות אחרי פסיקים, חיוך בקול.`;
 async function liveSpeak(env, text, { model = "gemini-2.5-flash-native-audio-latest", voice = "Puck", timeoutMs = 45000 } = {}) {
-  const url = "https://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);
-  const resp = await fetch(url, { headers: { Upgrade: "websocket" } });
+  const url = "https://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=" + encodeURIComponent(String(env.GEMINI_API_KEY).trim());
+  const resp = await fetch(url, { headers: { Upgrade: "websocket", "x-goog-api-key": String(env.GEMINI_API_KEY).trim() } });
   const ws = resp.webSocket;
   if (!ws) throw new Error("live: no websocket (" + resp.status + ") " + (await resp.text()).slice(0, 200));
   ws.accept();
