@@ -393,6 +393,52 @@ function normalize(L) {
   return L;
 }
 
+
+/* ---------- קול טבעי: Gemini Live (native audio) ---------- */
+function b64ToBytes(b64) { const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+function pcmToWav(chunks, rate = 24000) {
+  const len = chunks.reduce((n, c) => n + c.length, 0);
+  const buf = new Uint8Array(44 + len), dv = new DataView(buf.buffer);
+  const w = (o, s) => { for (let i = 0; i < s.length; i++) buf[o + i] = s.charCodeAt(i); };
+  w(0, "RIFF"); dv.setUint32(4, 36 + len, true); w(8, "WAVE"); w(12, "fmt "); dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true); dv.setUint16(22, 1, true); dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true);
+  dv.setUint16(32, 2, true); dv.setUint16(34, 16, true); w(36, "data"); dv.setUint32(40, len, true);
+  let o = 44; for (const c of chunks) { buf.set(c, o); o += c.length; }
+  return buf;
+}
+const VOICE_PROMPT = `אתה קריין. התפקיד היחיד שלך: להקריא בקול את הטקסט שהמשתמש שולח – מילה במילה, בעברית, בלי להוסיף, בלי להשמיט ובלי לענות עליו.
+הקול: מורה למתמטיקה ישראלי, חם, רגוע ובטוח, שמדבר עם תלמיד אחד כמו בשיעור פרטי – שיחה טבעית, לא הקראה. קצב נינוח, הפסקות קטנות אחרי פסיקים, חיוך בקול.`;
+async function liveSpeak(env, text, { model = "gemini-2.5-flash-native-audio-latest", voice = "Puck", timeoutMs = 45000 } = {}) {
+  const url = "https://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=" + encodeURIComponent(env.GEMINI_API_KEY);
+  const resp = await fetch(url, { headers: { Upgrade: "websocket" } });
+  const ws = resp.webSocket;
+  if (!ws) throw new Error("live: no websocket (" + resp.status + ") " + (await resp.text()).slice(0, 200));
+  ws.accept();
+  const chunks = []; let setupDone = false;
+  const done = new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("live: timeout")), timeoutMs);
+    ws.addEventListener("message", async ev => {
+      let s = ev.data; if (typeof s !== "string") s = new TextDecoder().decode(s instanceof ArrayBuffer ? s : await new Response(s).arrayBuffer());
+      let m; try { m = JSON.parse(s); } catch { return; }
+      if (m.setupComplete && !setupDone) {
+        setupDone = true;
+        ws.send(JSON.stringify({ clientContent: { turns: [{ role: "user", parts: [{ text: "הקרא בדיוק את הטקסט הזה:\n" + text }] }], turnComplete: true } }));
+      }
+      for (const p of m.serverContent?.modelTurn?.parts || []) if (p.inlineData?.data) chunks.push(b64ToBytes(p.inlineData.data));
+      if (m.serverContent?.turnComplete || m.serverContent?.generationComplete && chunks.length) { clearTimeout(t); resolve(); }
+      if (m.error) { clearTimeout(t); reject(new Error("live: " + JSON.stringify(m.error).slice(0, 200))); }
+    });
+    ws.addEventListener("close", ev => { clearTimeout(t); chunks.length ? resolve() : reject(new Error("live closed " + ev.code + " " + ev.reason)); });
+  });
+  ws.send(JSON.stringify({ setup: {
+    model: "models/" + model,
+    generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
+    systemInstruction: { parts: [{ text: VOICE_PROMPT }] },
+  } }));
+  try { await done; } finally { try { ws.close(); } catch {} }
+  return pcmToWav(chunks);
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -408,9 +454,9 @@ export default {
 
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
     if (request.method === "GET" && new URL(request.url).searchParams.get("dbg") === "e962ba8a49cc6c7a") {
-      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { headers: { "x-goog-api-key": env.GEMINI_API_KEY } });
-      const j = await r.json();
-      return json((j.models || []).map(m => m.name + " | " + (m.supportedGenerationMethods || []).join(",")));
+      const u = new URL(request.url);
+      try { const wav = await liveSpeak(env, u.searchParams.get("text"), { model: u.searchParams.get("model") || undefined, voice: u.searchParams.get("voice") || undefined });
+        return new Response(wav, { headers: { ...cors, "Content-Type": "audio/wav" } }); } catch (e) { return json({ err: String(e.message || e) }, 500); }
     }
     if (request.method === "GET") return json({ ok: true, service: "pshut-math solve" });
     if (request.method !== "POST") return json({ error: "method" }, 405);
