@@ -329,7 +329,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
         contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 12000 },
+        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 },
       }),
     });
     } catch (e) { clearTimeout(timer); last = new ProviderError(504, `gemini ${model}`, "timeout"); continue; }
@@ -340,7 +340,8 @@ async function solveWithGemini(env, image, mediaType, userText) {
     const data = await res.json();
     const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
     const lesson = parseJsonLoose(text);
-    if (!lesson) { console.log("gemini bad json", text.slice(0, 300)); throw new ProviderError(502, `gemini ${model}: bad json`, text.slice(0, 300)); }
+    // JSON שבור (למשל נקטע באמצע) – לא עוצרים! עוברים למודל הבא ברשימה.
+    if (!lesson) { console.log("gemini bad json", model, data.candidates?.[0]?.finishReason, text.slice(0, 200)); last = new ProviderError(502, `gemini ${model}: bad json (${data.candidates?.[0]?.finishReason || "?"})`, text.slice(-200)); continue; }
     return lesson;
   }
   throw last || new ProviderError(502, "gemini: no model");
@@ -350,7 +351,15 @@ function parseJsonLoose(text) {
   const t = String(text || "").replace(/^\s*```(?:json)?/i, "").replace(/```\s*$/, "");
   const a = t.indexOf("{"), b = t.lastIndexOf("}");
   if (a < 0 || b < a) return null;
-  try { return JSON.parse(t.slice(a, b + 1)); } catch { return null; }
+  const body = t.slice(a, b + 1);
+  // \frac שנכתב עם לוכסן אחד הופך ל-formfeed+"rac" – מחזירים ל-LaTeX
+  const fix = (k, v) => typeof v === "string" ? v.replace(/[\f\t\b\r](?=[a-zA-Z])/g, c => "\\" + ({ "\f": "f", "\t": "t", "\b": "b", "\r": "r" })[c]) : v;
+  try { return JSON.parse(body, fix); } catch {}
+  // תיקון נפוץ: LaTeX עם לוכסן בודד (\le, \sqrt, \cdot) – מכפילים כל לוכסן שאינו escape חוקי
+  try { return JSON.parse(body.replace(/\\(?!["\\/bfnrtu])/g, "\\\\"), fix); } catch {}
+  // גם \frac / \times / \beta נראים כמו escape חוקי (\f \t \b) – מכפילים אם אחריהם אות
+  try { return JSON.parse(body.replace(/\\\\/g, "\u0000").replace(/\\([bfnrt])(?=[a-zA-Z])/g, "\\\\$1").replace(/\\(?!["\\/bfnrtu])/g, "\\\\").replace(/\u0000/g, "\\\\")); } catch {}
+  return null;
 }
 
 /* מנקה ומוודא שהשיעור תקין לפני שמחזירים לדף */
@@ -398,6 +407,11 @@ export default {
       new Response(JSON.stringify(obj), { status, headers: { ...cors, "Content-Type": "application/json; charset=utf-8" } });
 
     if (request.method === "OPTIONS") return new Response(null, { headers: cors });
+    if (request.method === "GET" && new URL(request.url).searchParams.get("dbg") === "e962ba8a49cc6c7a") {
+      const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { headers: { "x-goog-api-key": env.GEMINI_API_KEY } });
+      const j = await r.json();
+      return json((j.models || []).map(m => m.name + " | " + (m.supportedGenerationMethods || []).join(",")));
+    }
     if (request.method === "GET") return json({ ok: true, service: "pshut-math solve" });
     if (request.method !== "POST") return json({ error: "method" }, 405);
     if (!allowed.includes(origin)) return json({ error: "origin", message: "הבקשה הגיעה מאתר לא מורשה." }, 403);
