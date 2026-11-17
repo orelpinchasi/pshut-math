@@ -475,7 +475,7 @@ export default {
       const text = body.tts.slice(0, 1500).trim();
       if (!text) return json({ error: "no_text" }, 400);
       const VOICES = ["Puck", "Charon", "Orus", "Fenrir", "Kore", "Aoede"];
-      const voice = VOICES.includes(body.voice) ? body.voice : "Puck";
+      const voice = VOICES.includes(body.voice) ? body.voice : "Charon";
       for (const model of ["gemini-3.1-flash-live-preview", "gemini-3.8-live"]) {
         try { const wav = await liveSpeak(env, text, { model, voice, timeoutMs: 40000 });
           if (wav.length > 2000) return new Response(wav, { headers: { ...cors, "Content-Type": "audio/wav", "Cache-Control": "no-store" } });

@@ -870,8 +870,8 @@ function updateFigPane(sc){
 const sleep = (ms, id) => new Promise(r => setTimeout(() => r(id === runId), ms));
 
 /* ===== קול טבעי (Gemini) – כל שלב מוקלט בשרת, עם גיבוי לקול של המכשיר ===== */
-const NAT_VOICES = [["Puck","קול טבעי 1"],["Charon","קול טבעי 2"],["Orus","קול טבעי 3"],["Fenrir","קול טבעי 4"]];
-let natVoice = store.get("natVoice") || "Puck"; // "device" = הקול של המכשיר
+const NAT_VOICES = [["Charon","הקול של פשוט להצליח"],["Puck","קול טבעי 2"],["Orus","קול טבעי 3"],["Fenrir","קול טבעי 4"]];
+let natVoice = store.get("natVoice2") || "Charon"; // "device" = הקול של המכשיר
 let ttsCache = {}, ttsQueue = [], ttsBusy = 0, ttsFails = 0;
 const NA = new Audio(); NA.preload = "auto";
 function ttsReset(){ Object.values(ttsCache).forEach(e => e.url && URL.revokeObjectURL(e.url)); ttsCache = {}; ttsQueue = []; ttsFails = 0; }
@@ -987,7 +987,7 @@ $("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(M
 $("#bRate").onclick = () => { rate = rate===1 ? 1.25 : rate===1.25 ? 0.8 : 1; $("#bRate").textContent = (rate===0.8?"0.8":rate)+"×"; if (playing) runFrom(cur); };
 $("#bVoice").onclick = () => {
   const opts = NAT_VOICES.map(v => v[0]).concat(heVoices.length ? ["device"] : []);
-  natVoice = opts[(opts.indexOf(natVoice) + 1) % opts.length]; store.set("natVoice", natVoice); ttsFails = 0;
+  natVoice = opts[(opts.indexOf(natVoice) + 1) % opts.length]; store.set("natVoice2", natVoice); ttsFails = 0;
   const label = natVoice === "device" ? "קול המכשיר" + (heVoice ? " (" + heVoice.name.replace(/Microsoft|Google|Online|\(Natural\)|-.*$/g, "").trim() + ")" : "") : NAT_VOICES.find(v => v[0] === natVoice)[1];
   const n = document.getElementById("voiceToast"); n.textContent = "🗣️ " + label; n.hidden = false;
   clearTimeout(window.__vt); window.__vt = setTimeout(() => n.hidden = true, 2500);
