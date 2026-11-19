@@ -202,6 +202,8 @@ nav.links a{white-space:nowrap}
 .snapcta span{font-size:14px;opacity:.85}
 .snapcta .go{margin-inline-start:auto;background:#f5b83d;color:#141b3a;font-weight:700;border-radius:999px;padding:7px 14px;white-space:nowrap;font-size:14px;opacity:1}
 </style>
+<link rel="stylesheet" href="path.css">
+<style>@media (max-width:480px){header.top .brand span{display:none}}</style>
 </head>
 <body>
 
@@ -212,10 +214,10 @@ nav.links a{white-space:nowrap}
       <span>פשוט להצליח במתמטיקה</span>
     </a>
     <nav class="links">
-      <a href="#videos">סרטונים</a>
+      <a class="path" href="#path" aria-label="מסלול למידה">🗺️<span class="t"> מסלול למידה</span></a>
+      <a href="#videos">כל הסרטונים</a>
       <a href="#curriculum">תוכנית הלימודים</a>
       <a href="#method">השיטה</a>
-      <a class="path" href="learn.html" aria-label="מסלול למידה">🗺️<span class="t"> מסלול למידה</span></a>
       <a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>
       <a class="cta" href="#contact">שיעור אישי</a>
     </nav>
@@ -226,15 +228,16 @@ nav.links a{white-space:nowrap}
   <svg class="stars" id="stars" aria-hidden="true"></svg>
   <div class="wrap">
     <div>
-      <span class="eyebrow">חטיבת ביניים · 3 · 4 · 5 יחידות</span>
+      <span class="eyebrow">מסלול למידה לפי תוכנית הלימודים · ז׳–י״ב</span>
       <h1>כל אחד יכול להצליח.<br><em>רק צריך תנאים נכונים.</em></h1>
-      <p class="lead">כל הסרטונים של הערוץ במקום אחד — הסברים, תרגול ושאלות בגרות פתורות, מסודרים לפי כיתה, שאלון ונושא בתוכנית הלימודים.</p>
+      <p class="lead">בחרו כיתה וקבלו מסלול מסודר: מה לומדים בכל שלב של השנה, באיזה סדר לראות את הסרטונים, ודפי עבודה לתרגול.</p>
+      <div class="gradepick-l">באיזו כיתה אתם?</div>
+      <div class="gradepick"><a href="#p-z">ז׳</a><a href="#p-h">ח׳</a><a href="#p-t">ט׳</a><a href="#p-y5">י׳</a><a href="#p-yy5">י״א</a><a href="#p-yb5">י״ב</a></div>
       <form class="search" id="searchForm">
         <input id="q" type="search" placeholder="חפשו נושא, שאלון או מושג… למשל ״הסתברות״ או ״806״" autocomplete="off">
         <button type="submit">חיפוש</button>
       </form>
       <a class="snapcta" href="solve.html"><span class="i">📸</span><div><b>נתקעתם בשאלה?</b><span>צלמו אותה וקבלו שיעור קצר עם הסבר, שלב אחרי שלב</span></div><span class="go">צלמו ←</span></a>
-      <a class="snapcta pathcta" href="learn.html"><span class="i">🗺️</span><div><b>מה ללמוד ובאיזה סדר?</b><span>מסלול למידה לכל כיתה, ז׳–י״ב: הסרטונים לפי תוכנית הלימודים ודפי עבודה לתרגול</span></div><span class="go">למסלול ←</span></a>
       <div class="lp-day" id="lpDay"></div>
       <div class="hero-stats">
         <div><b id="statVideos">0</b><span>סרטונים</span></div>
@@ -245,6 +248,8 @@ nav.links a{white-space:nowrap}
     <div class="reel"><video id="reelV" src="media/reel-ch14.mp4" poster="media/reel-ch14-poster.jpg" autoplay muted loop playsinline preload="metadata"></video><button type="button" class="snd" onclick="const v=document.getElementById('reelV');v.muted=!v.muted;if(!v.muted){v.currentTime=0;v.play();}this.textContent=v.muted?'🔊 הפעילו קול':'🔇 השתק'">🔊 הפעילו קול</button></div>
   </div>
 </section>
+
+<section id="path"></section>
 
 <main id="videos">
   <div class="wrap levels">
@@ -1817,5 +1822,6 @@ if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWo
   }catch(e){}
 })();
 </script>
+<script src="path.js"></script>
 </body>
 </html>

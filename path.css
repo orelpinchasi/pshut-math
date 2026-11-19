@@ -1,0 +1,57 @@
+/* מסלול הלמידה – רכיב משותף (עמוד הבית) */
+#path{--pc:#fff;--pg:#f5b83d;--pg2:#ffd77a;--pi:#1d2140;--pl:#e7e1d3;--pm:#6b6f86;--pn:#141b3a;--pn2:#1f2a57;--pp:#fbf7ef;--pt:#2bb3ab;background:var(--pp);color:var(--pi);padding:0 0 30px;scroll-margin-top:60px}
+#path *{box-sizing:border-box}
+#path .p-hd{background:linear-gradient(160deg,var(--pn),var(--pn2));color:#fff;padding:34px 16px 78px;text-align:center}
+#path .p-kick{display:inline-block;background:rgba(245,184,61,.15);color:var(--pg2);border:1px solid rgba(245,184,61,.4);border-radius:99px;padding:5px 14px;font-size:13px}
+#path h2.p-h1{font-size:clamp(28px,5vw,42px);margin:12px 0 8px;color:#fff}
+#path .p-hd p{margin:0 auto;max-width:640px;color:#cfd4ee;line-height:1.6}
+#path .p-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+#path .p-tabs button{font:inherit;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:12px;padding:9px 16px;font-weight:700;cursor:pointer;min-width:54px;font-size:16px}
+#path .p-tabs button.on{background:var(--pg);color:var(--pn);border-color:var(--pg)}
+#path .p-lv{margin-top:10px}#path .p-lv button{font-size:14px;padding:6px 14px;border-radius:99px;min-width:0}
+#path .p-lv button.on{background:#fff;color:var(--pn);border-color:#fff}
+#path .p-prog{max-width:780px;margin:-46px auto 0;background:var(--pc);border-radius:18px;box-shadow:0 12px 30px rgba(20,27,58,.12);padding:14px 20px;position:relative;z-index:2}
+#path .p-prog .row{display:flex;align-items:center;gap:16px}#path .p-bar{flex:1;height:12px;background:#efe9da;border-radius:99px;overflow:hidden}
+#path .p-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pg),#f39c3d);transition:width .4s}
+#path .p-prog b{font-size:15px;white-space:nowrap}#path .p-ttl{font-size:13px;color:var(--pm);margin-bottom:6px}
+#path .p-units{max-width:880px;margin:26px auto 24px;padding:0 16px;position:relative}
+#path .p-units:before{content:"";position:absolute;right:37px;top:10px;bottom:10px;width:4px;background:repeating-linear-gradient(var(--pg) 0 12px,transparent 12px 22px);border-radius:4px}
+#path .unit{display:flex;gap:16px;margin-bottom:18px;position:relative}
+#path .dot{flex:0 0 46px;height:46px;border-radius:50%;background:var(--pn);color:var(--pg);font-weight:800;font-size:19px;display:grid;place-items:center;border:4px solid var(--pp);box-shadow:0 0 0 3px var(--pg);z-index:1}
+#path .unit.full .dot{background:var(--pt);color:#fff;box-shadow:0 0 0 3px var(--pt)}
+#path .card{flex:1;min-width:0;background:var(--pc);border:1px solid var(--pl);border-radius:18px;padding:16px 18px;box-shadow:0 4px 14px rgba(20,27,58,.05)}
+#path .uh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer}#path .uh h3{margin:0;font-size:21px;color:var(--pi)}
+#path .mo{background:#fff4dc;color:#a8700b;border-radius:99px;padding:3px 12px;font-size:13px;font-weight:500}
+#path .cnt{margin-inline-start:auto;font-size:13px;color:var(--pm)}
+#path .tg{font:inherit;border:0;background:#f2eee3;border-radius:99px;width:32px;height:32px;cursor:pointer;font-size:14px;color:var(--pi)}
+#path .body{display:none}#path .unit.open .body{display:block}#path .unit.open .tg{transform:rotate(180deg)}
+#path .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
+#path h4{font-size:15px;color:var(--pm);margin:14px 0 8px;font-weight:700}
+#path ul{margin:0;padding-inline-start:20px;line-height:1.75}
+#path .m{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--pi);background:#f6f8ff;border:1px solid #dfe4f6;border-radius:12px;padding:9px 12px;margin-bottom:7px;font-size:14.5px}
+#path .m:hover{border-color:var(--pn2)}#path .m .ft{font-size:11px;font-weight:800;background:var(--pn);color:#fff;border-radius:6px;padding:2px 6px;flex:0 0 auto}
+#path .m .src{margin-inline-start:auto;font-size:11px;color:var(--pm);white-space:nowrap}
+#path .none{color:var(--pm);font-size:14px}
+#path .vs{display:grid;gap:8px}
+#path .v{display:flex;align-items:center;gap:12px;color:var(--pi);border:1px solid var(--pl);border-radius:14px;padding:7px;background:#fffdf8;cursor:pointer;text-align:start;width:100%}
+#path .v:hover{border-color:var(--pg)}#path .v img{width:112px;height:63px;object-fit:cover;border-radius:9px;flex:0 0 auto;background:#e9e4d6}
+#path .v .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--pg);color:var(--pn);font-weight:800;display:grid;place-items:center;font-size:14px}
+#path .v .vt{flex:1;font-size:15px;line-height:1.35}
+#path .ck{font:inherit;flex:0 0 36px;height:36px;border-radius:50%;border:2px solid var(--pl);background:#fff;color:transparent;font-weight:800;cursor:pointer}
+#path .v.done{background:#effaf6;border-color:#bfe9dc}#path .v.done .ck{background:var(--pt);border-color:var(--pt);color:#fff}
+#path .sub{margin:10px 0 2px;font-weight:700;color:#a8700b;font-size:14px}
+#path .gap{border:2px dashed #e6dccb;color:var(--pm);background:#fffaf0;border-radius:12px;padding:12px;font-size:14.5px}
+#path .gap a{color:var(--pn2);font-weight:700}
+#path .rest{display:none}#path .vs.all .rest{display:flex}
+#path .showall{font:inherit;margin-top:10px;border:1px solid var(--pl);background:#fff;border-radius:99px;padding:8px 16px;font-weight:700;color:var(--pn2);cursor:pointer}
+#path .practice{max-width:880px;margin:0 auto 18px;padding:0 16px}#path .practice .grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:4px 10px}
+#path .p-note{max-width:880px;margin:0 auto;padding:0 16px;color:var(--pm);font-size:13px;line-height:1.7}
+#path .p-note a{color:var(--pn2)}
+@media(max-width:640px){#path .cols{grid-template-columns:1fr}}
+@media(max-width:560px){#path .p-units{padding:0 10px}#path .p-units:before{right:26px}#path .unit{gap:10px}#path .dot{flex-basis:34px;height:34px;font-size:15px;border-width:3px}#path .card{padding:14px 12px}#path .uh h3{font-size:18px}#path .v{gap:8px;padding:6px}#path .v img{width:84px;height:47px}#path .v .n{flex-basis:24px;height:24px;font-size:12px}#path .v .vt{font-size:14px}#path .ck{flex-basis:30px;height:30px}}
+/* בחירת כיתה מהירה בראש העמוד */
+.gradepick{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
+.gradepick a{text-decoration:none;font-weight:800;font-size:17px;color:#141b3a;background:#f5b83d;border-radius:14px;padding:10px 0;min-width:58px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.18);transition:.15s}
+.gradepick a:hover{transform:translateY(-2px);background:#ffd77a}
+.gradepick-l{color:#ffd77a;font-weight:700;font-size:15px;margin-top:18px}
+@media(max-width:480px){.gradepick{gap:6px}.gradepick a{min-width:0;flex:1 1 0;font-size:16px;padding:10px 0}#path .p-tabs button{min-width:0;padding:8px 10px}}
