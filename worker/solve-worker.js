@@ -310,46 +310,59 @@ ${JSON.stringify(LESSON_TOOL.input_schema)}
 זכור: בתוך מחרוזות JSON כל לוכסן הפוך של LaTeX נכתב כפול (\\\\frac).`;
 
 async function solveWithGemini(env, image, mediaType, userText) {
-  // לכל מודל יש מכסה יומית חינמית נפרדת (נכון לנובמבר 2026: Flash ‏~20 ביום, Flash-Lite ‏~500 ביום).
-  // מתחילים מהחכמים ביותר, וכשמכסה נגמרת או שמודל עמוס – עוברים לבא.
-  // gemini-flash-latest ראשון – נבדק ועונה תוך 20–40 שניות. מודלים איטיים מדי נעצרים אחרי 50 שניות.
-  const models = [env.GEMINI_MODEL,
-    "gemini-flash-latest", "gemini-3-flash-preview", "gemini-2.5-flash", "gemini-3.6-flash", "gemini-3.8-flash",
-    "gemini-3.7-flash", "gemini-3.5-flash", "gemini-4-hydrogen",
-    "gemini-3.5-flash-lite", "gemini-3.1-flash-lite"].filter(Boolean);
-  const started = Date.now();
-  let last;
-  for (const model of [...new Set(models)]) {
-    // התשובה נשלחת בזרם (עם "דופק" כל כמה שניות), אז אין מגבלת 100 שניות של Cloudflare.
-    const left = 165000 - (Date.now() - started);
-    if (left < 20000) break; // לא להשאיר תלמיד לחכות יותר מדי
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), Math.min(80000, left));
-    let res;
+  // מהירות קודם: מודלי Flash-Lite (‏500 ביום כל אחד, עונים תוך 10–25 שניות), ואחריהם Flash כגיבוי.
+  // "גידור": מתחילים מודל אחד; אם הוא נכשל או לא ענה תוך 14 שניות – מפעילים במקביל את הבא (עד 3 בו-זמנית).
+  // התשובה התקינה הראשונה מנצחת, וכל השאר מבוטלים.
+  const models = [...new Set([env.GEMINI_MODEL,
+    "gemini-3.1-flash-lite", "gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-2.5-flash-lite",
+    "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash",
+  ].filter(Boolean))];
+  const DEADLINE = 110000, HEDGE_MS = 14000, MAX_PAR = 3;
+  const started = Date.now(), ctrls = [];
+  let next = 0, running = 0, last = null, won = false, dl = null;
+  const attempt = async model => {
+    const ctrl = new AbortController(); ctrls.push(ctrl);
+    const timer = setTimeout(() => ctrl.abort(), Math.max(5000, DEADLINE - (Date.now() - started)));
+    const t0 = Date.now();
     try {
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-      signal: ctrl.signal,
-      method: "POST",
-      headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
-        contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
-        generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 },
-      }),
+      const gc = { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 };
+      if (/gemini-3/.test(model)) gc.thinkingConfig = { thinkingLevel: "low" };
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        signal: ctrl.signal, method: "POST",
+        headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
+          contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
+          generationConfig: gc,
+        }),
+      });
+      if (!res.ok) throw new ProviderError(res.status, `gemini ${model}`, (await res.text()).slice(0, 200));
+      const data = await res.json();
+      const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
+      const lesson = parseJsonLoose(text);
+      if (!lesson || !normalize(JSON.parse(JSON.stringify(lesson)))) throw new ProviderError(502, `gemini ${model}: bad json (${data.candidates?.[0]?.finishReason || "?"})`, text.slice(-200));
+      lesson._model = model; lesson._ms = Date.now() - t0;
+      return lesson;
+    } catch (e) {
+      throw e instanceof ProviderError ? e : new ProviderError(504, `gemini ${model}`, String(e && e.message || e));
+    } finally { clearTimeout(timer); }
+  };
+  try {
+    return await new Promise((resolve, reject) => {
+      let hedge = null;
+      const launch = () => {
+        clearTimeout(hedge);
+        if (won) return;
+        if (next >= models.length || Date.now() - started > DEADLINE - 15000) { if (!running) reject(last || new ProviderError(502, "gemini: no model")); return; }
+        const model = models[next++]; running++;
+        attempt(model).then(L => { if (!won) { won = true; resolve(L); } },
+          e => { last = e; console.log("gemini fail", model, e.status, e.message); running--; launch(); });
+        if (running < MAX_PAR) hedge = setTimeout(launch, HEDGE_MS);
+      };
+      launch();
+      dl = setTimeout(() => { if (!won) reject(last || new ProviderError(504, "gemini: timeout")); }, DEADLINE);
     });
-    } catch (e) { clearTimeout(timer); last = new ProviderError(504, `gemini ${model}`, "timeout"); continue; }
-    clearTimeout(timer);
-    // מודל לא קיים / עמוס / תקלה זמנית – מנסים את המודל הבא ברשימה
-    if ([404, 429, 500, 502, 503, 504, 524].includes(res.status)) { last = new ProviderError(res.status, `gemini ${model}`, await res.text()); continue; }
-    if (!res.ok) { const t = await res.text(); console.log("gemini", model, res.status, t.slice(0, 400)); throw new ProviderError(res.status, `gemini ${model}`, t); }
-    const data = await res.json();
-    const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
-    const lesson = parseJsonLoose(text);
-    // JSON שבור (למשל נקטע באמצע) – לא עוצרים! עוברים למודל הבא ברשימה.
-    if (!lesson) { console.log("gemini bad json", model, data.candidates?.[0]?.finishReason, text.slice(0, 200)); last = new ProviderError(502, `gemini ${model}: bad json (${data.candidates?.[0]?.finishReason || "?"})`, text.slice(-200)); continue; }
-    return lesson;
-  }
-  throw last || new ProviderError(502, "gemini: no model");
+  } finally { won = true; clearTimeout(dl); ctrls.forEach(c => { try { c.abort(); } catch {} }); }
 }
 
 function parseJsonLoose(text) {
@@ -526,7 +539,7 @@ export default {
             ? await solveWithGemini(env, image, mediaType, userText)
             : await solveWithClaude(env, image, mediaType, userText);
           lesson = normalize(raw);
-          if (lesson) { lesson.provider = p; break; }
+          if (lesson) { lesson.provider = p + (raw && raw._model ? ":" + raw._model + ":" + Math.round(raw._ms / 1000) + "s" : ""); break; }
           fails.push(`${p}: lesson invalid`);
         } catch (e) {
           if (e.status === 429) quota = true;
