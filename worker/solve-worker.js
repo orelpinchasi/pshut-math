@@ -313,10 +313,11 @@ async function solveWithGemini(env, image, mediaType, userText) {
   // מהירות קודם: מודלי Flash-Lite (‏500 ביום כל אחד, עונים תוך 10–25 שניות), ואחריהם Flash כגיבוי.
   // "גידור": מתחילים מודל אחד; אם הוא נכשל או לא ענה תוך 14 שניות – מפעילים במקביל את הבא (עד 3 בו-זמנית).
   // התשובה התקינה הראשונה מנצחת, וכל השאר מבוטלים.
-  const models = [...new Set([env.GEMINI_MODEL,
-    "gemini-3.1-flash-lite", "gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-2.5-flash-lite",
-    "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash",
-  ].filter(Boolean))];
+  // ב-Flash-Lite הזמן עד המילה הראשונה משתנה מאוד (9–45 שניות, תור אצל גוגל), אז מריצים אותו גם פעמיים במקביל.
+  const L31 = "gemini-3.1-flash-lite";
+  const models = [env.GEMINI_MODEL, L31, L31, "gemini-3.5-flash-lite", "gemini-flash-lite-latest", L31,
+    "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash",
+    "gemini-4-hydrogen"].filter(Boolean);
   // מודל "חי" = כבר התחיל לשלוח טקסט (stream). מודל שתקוע בתור של גוגל לא שולח כלום – אז לא מחכים לו.
   const DEADLINE = 110000, HEDGE_MS = 8000, MAX_PAR = 4;
   const started = Date.now(), ctrls = [];
@@ -345,8 +346,8 @@ async function solveWithGemini(env, image, mediaType, userText) {
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
-        if (!alive.has(model) && tr.first == null) tr.first = Math.round((Date.now() - t0) / 1000);
-        alive.add(model);
+        if (tr.first == null) tr.first = Math.round((Date.now() - t0) / 1000);
+        alive.add(tr);
         buf += dec.decode(value, { stream: true });
         let nl;
         while ((nl = buf.indexOf("\n")) >= 0) {
@@ -365,7 +366,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
     } catch (e) {
       tr.r = (e && e.status || "x") + "@" + Math.round((Date.now() - t0) / 1000);
       const pe = e instanceof ProviderError ? e : new ProviderError(504, `gemini ${model}`, String(e && e.message || e)); pe.trace = trace; throw pe;
-    } finally { clearTimeout(timer); alive.delete(model); }
+    } finally { clearTimeout(timer); alive.delete(tr); }
   };
   try {
     return await new Promise((resolve, reject) => {
