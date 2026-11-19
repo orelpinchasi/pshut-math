@@ -189,6 +189,9 @@ body{padding-bottom:env(safe-area-inset-bottom)}
 .install-bar .go{background:var(--gold);color:var(--night);font-weight:700}
 .install-bar .x{background:transparent;color:#fff;opacity:.7;padding:8px}
 /* צלמו שאלה */
+nav.links a.path{background:rgba(43,179,171,.16);border:1px solid rgba(43,179,171,.55);color:#8fe3dc;opacity:1;font-weight:700}
+@media (max-width:760px){nav.links a.path{display:inline-block;padding:7px 11px}nav.links a.path .t{display:none}}
+.pathcta{border-color:rgba(43,179,171,.55)}.pathcta b{color:#8fe3dc!important}
 nav.links a.snap{background:rgba(245,184,61,.16);border:1px solid rgba(245,184,61,.5);color:#ffd77a;opacity:1;font-weight:700}
 nav.links a{white-space:nowrap}
 @media (max-width:760px){nav.links a.snap{display:inline-block;padding:7px 11px}nav.links a.snap .t{display:none}}
@@ -212,6 +215,7 @@ nav.links a{white-space:nowrap}
       <a href="#videos">סרטונים</a>
       <a href="#curriculum">תוכנית הלימודים</a>
       <a href="#method">השיטה</a>
+      <a class="path" href="learn.html" aria-label="מסלול למידה">🗺️<span class="t"> מסלול למידה</span></a>
       <a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>
       <a class="cta" href="#contact">שיעור אישי</a>
     </nav>
@@ -230,6 +234,7 @@ nav.links a{white-space:nowrap}
         <button type="submit">חיפוש</button>
       </form>
       <a class="snapcta" href="solve.html"><span class="i">📸</span><div><b>נתקעתם בשאלה?</b><span>צלמו אותה וקבלו שיעור קצר עם הסבר, שלב אחרי שלב</span></div><span class="go">צלמו ←</span></a>
+      <a class="snapcta pathcta" href="learn.html"><span class="i">🗺️</span><div><b>מה ללמוד ובאיזה סדר?</b><span>מסלול למידה לכל כיתה, ז׳–י״ב: הסרטונים לפי תוכנית הלימודים ודפי עבודה לתרגול</span></div><span class="go">למסלול ←</span></a>
       <div class="lp-day" id="lpDay"></div>
       <div class="hero-stats">
         <div><b id="statVideos">0</b><span>סרטונים</span></div>
