@@ -317,9 +317,11 @@ async function solveWithGemini(env, image, mediaType, userText) {
     "gemini-3.1-flash-lite", "gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-2.5-flash-lite",
     "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash",
   ].filter(Boolean))];
-  const DEADLINE = 110000, HEDGE_MS = 14000, MAX_PAR = 3;
+  // מודל "חי" = כבר התחיל לשלוח טקסט (stream). מודל שתקוע בתור של גוגל לא שולח כלום – אז לא מחכים לו.
+  const DEADLINE = 110000, HEDGE_MS = 8000, MAX_PAR = 4;
   const started = Date.now(), ctrls = [];
   let next = 0, running = 0, last = null, won = false, dl = null;
+  const alive = new Set();
   const attempt = async model => {
     const ctrl = new AbortController(); ctrls.push(ctrl);
     const timer = setTimeout(() => ctrl.abort(), Math.max(5000, DEADLINE - (Date.now() - started)));
@@ -327,7 +329,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
     try {
       const gc = { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 };
       if (/gemini-3/.test(model)) gc.thinkingConfig = { thinkingLevel: "low" };
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`, {
         signal: ctrl.signal, method: "POST",
         headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
         body: JSON.stringify({
@@ -337,15 +339,31 @@ async function solveWithGemini(env, image, mediaType, userText) {
         }),
       });
       if (!res.ok) throw new ProviderError(res.status, `gemini ${model}`, (await res.text()).slice(0, 200));
-      const data = await res.json();
-      const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
+      // קריאת הזרם (SSE): כל שורת data היא חלק מהתשובה
+      const reader = res.body.getReader(), dec = new TextDecoder();
+      let buf = "", text = "", finish = "";
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        alive.add(model);
+        buf += dec.decode(value, { stream: true });
+        let nl;
+        while ((nl = buf.indexOf("\n")) >= 0) {
+          const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+          if (!line.startsWith("data:")) continue;
+          let ev; try { ev = JSON.parse(line.slice(5)); } catch { continue; }
+          const c = ev.candidates?.[0];
+          for (const part of c?.content?.parts || []) if (!part.thought && part.text) text += part.text;
+          if (c?.finishReason) finish = c.finishReason;
+        }
+      }
       const lesson = parseJsonLoose(text);
-      if (!lesson || !normalize(JSON.parse(JSON.stringify(lesson)))) throw new ProviderError(502, `gemini ${model}: bad json (${data.candidates?.[0]?.finishReason || "?"})`, text.slice(-200));
+      if (!lesson || !normalize(JSON.parse(JSON.stringify(lesson)))) throw new ProviderError(502, `gemini ${model}: bad json (${finish || "?"})`, text.slice(-200));
       lesson._model = model; lesson._ms = Date.now() - t0;
       return lesson;
     } catch (e) {
       throw e instanceof ProviderError ? e : new ProviderError(504, `gemini ${model}`, String(e && e.message || e));
-    } finally { clearTimeout(timer); }
+    } finally { clearTimeout(timer); alive.delete(model); }
   };
   try {
     return await new Promise((resolve, reject) => {
@@ -357,8 +375,13 @@ async function solveWithGemini(env, image, mediaType, userText) {
         const model = models[next++]; running++;
         attempt(model).then(L => { if (!won) { won = true; resolve(L); } },
           e => { last = e; console.log("gemini fail", model, e.status, e.message); running--; launch(); });
-        if (running < MAX_PAR) hedge = setTimeout(launch, HEDGE_MS);
+        armHedge();
       };
+      // כל כמה שניות: אם אף מודל עוד לא התחיל לכתוב – מפעילים עוד אחד במקביל
+      const armHedge = () => { clearTimeout(hedge); hedge = setTimeout(() => {
+        if (won) return;
+        if (!alive.size && running < MAX_PAR) launch(); else armHedge();
+      }, HEDGE_MS); };
       launch();
       dl = setTimeout(() => { if (!won) reject(last || new ProviderError(504, "gemini: timeout")); }, DEADLINE);
     });
