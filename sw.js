@@ -1,6 +1,6 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v19";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html"];
+const CACHE = "pshut-v20";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html", "lesson.html"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))));
@@ -14,7 +14,7 @@ self.addEventListener("fetch", e => {
   // דפים: קודם רשת (כדי לקבל עדכונים), ואם אין אינטרנט – מהמטמון
   if (req.mode === "navigate") {
     // כל דף נשמר בנפרד (index.html / solve.html), כדי שדף אחד לא ידרוס את השני במטמון
-    const page = /solve\.html$/.test(url.pathname) ? "solve.html" : "index.html";
+    const page = (url.pathname.match(/([\w-]+\.html)$/) || [, "index.html"])[1];
     e.respondWith(fetch(req).then(r => { const c = r.clone(); if (r.ok) caches.open(CACHE).then(x => x.put(page, c)); return r; })
       .catch(() => caches.match(page)));
     return;

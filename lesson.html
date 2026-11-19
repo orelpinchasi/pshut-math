@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#141b3a">
+<meta name="description" content="שיעור פרטי במתמטיקה: בוחרים נושא או מעלים את החומר, ומתרגלים מתרגילים קלים ועד קשים – שלב אחרי שלב, עם רמזים, בדיקה וסרטונים של אוראל.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="פשוט להצליח במתמטיקה">
+<meta property="og:title" content="שיעור פרטי – פשוט להצליח במתמטיקה">
+<meta property="og:description" content="מתרגלים יחד מתרגילים קלים ועד קשים, שלב אחרי שלב.">
+<meta property="og:image" content="https://orelpinchasi.github.io/pshut-math/og-star.jpg">
+<title>שיעור פרטי – פשוט להצליח במתמטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+<style>
+:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--gold2:#ffd77a;--rose:#ef6f6c;--paper:#fbf7ef;--ink:#1d2140;--muted:#6b6f86;--line:#e7e1d3;--ok:#1f9d6b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;overflow-x:hidden}
+a{color:inherit}
+h1,h2,h3{font-family:"Secular One",Rubik,sans-serif;font-weight:400;margin:0}
+button{font:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:rgba(20,27,58,.94);backdrop-filter:blur(8px);color:#fff;padding-top:env(safe-area-inset-top)}
+header.top .wrap{display:flex;align-items:center;gap:10px;height:58px;max-width:1100px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-family:"Secular One";font-size:18px;white-space:nowrap}
+.hbtn{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:999px;height:36px;min-width:36px;padding:0 10px;font-size:15px}
+.back{margin-inline-start:auto;text-decoration:none;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.1);font-size:13.5px}
+.hero{background:radial-gradient(900px 420px at 80% -10%,#33407e 0,transparent 60%),linear-gradient(180deg,var(--night),var(--night2));color:#fff;padding:28px 0 64px}
+.eyebrow{display:inline-block;background:rgba(245,184,61,.15);color:var(--gold2);border:1px solid rgba(245,184,61,.35);padding:4px 12px;border-radius:999px;font-size:13px;margin-bottom:10px}
+.hero h1{font-size:clamp(30px,7vw,44px);line-height:1.12}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{opacity:.9;font-size:16px;margin:10px 0 0}
+.ladder-ill{display:flex;gap:6px;margin-top:14px;font-size:13px}
+.ladder-ill span{background:rgba(255,255,255,.1);border-radius:999px;padding:3px 10px}
+.panel{background:#fff;border-radius:22px;box-shadow:0 14px 40px rgba(29,33,64,.12);padding:18px;margin-top:-44px;position:relative;z-index:2}
+.lbl{display:block;font-weight:700;margin:4px 0 8px;font-size:15px}
+.lbl small{font-weight:400;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-weight:600;font-size:14.5px;color:var(--ink)}
+.chip.on{background:var(--night);border-color:var(--night);color:#fff}
+.topics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.topic{border:1.5px solid var(--line);background:#fffdf8;border-radius:14px;padding:10px;text-align:right;font-weight:600;font-size:14.5px;color:var(--ink);line-height:1.3}
+.topic small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+.topic.on{border-color:var(--gold);background:#fff4d6;box-shadow:0 0 0 2px var(--gold) inset}
+.sep{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:16px 0 10px}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+.upl{display:flex;align-items:center;gap:12px;border:2px dashed #d9cfb5;border-radius:16px;padding:12px;background:#fbf8f1;cursor:pointer;font-weight:700}
+.upl input{display:none}
+.upl .ic{font-size:28px}
+.upl small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+.upl img{width:64px;height:64px;object-fit:cover;border-radius:10px;margin-inline-start:auto}
+textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;font-size:15px;min-height:56px;resize:vertical;background:#fffdf8}
+.go{width:100%;border:0;border-radius:16px;background:var(--night);color:#fff;font-size:19px;padding:15px;margin-top:14px;font-family:"Secular One"}
+.go b{color:var(--gold)}
+.go:disabled{opacity:.45}
+.smallnote{font-size:12.5px;color:var(--muted);text-align:center;margin-top:8px}
+.msg{margin-top:10px}
+.note{border-radius:14px;padding:10px 12px;font-size:14.5px;margin:10px 0}
+.note.err{background:#fde8e7;color:#8c2320}.note.info{background:#eef3ff;color:#283a7a}.note.warn{background:#fff3db;color:#7a5200}
+
+/* loading */
+.loading{text-align:center;padding:70px 10px}
+.orbit{width:90px;height:90px;margin:0 auto 18px;position:relative;animation:spin 3s linear infinite}
+.orbit .planet{position:absolute;inset:22px;border-radius:50%;background:var(--gold);box-shadow:0 0 30px rgba(245,184,61,.5)}
+.orbit .star{position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:18px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading .m{font-family:"Secular One";font-size:20px;min-height:1.6em}
+.loading .s{color:var(--muted);font-size:14px}
+
+/* lesson */
+.ladder{position:sticky;top:58px;z-index:10;background:var(--paper);padding:10px 0 8px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.ladder .lv{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.ladder .lv i{width:16px;height:7px;border-radius:5px;background:#e3e0d6;display:inline-block}
+.ladder .lv i.cur{background:var(--gold2);box-shadow:0 0 0 1.5px var(--gold) inset}
+.ladder .lv i.ok{background:var(--ok)}
+.ladder .lv i.help{background:#f0b37a}
+.ladder .lv.on{color:var(--ink)}
+.ladder .tp{margin-inline-start:auto;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40%}
+.card{background:#fff;border-radius:20px;padding:16px;box-shadow:0 8px 24px rgba(29,33,64,.08);margin:14px 0}
+.ov{background:linear-gradient(135deg,#1f2a57,#141b3a);color:#fff}
+.ov h3{color:var(--gold2);font-size:19px;margin-bottom:6px}
+.ov p{margin:6px 0;color:#e8e9f3}
+.ov .tool{background:rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;margin:6px 0;font-size:14.5px}
+.ov .katex{color:#fff}
+.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:700;font-size:15.5px;background:var(--night);color:#fff}
+.btn.gold{background:var(--gold);color:var(--night)}
+.btn.light{background:#eef0f7;color:var(--ink)}
+.btn.wide{width:100%;margin-top:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{flex:1}
+.exq{border:2px dashed #d9cfb5;background:#fffdf6;border-radius:16px;padding:12px 14px;font-size:16px;margin:8px 0 4px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px}
+.badge.easy{background:#e3f6ec;color:#11643f}.badge.medium{background:#fff1d6;color:#7a5200}.badge.hard{background:#fde5e4;color:#8c2320}
+.exhead{display:flex;align-items:center;gap:8px}
+.exhead h2{font-size:20px}
+.teacher{display:flex;gap:10px;align-items:flex-start;background:#f3f5fb;border-radius:14px;padding:10px 12px;margin:10px 0;font-size:15.5px}
+.teacher .av{flex:0 0 34px;height:34px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font-size:18px}
+.teacher .say{flex:1}
+.teacher .sp{border:0;background:none;font-size:16px;padding:0 2px;opacity:.6}
+.step{border-top:1px solid var(--line);margin-top:12px;padding-top:6px}
+.step.solved .inp{display:none}
+.step .sh{font-size:12.5px;font-weight:800;color:var(--muted);margin-top:6px}
+.solvedline{display:none;background:#e7f7ef;border-radius:12px;padding:8px 12px;margin:8px 0;color:#11643f;font-weight:600}
+.step.solved .solvedline{display:block}
+.modes{display:flex;gap:6px;margin:6px 0 8px}
+.modes button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:7px 4px;font-weight:700;font-size:13.5px;color:var(--ink)}
+.modes button.on{background:var(--night);border-color:var(--night);color:#fff}
+.disp{direction:ltr;min-height:50px;border:2px solid #d8dcec;border-radius:14px;padding:6px 12px;font:700 23px "Times New Roman",serif;display:flex;align-items:center;flex-wrap:wrap;gap:1px;background:#fcfcff}
+.disp .cur{display:inline-block;width:2px;height:24px;background:var(--night);animation:bl 1s steps(1) infinite;margin-inline:1px}
+@keyframes bl{50%{opacity:0}}
+.disp .ph{color:#b8bccf;font:400 14.5px Rubik;direction:rtl}
+.kb{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px;direction:ltr}
+.kb button{height:44px;border:0;border-radius:11px;background:#eef0f7;font:700 19px "Times New Roman",serif;color:var(--ink)}
+.kb button.op{background:#e3e7f5}
+.kb button.v{background:var(--gold);color:var(--night)}
+.kb button.fn{font:600 13.5px Rubik}
+.kb button.ok{background:var(--night);color:#fff;font:700 15px Rubik;grid-column:span 2}
+.kb button:active{transform:scale(.95)}
+.padwrap{position:relative;border-radius:16px;overflow:hidden;border:2px solid #d8dcec;background:#fffdf6;background-image:repeating-linear-gradient(180deg,transparent 0 31px,#dfe7f5 31px 32px)}
+.padwrap canvas{display:block;width:100%;height:170px;touch-action:none}
+.padwrap .tip{position:absolute;top:8px;right:12px;font-size:12px;color:#9aa0b8;pointer-events:none}
+.opts{display:grid;gap:8px;margin-top:6px}
+.opts button{text-align:right;border:2px solid #e3e6f0;background:#fff;border-radius:14px;padding:11px 12px;font-size:15px;color:var(--ink)}
+.opts button.right{border-color:var(--ok);background:#e7f7ef}
+.opts button.wrong{border-color:#f0b37a;background:#fff4e8}
+.fb{border-radius:14px;padding:10px 12px;font-size:15px;margin-top:8px}
+.fb.ok{background:#e7f7ef;color:#11643f}.fb.bad{background:#fff1e0;color:#8a4a00}.fb.hint{background:#fff8e1;color:#6b5200}.fb.wait{background:#f3f5fb;color:#283a7a}
+.helprow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.helprow button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.done-card{border:2px solid var(--gold);background:#fffaf0}
+.done-card .ans{direction:ltr;text-align:center;font-size:20px;margin:6px 0}
+/* מחברת */
+.nb-review .nl{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start;border-radius:10px;padding:6px 8px;margin:4px 0;background:#fffdf6}
+.nb-review .nl.ok{background:#e7f7ef}.nb-review .nl.error{background:#ffe1dc;box-shadow:inset 0 0 0 2px #ef6f6c}.nb-review .nl.unclear{background:#f3f3f6}
+.nb-review .nl .tx{direction:ltr;text-align:left;overflow-x:auto}
+.nb-review .nl .nt{grid-column:2;font-size:14px;color:#8c2320}
+.upl2{display:flex;justify-content:center;align-items:center;gap:8px;border:2px dashed #d9cfb5;border-radius:14px;padding:11px;background:#fbf8f1;font-weight:700;cursor:pointer;margin-top:10px}
+.upl2 input{display:none}
+/* סרטונים */
+.vids{display:grid;gap:10px;margin-top:8px}
+.vc{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:center;border:0;background:#fff;border-radius:14px;padding:6px;text-align:right;box-shadow:0 3px 12px rgba(29,33,64,.08);color:var(--ink)}
+.vc .th{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:#ddd}
+.vc .th img{width:100%;height:100%;object-fit:cover;display:block}
+.vc .th::after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:22px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.vc .vt{font-size:14px;font-weight:600;line-height:1.35}
+.break{background:linear-gradient(135deg,#fff4d6,#fffaf0);border:2px solid var(--gold2)}
+.ytm{position:fixed;inset:0;z-index:60;background:rgba(10,14,34,.9);display:none;place-items:center;padding:14px}
+.ytm.on{display:grid}
+.ytm .box{width:min(900px,100%)}
+.ytm iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:14px;background:#000}
+.ytm .bar{display:flex;justify-content:space-between;align-items:center;color:#fff;margin-top:10px;gap:10px;font-size:14px}
+.ytm .bar a{color:var(--gold2)}
+.ytm .x{border:0;background:#fff;color:var(--night);border-radius:999px;width:38px;height:38px;font-size:18px}
+.im{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.hebmath{display:block;direction:rtl;text-align:center;unicode-bidi:isolate}
+.sum .big{font-family:"Secular One";font-size:40px;color:var(--ok);text-align:center}
+footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 34px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><svg width="28" height="28" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="24" r="12" fill="#f5b83d"/><circle cx="15" cy="21" r="2.2" fill="#d99a22"/><circle cx="24" cy="28" r="1.6" fill="#d99a22"/><path d="M20 3l1.6 4 4.2.3-3.2 2.7 1 4.1L20 12l-3.6 2.1 1-4.1-3.2-2.7 4.2-.3z" fill="#ffd77a"/></svg><span>פשוט להצליח</span></a>
+    <button class="hbtn" id="voiceBtn" aria-label="קול" title="הקראה בקול">🔊</button>
+    <a class="back" href="./">לאתר ←</a>
+  </div>
+</header>
+
+<!-- ===== מסך 1: בחירה ===== -->
+<section id="scrSetup">
+  <div class="hero"><div class="wrap">
+    <span class="eyebrow">🎓 שיעור פרטי · בחינם</span>
+    <h1>מתרגלים <em>ביחד</em>,<br>מקל ועד קשה.</h1>
+    <p>בוחרים נושא או מעלים את החומר שלכם – ואני מדריך אתכם תרגיל אחרי תרגיל, שלב אחרי שלב. טעיתם? מקבלים רמז, לא תשובה. ובאמצע – סרטונים שלי על הנושא.</p>
+    <div class="ladder-ill"><span>🟢 קל</span><span>🟡 בינוני</span><span>🔴 קשה</span></div>
+  </div></div>
+  <div class="wrap"><div class="panel">
+    <span class="lbl">באיזו כיתה / רמה?</span>
+    <div class="chips" id="lvChips"></div>
+    <div id="topicBox" hidden>
+      <span class="lbl" style="margin-top:14px">איזה נושא? <small>(אפשר גם לדלג ולהעלות חומר)</small></span>
+      <div class="topics" id="topics"></div>
+    </div>
+    <div class="sep">או</div>
+    <label class="upl" id="upl"><span class="ic">📄</span><span>העלו את החומר שאתם לומדים<small>דף עבודה, עמוד מהספר או שאלה מהמבחן – והתרגילים יהיו בדיוק בסגנון שלו</small></span><img id="uplImg" hidden alt=""><input type="file" accept="image/*" id="uplIn"></label>
+    <span class="lbl" style="margin-top:14px">משהו שחשוב לכם? <small>(לא חובה)</small></span>
+    <textarea id="note" maxlength="300" placeholder="למשל: יש לי מבחן ביום ראשון / קשה לי עם שברים"></textarea>
+    <button class="go" id="startBtn" disabled>✨ <b>מתחילים</b> שיעור</button>
+    <p class="smallnote">6 תרגילים: 2 קלים, 2 בינוניים, 2 קשים · כ־20 דקות</p>
+    <div class="msg" id="setupMsg"></div>
+  </div></div>
+</section>
+
+<!-- ===== טעינה ===== -->
+<section id="scrLoading" hidden>
+  <div class="wrap loading"><div class="orbit"><div class="planet"></div><div class="star">⭐</div></div>
+    <div class="m" id="loadMsg">מכין לכם תרגילים…</div>
+    <div class="s">בדרך כלל 15–40 שניות. נשימה עמוקה 🙂</div></div>
+</section>
+
+<!-- ===== השיעור ===== -->
+<section id="scrLesson" hidden>
+  <div class="wrap">
+    <div class="ladder" id="ladder"></div>
+    <div id="feed"></div>
+  </div>
+</section>
+
+<div class="ytm" id="ytm"><div class="box"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="סרטון"></iframe>
+  <div class="bar"><span id="ytt"></span><span><a id="ytl" target="_blank" rel="noopener">ביוטיוב ↗</a> <button class="x" id="ytx" aria-label="סגירה">×</button></span></div></div></div>
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי · התרגילים נוצרים אוטומטית – אם משהו נראה לא נכון, <a href="https://wa.me/972506702628" target="_blank" rel="noopener">כתבו לי</a>.</footer>
+
+<script>
+const WORKER_URL = "https://pshut-solve.pshut-math.workers.dev/";
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const store = { get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const show = id => { ["scrSetup","scrLoading","scrLesson"].forEach(s => $("#"+s).hidden = s !== id); scrollTo(0,0); };
+const HEB = /[֐-׿]/;
+function hebTex(v){ const parts = String(v).split(/\\text\{([^{}]*)\}/);
+  return `<span class="hebmath" dir="rtl">${mixed(parts.map((p,i) => i%2 ? p : (p.trim() ? `\\(${p.trim()}\\)` : " ")).join(" "))}</span>`; }
+function tex(v, display=true){
+  if (HEB.test(v)) return hebTex(v);
+  if (!window.katex) return `<span dir="ltr">${esc(v)}</span>`;
+  try { return katex.renderToString(v, {displayMode:display, throwOnError:true, strict:false}); } catch(e){ return `<span dir="ltr">${esc(v)}</span>`; }
+}
+function mixed(s){ return String(s ?? "").split(/\\\((.+?)\\\)/s).map((p,i) => i%2 ? `<span class="im" dir="ltr">${tex(p,false)}</span>` : esc(p)).join(""); }
+
+/* ---------- נושאים לפי רמה ---------- */
+const TOPICS = {signed:"מספרים מכוונים",powers:"חזקות",algebra:"אלגברה ופירוק לגורמים",equations:"משוואות",systems:"מערכות משוואות",inequal:"אי-שוויונות",ratio:"יחס ופרופורציה",percent:"אחוזים",word:"בעיות מילוליות ותנועה",linear:"קו ישר ושיפוע",quadratic:"פרבולה ופונקציה ריבועית",angles:"זוויות",area:"שטחים והיקפים",congruence:"חפיפת משולשים",pythagoras:"פיתגורס",similarity:"דמיון משולשים",midsegment:"מרובעים וקטע אמצעים",geometry:"גאומטריה",circle:"מעגל",analytic:"גאומטריה אנליטית","trig-right":"טריגו במשולש ישר-זווית","trig-plane":"טריגו במישור","trig-space":"טריגו במרחב","trig-func":"פונקציות ומשוואות טריגו",stats:"סטטיסטיקה",prob:"הסתברות",sequences:"סדרות",growth:"גדילה ודעיכה",calc:"חקירת פונקציות",extremum:"בעיות קיצון","calc-exp":"מעריכיות ו-ln",integrals:"אינטגרלים",vectors:"וקטורים",complex:"מספרים מרוכבים"};
+const LEVELS = [
+  {k:"z", n:"ז׳", codes:["z"], t:["signed","algebra","equations","percent","ratio","angles","area","word"]},
+  {k:"h", n:"ח׳", codes:["h"], t:["equations","systems","linear","percent","ratio","inequal","angles","congruence","pythagoras","word"]},
+  {k:"t", n:"ט׳", codes:["t"], t:["algebra","powers","quadratic","systems","word","similarity","midsegment","pythagoras","trig-right","prob","stats"]},
+  {k:"3", n:"3 יח״ל", codes:["3a","3b"], t:["percent","growth","linear","systems","analytic","trig-right","trig-space","stats","prob","calc","sequences"]},
+  {k:"4", n:"4 יח״ל", codes:["4a","4b"], t:["calc","calc-exp","extremum","integrals","sequences","growth","prob","stats","analytic","circle","trig-plane","trig-space","word"]},
+  {k:"5", n:"5 יח״ל", codes:["5a","5b"], t:["calc","calc-exp","extremum","integrals","sequences","prob","analytic","circle","geometry","similarity","trig-plane","trig-func","trig-space","vectors","complex","word"]},
+];
+let VIDS = []; fetch("videos.json").then(r => r.json()).then(v => { VIDS = v.map(([id,topic,codes,title]) => ({id,topic,codes:codes.split(" "),title})); drawTopics(); }).catch(()=>{});
+let lvl = LEVELS.find(l => l.k === store.get("pl_lvl")) || null, topic = null, material = null;
+function drawLevels(){ $("#lvChips").innerHTML = LEVELS.map(l => `<button class="chip${lvl===l?" on":""}" data-k="${l.k}">${l.n}</button>`).join(""); }
+function drawTopics(){
+  if (!lvl) { $("#topicBox").hidden = true; return; }
+  $("#topicBox").hidden = false;
+  $("#topics").innerHTML = lvl.t.map(k => { const n = VIDS.filter(v => v.topic === k && v.codes.some(c => lvl.codes.includes(c))).length;
+    return `<button class="topic${topic===k?" on":""}" data-k="${k}">${TOPICS[k]}${n ? `<small>🎬 ${n} סרטונים שלי</small>` : ""}</button>`; }).join("");
+}
+function canStart(){ $("#startBtn").disabled = !(lvl && (topic || material)); }
+$("#lvChips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return; lvl = LEVELS.find(l => l.k === b.dataset.k); store.set("pl_lvl", lvl.k); topic = null; drawLevels(); drawTopics(); canStart(); };
+$("#topics").onclick = e => { const b = e.target.closest(".topic"); if (!b) return; topic = topic === b.dataset.k ? null : b.dataset.k; drawTopics(); canStart(); };
+(() => { const q = new URLSearchParams(location.search), t = q.get("topic"), l = q.get("lvl");
+  if (l && LEVELS.find(x => x.k === l)) lvl = LEVELS.find(x => x.k === l);
+  if (t && TOPICS[t]) { topic = t; if (!lvl || !lvl.t.includes(t)) lvl = lvl && lvl.t.includes(t) ? lvl : (LEVELS.find(x => x.t.includes(t)) || lvl); }
+  canStart(); })();
+drawLevels(); drawTopics();
+async function compress(file, max = 1600){
+  const url = URL.createObjectURL(file);
+  const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+  const k = Math.min(1, max/Math.max(img.naturalWidth,img.naturalHeight));
+  const c = document.createElement("canvas"); c.width = Math.round(img.naturalWidth*k); c.height = Math.round(img.naturalHeight*k);
+  const g = c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(img,0,0,c.width,c.height);
+  const out = c.toDataURL("image/jpeg", .85); return { data: out.split(",")[1], type:"image/jpeg", url: out };
+}
+$("#uplIn").onchange = async e => { const f = e.target.files[0]; if (!f) return;
+  try { material = await compress(f); $("#uplImg").src = material.url; $("#uplImg").hidden = false; } catch(er){ material = null; }
+  if (!lvl) $("#setupMsg").innerHTML = `<div class="note info">בחרו גם כיתה / רמה למעלה 👆</div>`; canStart(); };
+
+/* ---------- תקשורת עם השרת ---------- */
+async function api(body, ms = 150000){
+  const ctrl = ("AbortController" in window) ? new AbortController() : null; const t = setTimeout(() => ctrl && ctrl.abort(), ms);
+  let lastErr;
+  for (let a = 0; a < 2; a++) {
+    try {
+      const r = await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body), signal: ctrl ? ctrl.signal : undefined });
+      const j = await r.json().catch(() => ({})); clearTimeout(t);
+      if (!r.ok || j.error) { const er = new Error(j.message || "משהו השתבש. נסו שוב."); er.code = j.error; throw er; }
+      return j;
+    } catch(e) { lastErr = e; if (e.code || (e.name === "AbortError")) break; await new Promise(r => setTimeout(r, 2000)); }
+  }
+  clearTimeout(t); throw lastErr;
+}
+
+/* ---------- קול (הקול הטבעי של האתר) ---------- */
+let voiceOn = store.get("pl_voice") !== "0";
+const NA = new Audio(); let vid = 0;
+function drawVoice(){ $("#voiceBtn").textContent = voiceOn ? "🔊" : "🔇"; }
+drawVoice();
+$("#voiceBtn").onclick = () => { voiceOn = !voiceOn; store.set("pl_voice", voiceOn ? "1" : "0"); drawVoice(); if (!voiceOn) { vid++; vqueue = []; NA.pause(); vplaying = false; } };
+const LETTERS = {a:"איי",b:"בי",c:"סי",d:"די",e:"אי",f:"אף",g:"ג'י",h:"אייץ'",i:"איי",j:"ג'יי",k:"קיי",l:"אל",m:"אם",n:"אן",o:"או",p:"פי",q:"קיו",r:"אר",s:"אס",t:"טי",u:"יו",v:"וי",w:"דאבל יו",x:"איקס",y:"וואי",z:"זד"};
+function speakFix(t){
+  return String(t || "").replace(/\\\((.+?)\\\)/gs, " $1 ")
+    .replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, " $1 חלקי $2 ").replace(/\\sqrt\{([^{}]*)\}/g, " שורש של $1 ")
+    .replace(/\\(cdot|times)/g, " כפול ").replace(/\\pi/g, " פאי ").replace(/\\[a-zA-Z]+/g, " ").replace(/[{}]/g, " ")
+    .replace(/\^\s*2\b/g, " בריבוע ").replace(/\^\s*(\d+)/g, " בחזקת $1 ").replace(/(\d)([a-zA-Z])/g, "$1 $2")
+    .replace(/\s*=\s*/g, " שווה ").replace(/\s*\+\s*/g, " ועוד ").replace(/(\d|[a-zA-Z])\s*[−–-]\s*(?=[\da-zA-Z(])/g, "$1 פחות ")
+    .replace(/\b[A-Za-z]{1,3}\b/g, w => w.split("").map(ch => LETTERS[ch.toLowerCase()] || ch).join(" ")).replace(/\s{2,}/g, " ").trim();
+}
+const ttsCache = {};
+function ttsUrl(text){
+  if (!ttsCache[text]) ttsCache[text] = fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ tts: speakFix(text), voice: "Charon" }) })
+    .then(r => r.ok && /audio/.test(r.headers.get("content-type")||"") ? r.blob() : null).then(b => b && URL.createObjectURL(b)).catch(() => null);
+  return ttsCache[text];
+}
+let vqueue = [], vplaying = false;
+function say(text){
+  if (!voiceOn || !text) return;
+  ttsUrl(text); vqueue.push(text); if (vqueue.length > 2) vqueue.splice(0, vqueue.length - 2);
+  vpump();
+}
+async function vpump(){
+  if (vplaying || !vqueue.length) return;
+  vplaying = true; const my = vid, t = vqueue.shift();
+  const u = await ttsUrl(t);
+  if (!u || my !== vid || !voiceOn) { vplaying = false; return vpump(); }
+  NA.onended = NA.onerror = () => { vplaying = false; vpump(); };
+  NA.src = u; const p = NA.play(); if (p && p.catch) p.catch(() => { vplaying = false; });
+}
+function sayNow(text){ vid++; vqueue = []; NA.pause(); vplaying = false; const v = voiceOn; voiceOn = true; say(text); voiceOn = v; }
+function unlockAudio(){ try { NA.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="; const p = NA.play(); p && p.catch && p.catch(()=>{}); } catch(e){} }
+function teacher(html, sayText){
+  const id = "t" + Math.random().toString(36).slice(2, 8);
+  if (sayText) setTimeout(() => say(sayText), 50);
+  return `<div class="teacher"><span class="av">🧑‍🏫</span><div class="say">${html}</div>${sayText ? `<button class="sp" data-say="${esc(sayText)}" aria-label="השמעה">🔈</button>` : ""}</div>`;
+}
+document.addEventListener("click", e => { const b = e.target.closest(".sp"); if (b) sayNow(b.dataset.say); });
+
+/* ---------- בדיקת תשובות (במכשיר, מיד) ---------- */
+function toJS(s, v){
+  v = v || "x";
+  let t = String(s).replace(/\s+/g, "").replace(/−|–/g, "-").replace(/×|·/g, "*").replace(/÷/g, "/").replace(/π/g, "(Math.PI)")
+    .replace(/\^/g, "**").replace(/√\(/g, "Math.sqrt(").replace(/√(\d+(\.\d+)?|[a-zA-Z])/g, "Math.sqrt($1)");
+  const V = v.replace(/[^a-zA-Z]/g, "");
+  t = t.replace(new RegExp(`(\\d|\\))(${V}|\\(|Math)`, "g"), "$1*$2").replace(new RegExp(`(${V})(\\d|\\(|Math)`, "g"), "$1*$2").replace(/\)(\d)/g, ")*$1");
+  return t;
+}
+function safe(expr, v){ const rest = expr.replace(/Math\.(sqrt|PI)/g, "").replace(new RegExp(v, "g"), "").replace(/[\d+\-*/().,\s]/g, ""); return rest === ""; }
+function ev(expr, v, val){ if (!safe(expr, v)) return NaN; try { return Function(v, `return (${expr})`)(val); } catch(e){ return NaN; } }
+function nums(s, v){ return String(s).split(/,|או|;/).map(p => p.replace(new RegExp(`^${v}=|=${v}$`), "")).filter(Boolean).map(p => ev(toJS(p, v), v, 0)); }
+function judge(step, input){
+  const v = step.var || "x";
+  let a = String(input).trim(); if (!a) return { empty: true };
+  if (step.type === "expr") {
+    const A = toJS(a.replace(new RegExp(`^[a-zA-Z]\\(${v}\\)=|^y=`), ""), v), E = toJS(step.answer, v);
+    if (/=/.test(A)) return { bad: true, fmt: "בשלב הזה כותבים רק את הביטוי, בלי סימן שווה 🙂" };
+    const same = (p, q) => [1.7, -2.3, 3.1].every(x => { const u = ev(p, v, x), w = ev(q, v, x); return isFinite(u) && isFinite(w) && Math.abs(u - w) < 1e-6 * Math.max(1, Math.abs(w)); });
+    if (!isFinite(ev(E, v, 1.7))) return { unknown: true };
+    if (same(A, E)) return { ok: true };
+    const m = (step.mistakes || []).find(m => same(A, toJS(m.answer, v)));
+    return { bad: true, m };
+  }
+  const want = nums(step.answer, v), got = nums(a, v);
+  if (!want.length || want.some(n => !isFinite(n))) return { unknown: true };
+  if (!got.length || got.some(n => !isFinite(n))) return { bad: true, fmt: "לא הצלחתי לקרוא את התשובה – כתבו רק מספר" + (step.type === "values" ? "ים, מופרדים בפסיק." : ".") };
+  const eqSet = (p, q) => p.length === q.length && [...p].sort((x,y)=>x-y).every((n,i) => Math.abs(n - [...q].sort((x,y)=>x-y)[i]) < 1e-6 * Math.max(1, Math.abs(n)));
+  if (eqSet(got, want)) return { ok: true };
+  if (step.type === "values" && got.length < want.length && got.every(g => want.some(w => Math.abs(g - w) < 1e-6))) return { bad: true, fmt: "נכון! אבל יש עוד פתרון – תמצאו גם אותו (מפרידים בפסיק)." };
+  const m = (step.mistakes || []).find(m => { const mm = nums(m.answer, v); return mm.length && eqSet(got, mm); });
+  return { bad: true, m };
+}
+
+/* ---------- השיעור ---------- */
+let S = null; // מצב השיעור
+const LV_NAME = { easy: "קל", medium: "בינוני", hard: "קשה" };
+const LOAD = ["מכין לכם תרגילים…","בונה תרגיל קל לחימום…","בודק שהמספרים יוצאים יפה…","מכין רמזים למקרה שתיתקעו…","כמעט מוכן…"];
+let loadT;
+function loading(on){ clearInterval(loadT); if (!on) return; let i = 0; $("#loadMsg").textContent = LOAD[0]; show("scrLoading"); loadT = setInterval(() => $("#loadMsg").textContent = LOAD[Math.min(++i, LOAD.length-1)], 6000); }
+function stageReq(stage){
+  const b = { mode:"practice", stage, topic: topic || "", level: lvl ? lvl.n : "", note: $("#note").value.trim(), done: S ? S.ex.map(e => e.question) : [] };
+  if (material) { b.image = material.data; b.mediaType = material.type; }
+  return api(b);
+}
+$("#startBtn").onclick = async () => {
+  unlockAudio();
+  S = { ex: [], cur: -1, results: [], stages: {}, topic, title: "" };
+  loading(true);
+  try {
+    const j = await stageReq(1); addStage(1, j.practice);
+    S.stages[2] = stageReq(2).catch(e => e); // מכינים מראש את הרמה הבאה
+    loading(false); show("scrLesson"); $("#feed").innerHTML = "";
+    const P = j.practice; S.title = P.title || TOPICS[topic] || "השיעור שלך"; if (!S.topic && P.topic) S.topic = P.topic;
+    drawLadder();
+    if (P.overview && (P.overview.goal || P.overview.what)) {
+      $("#feed").insertAdjacentHTML("beforeend", `<div class="card ov"><h3>🧭 רגע לפני – ${esc(S.title)}</h3>
+        ${P.overview.goal ? `<p><b>המטרה:</b> ${mixed(P.overview.goal)}</p>` : ""}${P.overview.what ? `<p><b>מה עושים:</b> ${mixed(P.overview.what)}</p>` : ""}
+        ${(P.overview.tools||[]).map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}
+        <button class="btn gold wide" id="ovGo">לתרגיל הראשון ←</button></div>`);
+      say(P.overview.say);
+      $("#ovGo").onclick = e => { e.target.remove(); nextExercise(); };
+    } else nextExercise();
+  } catch(e) {
+    loading(false); show("scrSetup");
+    $("#setupMsg").innerHTML = `<div class="note err">😕 ${esc(e.message || "אין חיבור כרגע.")} נסו שוב בעוד רגע.</div>`;
+  }
+};
+function addStage(stage, P){ S.keywords = (S.keywords || []).concat(P.keywords || []); if (!S.topic && P.topic) S.topic = P.topic; (P.exercises || []).forEach(e => { e.stage = stage; S.ex.push(e); S.results.push(null); }); }
+function drawLadder(){
+  const per = { easy: [], medium: [], hard: [] };
+  S.ex.forEach((e, i) => per[e.level] && per[e.level].push(i));
+  // מקומות שמורים לרמות שעוד לא הגיעו
+  ["medium","hard"].forEach(l => { while (per[l].length < 2) per[l].push(-1); });
+  const curLv = S.ex[S.cur] ? S.ex[S.cur].level : "easy";
+  $("#ladder").innerHTML = ["easy","medium","hard"].map(l => `<span class="lv${l===curLv?" on":""}">${LV_NAME[l]} ${per[l].map(i => `<i class="${i===S.cur?"cur":i>=0&&S.results[i]==="ok"?"ok":i>=0&&S.results[i]==="help"?"help":""}"></i>`).join("")}</span>`).join("")
+    + `<span class="tp">${esc(S.title)}</span>`;
+}
+async function ensureNext(){
+  if (S.cur + 1 < S.ex.length) return true;
+  const stage = (S.ex[S.ex.length-1] || {}).stage + 1;
+  if (stage > 3) return false;
+  let j = S.stages[stage];
+  const wait = document.createElement("div"); wait.className = "card"; wait.innerHTML = teacher("רגע, מכין את התרגיל הבא… ⏳"); $("#feed").append(wait);
+  try { j = await j; if (j instanceof Error || !j) j = await stageReq(stage); }
+  catch(e){ try { j = await stageReq(stage); } catch(e2){ wait.innerHTML = `<div class="note err">😕 לא הצלחתי להכין את התרגיל הבא. <button class="btn light" id="retryNext">ניסיון נוסף</button></div>`; $("#retryNext").onclick = () => { wait.remove(); S.stages[stage] = null; nextExercise(); }; return null; } }
+  wait.remove();
+  addStage(stage, j.practice);
+  if (stage < 3 && !S.stages[stage+1]) S.stages[stage+1] = stageReq(stage+1).catch(e => e);
+  return true;
+}
+async function nextExercise(){
+  const prevStage = S.ex[S.cur] ? S.ex[S.cur].stage : 0;
+  const ok = await ensureNext(); if (ok === null) return;
+  if (!ok) return finishLesson();
+  const e = S.ex[S.cur + 1];
+  if (prevStage && e.stage !== prevStage && !S["break" + prevStage]) { S["break" + prevStage] = 1; return videoBreak(prevStage, e.level); }
+  S.cur++; drawLadder(); renderExercise(S.cur);
+}
+
+/* ----- תרגיל ----- */
+function renderExercise(i){
+  const e = S.ex[i]; e.state = { step: 0, wrong: 0, helped: false };
+  const card = document.createElement("div"); card.className = "card"; card.id = "ex" + i;
+  card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2></div>
+    <div class="exq">${mixed(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", e.intro_say)}<div class="steps"></div>`;
+  $("#feed").append(card);
+  setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  renderStep(i, 0);
+}
+function renderStep(i, k){
+  const e = S.ex[i], st = e.steps[k], card = $("#ex" + i);
+  const el = document.createElement("div"); el.className = "step"; el.id = `st${i}_${k}`;
+  let inp = "";
+  if (st.type === "choice") inp = `<div class="opts">${st.choices.map((c, j) => `<button data-j="${j}">${mixed(c.text)}</button>`).join("")}</div>`;
+  else {
+    const mode = store.get("pl_mode") || "kb";
+    inp = `<div class="modes"><button data-m="kb" class="${mode==="kb"?"on":""}">🔢 מקלדת</button><button data-m="pad" class="${mode==="pad"?"on":""}">✍️ כתיבה באצבע</button></div>
+      <div class="m-kb" ${mode==="kb"?"":"hidden"}><div class="disp"></div>${keyboard(st)}</div>
+      <div class="m-pad" ${mode==="pad"?"":"hidden"}><div class="padwrap"><canvas></canvas><span class="tip">כתבו כאן את התשובה באצבע ✍️</span></div>
+        <div class="row" style="margin-top:8px"><button class="btn light" data-a="clr">ניקוי</button><button class="btn" data-a="read">בדיקה ✓</button></div></div>`;
+  }
+  el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}</div>${teacher(mixed(st.prompt), st.say || st.prompt)}
+    <div class="inp">${inp}<div class="fbx"></div><div class="helprow"></div></div><div class="solvedline"></div>`;
+  card.querySelector(".steps").append(el);
+  setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+  wireStep(i, k, el);
+}
+function keyboard(st){
+  const v = st.var || "x";
+  const keys = ["7","8","9","+","−","⌫", "4","5","6","×","÷","נקה", "1","2","3","(",")","=", "0",".",v,"²","^","√"];
+  const cls = k => /^[0-9.]$/.test(k) ? "" : k === v ? "v" : (k === "⌫" || k === "נקה") ? "fn" : "op";
+  const lab = k => k === "²" ? "x²" : k === "^" ? "xⁿ" : k;
+  return `<div class="kb">${keys.map(k => `<button class="${cls(k)}" data-k="${k}">${lab(k)}</button>`).join("")}<button class="op" data-k="π">π</button><button class="op" data-k=",">,</button><button class="ok" data-k="ok" style="grid-column:span 4">בדיקה ✓</button></div>`;
+}
+function wireStep(i, k, el){
+  const e = S.ex[i], st = e.steps[k];
+  const fbx = el.querySelector(".fbx"), help = el.querySelector(".helprow");
+  const say2 = (cls, html, sp) => { fbx.innerHTML = `<div class="fb ${cls}">${html}</div>`; if (sp) say(sp); };
+  const solved = how => {
+    el.classList.add("solved");
+    el.querySelector(".solvedline").innerHTML = `✅ ${st.type === "choice" ? mixed(st.choices.find(c => c.correct).text) : st.answer_tex ? `<span class="im" dir="ltr">${tex(st.answer_tex,false)}</span>` : esc(how)}`;
+    if (k + 1 < e.steps.length) renderStep(i, k + 1); else exerciseDone(i);
+  };
+  const wrong = (msg) => {
+    e.state.wrong++;
+    say2("bad", "🤔 " + mixed(msg), msg);
+    helpButtons();
+  };
+  const helpButtons = () => {
+    let h = "";
+    if (st.hint && e.state.wrong >= 1) h += `<button data-h="hint">💡 רמז</button>`;
+    if (e.state.wrong >= 2) h += `<button data-h="show">👀 הראו לי את הדרך</button>`;
+    if (e.state.wrong >= 2) h += `<button data-h="video">🎬 סרטון שלי על זה</button>`;
+    help.innerHTML = h;
+  };
+  help.onclick = ev2 => {
+    const b = ev2.target.closest("button"); if (!b) return;
+    if (b.dataset.h === "hint") { say2("hint", "💡 " + mixed(st.hint), st.hint); e.state.helped = true; }
+    if (b.dataset.h === "show") { e.state.helped = true;
+      const ans = st.type === "choice" ? mixed(st.choices.find(c => c.correct).text) + (st.choices.find(c => c.correct).why ? " – " + mixed(st.choices.find(c => c.correct).why) : "") : (st.answer_tex ? `<span class="im" dir="ltr">${tex(st.answer_tex,false)}</span>` : esc(st.answer));
+      say2("hint", `הנה התשובה לשלב הזה: ${ans}<br><small>לא נורא! ככה לומדים. בתרגיל הבא תנסו לבד 💪</small>`);
+      setTimeout(() => solved(st.answer), 2600); }
+    if (b.dataset.h === "video") openBestVideo(e);
+  };
+  if (st.type === "choice") {
+    el.querySelector(".opts").onclick = ev2 => {
+      const b = ev2.target.closest("button"); if (!b || el.classList.contains("solved")) return;
+      const c = st.choices[+b.dataset.j];
+      if (c.correct) { b.classList.add("right"); say2("ok", "✅ " + mixed(c.why || "בדיוק!"), c.why || "בדיוק!"); setTimeout(() => solved(c.text), 1400); }
+      else { b.classList.add("wrong"); wrong(c.why || "לא בדיוק. תחשבו שוב – התשובות נמצאות בנתונים."); }
+    };
+    return;
+  }
+  // מקלדת
+  let buf = [];
+  const disp = el.querySelector(".disp");
+  const draw = () => { const t = buf.join(""); disp.innerHTML = (t ? `<span>${esc(t)}</span>` : `<span class="ph">${st.type==="values"?"למשל: 2, 3":st.type==="expr"?"כתבו את הביטוי…":"כתבו את התשובה…"}</span>`) + `<span class="cur"></span>`; };
+  draw();
+  const check = (text, viaPad) => {
+    const r = judge(st, text);
+    if (r.empty) return say2("hint", "✏️ קודם כתבו תשובה 🙂");
+    if (r.ok) { say2("ok", "✅ " + (pick(["נכון!","בדיוק!","מהמם!","יפה מאוד!"])), null); setTimeout(() => solved(text), 900); return; }
+    if (r.unknown) { // אי אפשר לבדוק אוטומטית – משווים טקסט, ואם לא – מראים
+      if (text.replace(/\s/g,"") === String(st.answer).replace(/\s/g,"")) { say2("ok", "✅ נכון!"); setTimeout(() => solved(text), 900); return; }
+      return wrong("לא בטוח שזה נכון. בדקו שוב, או לחצו על 'הראו לי את הדרך'.");
+    }
+    if (r.fmt) return say2("hint", r.fmt);
+    wrong(r.m ? r.m.feedback : e.state.wrong ? "עוד לא… נסו את הרמז 💡" : "עוד לא… בדקו שוב את החישוב. התשובות נמצאות בנתונים!");
+  };
+  el.querySelector(".kb").onclick = ev2 => {
+    const b = ev2.target.closest("button"); if (!b) return; const kk = b.dataset.k;
+    if (kk === "⌫") buf.pop(); else if (kk === "נקה") buf = []; else if (kk === "ok") return check(buf.join(""));
+    else if (kk === "²") buf.push("^2"); else if (kk === "√") buf.push("√("); else buf.push(kk);
+    draw();
+  };
+  // מעבר בין מקלדת לכתיבה
+  el.querySelector(".modes").onclick = ev2 => { const b = ev2.target.closest("button"); if (!b) return; store.set("pl_mode", b.dataset.m);
+    el.querySelectorAll(".modes button").forEach(x => x.classList.toggle("on", x === b));
+    el.querySelector(".m-kb").hidden = b.dataset.m !== "kb"; el.querySelector(".m-pad").hidden = b.dataset.m !== "pad"; if (b.dataset.m === "pad") pad.size(); };
+  // כתיבה באצבע
+  const pad = makePad(el.querySelector(".padwrap canvas"), el.querySelector(".padwrap .tip"));
+  el.querySelector('[data-a="clr"]').onclick = () => pad.clear();
+  el.querySelector('[data-a="read"]').onclick = async b => {
+    if (!pad.inked) return say2("hint", "✏️ קודם כתבו משהו באצבע.");
+    say2("wait", "👀 קורא את מה שכתבתם…");
+    try {
+      const r = await api({ mode: "check", image: pad.png(), prompt: st.prompt.replace(/\\[()]/g, ""), answer: st.answer_tex || st.answer }, 70000);
+      if (r.unclear) return say2("hint", "🙈 לא הצלחתי לקרוא. כתבו קצת יותר גדול, או השתמשו במקלדת.");
+      const plain = String(r.read || "").replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)").replace(/\\(cdot|times)/g, "*").replace(/\\pi/g, "π").replace(/\\[a-zA-Z]+/g, "").replace(/[{}\\]/g, "");
+      const local = plain ? judge(st, plain) : {};
+      const okk = r.correct || local.ok;
+      if (okk) { say2("ok", `📝 קראתי: <span class="im" dir="ltr">${tex(r.read || "", false)}</span><br>✅ ${esc(r.feedback || "נכון!")}`); setTimeout(() => solved(r.read), 1500); }
+      else { fbx.innerHTML = ""; wrong(`קראתי: \\(${r.read || "?"}\\). ${r.feedback || "עוד לא…"}`); }
+    } catch(er) { say2("hint", "😕 לא הצלחתי לבדוק כרגע. נסו שוב או עברו למקלדת."); }
+  };
+}
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function makePad(cv, tip){
+  const ctx = cv.getContext("2d"); let drawing = false; const o = { inked: false };
+  o.size = () => { const r = cv.getBoundingClientRect(); if (!r.width) return; const d = devicePixelRatio || 1; cv.width = r.width * d; cv.height = r.height * d; ctx.setTransform(d,0,0,d,0,0); ctx.lineWidth = 3.4; ctx.lineCap = ctx.lineJoin = "round"; ctx.strokeStyle = "#1d2a6b"; o.inked = false; tip.style.display = ""; };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener("pointerdown", e => { if (!cv.width || cv.width < 10) o.size(); drawing = true; o.inked = true; tip.style.display = "none"; cv.setPointerCapture(e.pointerId); const [x,y] = pos(e); ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+.1,y+.1); ctx.stroke(); });
+  cv.addEventListener("pointermove", e => { if (!drawing) return; const [x,y] = pos(e); ctx.lineTo(x,y); ctx.stroke(); });
+  ["pointerup","pointercancel"].forEach(ev => cv.addEventListener(ev, () => drawing = false));
+  o.clear = () => { ctx.clearRect(0,0,cv.width,cv.height); o.inked = false; tip.style.display = ""; };
+  o.png = () => { const c = document.createElement("canvas"); c.width = cv.width; c.height = cv.height; const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0,0,c.width,c.height); g.drawImage(cv,0,0); return c.toDataURL("image/png").split(",")[1]; };
+  setTimeout(o.size, 50);
+  return o;
+}
+function exerciseDone(i){
+  const e = S.ex[i];
+  S.results[i] = e.state.helped || e.state.wrong >= 3 ? "help" : "ok"; drawLadder();
+  const card = document.createElement("div"); card.className = "card done-card";
+  const praise = S.results[i] === "ok" ? pick(["מהמם! פתרתם לבד 👏","אתם גאונים, כל הכבוד!","יפה מאוד – בלי עזרה בכלל!"]) : "כל הכבוד שלא ויתרתם! 💪";
+  card.innerHTML = `<h3>🎯 ${praise}</h3>${e.final_tex ? `<div class="ans">${tex(e.final_tex)}</div>` : ""}
+    ${e.check_say ? `<p style="margin:6px 0">✅ ${mixed(e.check_say)}</p>` : ""}
+    <label class="upl2">📷 רוצים שאבדוק גם את הדרך מהמחברת?<input type="file" accept="image/*"></label>
+    <div class="rv"></div>
+    <button class="btn gold wide nx">לתרגיל הבא ←</button>`;
+  $("#ex" + i).append(card);
+  say(praise.replace(/[👏💪]/g, ""));
+  card.querySelector("input").onchange = ev2 => reviewPhoto(e, ev2.target.files[0], card.querySelector(".rv"));
+  card.querySelector(".nx").onclick = ev2 => { ev2.target.remove(); nextExercise(); };
+  setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "nearest" }), 120);
+}
+async function reviewPhoto(e, f, box){
+  if (!f) return;
+  box.innerHTML = `<div class="fb wait">👀 עובר על הפתרון שלכם שורה אחרי שורה… (עד חצי דקה)</div>`;
+  try {
+    const img = await compress(f, 1400);
+    const r = (await api({ mode: "review", image: img.data, mediaType: img.type, question: e.question, answer: e.final_tex || "" })).review;
+    if (r.verdict === "unreadable") { box.innerHTML = `<div class="fb hint">🙈 לא הצלחתי לקרוא את הפתרון. צלמו מקרוב, ישר ובאור טוב.</div>`; return; }
+    box.innerHTML = `${teacher(esc(r.say), r.say)}<div class="nb-review">${r.lines.map((l, j) => `<div class="nl ${l.status}"><span>${l.status==="ok"?"✅":l.status==="error"?"❌":"❔"}</span><div class="tx">${tex(l.tex, false)}</div>${l.note ? `<div class="nt">${mixed(l.note)}</div>` : ""}</div>`).join("")}</div>
+      ${r.fix_tip ? `<div class="fb hint">💡 ${mixed(r.fix_tip)}</div>` : ""}`;
+  } catch(er) { box.innerHTML = `<div class="fb bad">😕 ${esc(er.message || "לא הצלחתי לבדוק כרגע.")}</div>`; }
+}
+
+/* ----- סרטונים של אוראל ----- */
+function videosFor(e, n = 3){
+  const tp = S.topic || topic, codes = lvl ? lvl.codes : [];
+  const kws = ((S.keywords) || []).concat(String(e && e.question || "").replace(/\\\(.+?\\\)/gs, " ").split(/\s+/).filter(w => w.length >= 4));
+  return VIDS.map(v => { let sc = 0;
+      if (tp && v.topic === tp) sc += 5; if (v.codes.some(c => codes.includes(c))) sc += 3;
+      for (const k of kws) if (k && v.title.includes(k)) sc += 1;
+      return { v, sc }; })
+    .filter(x => x.sc >= 5).sort((a, b) => b.sc - a.sc).slice(0, n).map(x => x.v);
+}
+function vCard(v){ return `<button class="vc" data-id="${v.id}" data-t="${esc(v.title)}"><span class="th"><img src="t/${v.id}.webp" alt="" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/mqdefault.jpg'"></span><span class="vt">${esc(v.title)}</span></button>`; }
+function openVideo(id, t){ NA.pause(); vid++; vqueue = []; vplaying = false; $("#ytf").src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`; $("#ytt").textContent = t || ""; $("#ytl").href = `https://youtu.be/${id}`; $("#ytm").classList.add("on"); }
+document.addEventListener("click", e => { const b = e.target.closest(".vc"); if (b) openVideo(b.dataset.id, b.dataset.t); });
+$("#ytx").onclick = () => { $("#ytm").classList.remove("on"); $("#ytf").src = ""; };
+$("#ytm").onclick = e => { if (e.target.id === "ytm") $("#ytx").click(); };
+function openBestVideo(e){
+  const vs = videosFor(e, 3);
+  const st = $(`#ex${S.ex.indexOf(e)} .step:last-child .fbx`);
+  if (!vs.length) { if (st) st.innerHTML = `<div class="fb hint">אין לי סרטון בדיוק על זה – נסו את הרמז 💡</div>`; return; }
+  if (st) st.innerHTML = `<div class="fb hint">🎬 הסרטונים שלי שיעזרו פה:</div><div class="vids">${vs.map(vCard).join("")}</div>`;
+}
+function videoBreak(stage, nextLevel){
+  const vs = videosFor(S.ex[S.cur], 3);
+  const okN = S.results.filter(r => r === "ok").length;
+  const card = document.createElement("div"); card.className = "card break";
+  const msg = stage === 1 ? "סיימתם את החימום! 🔥 לפני שעולים לבינוני – רוצים לראות איך אני פותר שאלה כזאת?" : "עוד רמה מאחוריכם! 💪 עכשיו מגיע הקשה. סרטון קצר לפני?";
+  card.innerHTML = `${teacher(esc(msg), msg)}${vs.length ? `<div class="vids">${vs.map(vCard).join("")}</div>` : ""}
+    <button class="btn wide nx">ממשיכים לרמה ${LV_NAME[nextLevel]} ←</button>`;
+  $("#feed").append(card);
+  card.querySelector(".nx").onclick = ev2 => { ev2.target.remove(); nextExercise(); };
+  setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+}
+function finishLesson(){
+  const ok = S.results.filter(r => r === "ok").length, n = S.results.length;
+  const card = document.createElement("div"); card.className = "card sum";
+  const msg = ok === n ? "פתרתם הכל לבד. אתם מוכנים למבחן!" : ok >= n / 2 ? "עבודה מצוינת! עוד קצת תרגול על מה שהיה קשה וזה שלכם." : "כל הכבוד שהגעתם עד הסוף! ככה בונים ביטחון – צעד אחרי צעד.";
+  const vs = videosFor(S.ex[S.ex.length-1], 3);
+  card.innerHTML = `<div class="big">${ok}/${n}</div><p style="text-align:center;margin:0 0 6px">תרגילים שפתרתם לבד</p>${teacher(esc(msg), msg)}
+    ${vs.length ? `<h3 style="font-size:17px;margin-top:10px">🎬 להמשך – סרטונים שלי בנושא</h3><div class="vids">${vs.map(vCard).join("")}</div>` : ""}
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="again">🔁 עוד תרגול באותו נושא</button><button class="btn light" id="other">נושא אחר</button></div>`;
+  $("#feed").append(card);
+  $("#again").onclick = () => $("#startBtn").click();
+  $("#other").onclick = () => { show("scrSetup"); };
+  setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+}
+</script>
+</body>
+</html>

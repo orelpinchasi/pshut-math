@@ -310,6 +310,12 @@ ${JSON.stringify(LESSON_TOOL.input_schema)}
 זכור: בתוך מחרוזות JSON כל לוכסן הפוך של LaTeX נכתב כפול (\\\\frac).`;
 
 async function solveWithGemini(env, image, mediaType, userText) {
+  return geminiHedged(env, SYSTEM_PROMPT + GEMINI_JSON_RULES, [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }],
+    L => !!normalize(JSON.parse(JSON.stringify(L))));
+}
+
+/* מנוע כללי: Gemini עם גידור (כמה מודלים במקביל), זרם, ותיקון JSON. validate מחליט אם התשובה שימושית. */
+async function geminiHedged(env, system, parts, validate, opts = {}) {
   // מהירות קודם: מודלי Flash-Lite (‏500 ביום כל אחד, עונים תוך 10–25 שניות), ואחריהם Flash כגיבוי.
   // "גידור": מתחילים מודל אחד; אם הוא נכשל או לא ענה תוך 14 שניות – מפעילים במקביל את הבא (עד 3 בו-זמנית).
   // התשובה התקינה הראשונה מנצחת, וכל השאר מבוטלים.
@@ -319,7 +325,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
     "gemini-3-flash-preview", "gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash",
     "gemini-4-hydrogen"].filter(Boolean);
   // מודל "חי" = כבר התחיל לשלוח טקסט (stream). מודל שתקוע בתור של גוגל לא שולח כלום – אז לא מחכים לו.
-  const DEADLINE = 110000, HEDGE_MS = 8000, MAX_PAR = 4;
+  const DEADLINE = opts.deadline || 110000, HEDGE_MS = opts.hedgeMs || 8000, MAX_PAR = 4;
   const started = Date.now(), ctrls = [];
   let next = 0, running = 0, last = null, won = false, dl = null;
   const alive = new Set(), trace = [];
@@ -334,8 +340,8 @@ async function solveWithGemini(env, image, mediaType, userText) {
         signal: ctrl.signal, method: "POST",
         headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT + GEMINI_JSON_RULES }] },
-          contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: userText }] }],
+          systemInstruction: { parts: [{ text: system }] },
+          contents: [{ role: "user", parts }],
           generationConfig: gc,
         }),
       });
@@ -360,7 +366,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
         }
       }
       const lesson = parseJsonLoose(text);
-      if (!lesson || !normalize(JSON.parse(JSON.stringify(lesson)))) throw new ProviderError(502, `gemini ${model}: bad json (${finish || "?"})`, text.slice(-200));
+      if (!lesson || !validate(lesson)) throw new ProviderError(502, `gemini ${model}: bad json (${finish || "?"})`, text.slice(-200));
       lesson._model = model; lesson._ms = Date.now() - t0; tr.r = "ok" + Math.round(lesson._ms / 1000); lesson._trace = trace;
       return lesson;
     } catch (e) {
@@ -487,6 +493,122 @@ async function liveSpeak(env, text, { model = "gemini-3.1-flash-live-preview", v
   return pcmToWav([new Uint8Array(out.buffer)], 16000);
 }
 
+/* =========================================================
+   שיעור פרטי: סט תרגילים מדורג + בדיקת כתב יד + בדיקת מחברת
+   ========================================================= */
+const STYLE_SHORT = `אתה אוראל פנחסי, המורה של "פשוט להצליח במתמטיקה", בשיעור פרטי בגובה העיניים.
+הסגנון: עברית מדוברת, חם ובטוח, גוף שני ("שים לב", "מה אתה רואה פה?"), משפטים קצרים.
+שלושת הכללים: "התשובות נמצאות בנתונים", "אין שאלות" (קודם מביאים הכל מהנתונים), "פשוט ליהנות".
+ביטויים מותרים במידה: "רגע, רגע, רגע", "מה זה נותן לנו?", "בוא נראה מה הם רוצים", "מהמם", "כל הכבוד". אסור: "יאללה".
+מתמטיקה תמיד ב-LaTeX בתוך \\( \\). בתוך LaTeX רק סימנים, מספרים ואותיות לועזיות – בלי מילים בעברית.
+בשדות say (קריינות) – רק מילים, בלי סימנים: "איקס בריבוע", "שלוש חלקי ארבע"; אותיות לועזיות כותבים בעברית ("איקס", "וואי").`;
+
+const PRACTICE_SYSTEM = STYLE_SHORT + `
+
+המשימה: לבנות לתלמיד תרגול מודרך – תרגילים שהוא פותר בעצמו, שלב אחרי שלב, והאתר בודק כל שלב.
+כל תרגיל מפורק ל-2–4 שלבים קטנים. בכל שלב התלמיד עונה תשובה קצרה, והאתר בודק אותה אוטומטית. לכן השדה answer חייב להיות מדויק וחישובי:
+- type "value": מספר אחד. answer = המספר בכתיב JavaScript (למשל "9", "-2.5", "7/3", "Math.sqrt(2)").
+- type "values": כמה מספרים (למשל שני פתרונות). answer = מספרים מופרדים בפסיק ("2,3").
+- type "expr": ביטוי במשתנה אחד. answer = כתיב JavaScript עם המשתנה var (ברירת מחדל x), למשל "3*x-6", "x**2-4*x+4". בלי סימן שווה.
+- type "choice": כשהתשובה היא מילים, הוכחה, בחירת דרך, נימוק או משהו שלא נבדק כמספר. choices = 3 אפשרויות, בדיוק אחת correct=true, ולכל אחת why קצר (למה נכון / למה לא).
+המשתנה var: אות לועזית אחת (x, y, t, n, a...).
+ערבב סוגים: לפחות שלב "choice" אחד בכל תרגיל שבו יש בחירת דרך, והשאר חישוביים.
+mistakes: 1–3 טעויות נפוצות אמיתיות – answer באותו כתיב בדיוק, ו-feedback שמכוון בלי לגלות את התשובה.
+hint: רמז שמקרב בלי לתת את התשובה.
+prompt: מה התלמיד צריך לעשות בשלב (טקסט קצר, מתמטיקה בתוך \\( \\)).
+say: מה המורה אומר בקול בשלב הזה (1–2 משפטים, שיחה).
+question: נוסח התרגיל המלא, כמו בדף עבודה.
+התרגילים חייבים להיות נכונים מתמטית – פתור כל אחד בעצמך לפני שאתה כותב (בשדה work).
+החזר JSON אחד בלבד:
+{"work":"טיוטה","title":"...","topic":"מפתח נושא","overview":{"goal":"...","what":"...","tools":["..."],"say":"60–90 מילים"},
+ "exercises":[{"level":"easy|medium|hard","question":"...","intro_say":"...","steps":[{"prompt":"...","say":"...","type":"value|values|expr|choice","var":"x","answer":"...","answer_tex":"...","choices":[{"text":"...","correct":true,"why":"..."}],"hint":"...","mistakes":[{"answer":"...","feedback":"..."}]}],"final_tex":"...","check_say":"..."}],
+ "keywords":["מילות מפתח בעברית לחיפוש סרטון"]}
+overview רק כשמבקשים (שלב 1). בתוך מחרוזות JSON כל לוכסן של LaTeX כפול (\\\\frac).`;
+
+const STAGES = { 1: ["easy", "easy"], 2: ["medium", "medium"], 3: ["hard", "hard"] };
+const LEVEL_WORDS = { easy: "קל – תרגיל בסיסי, צעד אחד-שניים, מספרים נוחים", medium: "בינוני – כמו שאלה רגילה בבחינה", hard: "קשה – ברמת שאלה מסכמת בבגרות/מבחן, כמה שלבים ומלכודת אחת" };
+
+function normPractice(P, stage) {
+  if (!P || typeof P !== "object" || !Array.isArray(P.exercises)) return null;
+  const S = v => String(v ?? "");
+  const clean = t => S(t).replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
+  const ex = P.exercises.filter(e => e && Array.isArray(e.steps) && e.steps.length).slice(0, 3).map((e, i) => ({
+    level: ["easy", "medium", "hard"].includes(e.level) ? e.level : (STAGES[stage] || [])[i] || "medium",
+    question: clean(e.question), intro_say: clean(e.intro_say), final_tex: S(e.final_tex), check_say: clean(e.check_say),
+    steps: e.steps.slice(0, 5).map(st => {
+      const type = ["value", "values", "expr", "choice"].includes(st.type) ? st.type : "choice";
+      const o = { prompt: clean(st.prompt), say: clean(st.say), type, var: /^[a-zA-Z]$/.test(st.var) ? st.var : "x",
+        answer: S(st.answer).replace(/\s+/g, ""), answer_tex: S(st.answer_tex), hint: clean(st.hint),
+        mistakes: (Array.isArray(st.mistakes) ? st.mistakes : []).slice(0, 4).map(m => ({ answer: S(m && m.answer).replace(/\s+/g, ""), feedback: clean(m && m.feedback) })).filter(m => m.answer && m.feedback) };
+      if (type === "choice") {
+        o.choices = (Array.isArray(st.choices) ? st.choices : []).slice(0, 4).map(c => ({ text: clean(c && c.text), correct: !!(c && c.correct), why: clean(c && c.why) })).filter(c => c.text);
+        if (o.choices.filter(c => c.correct).length !== 1) return null;
+      } else if (!o.answer) return null;
+      return o;
+    }).filter(Boolean),
+  })).filter(e => e.steps.length);
+  if (!ex.length) return null;
+  const out = { title: clean(P.title), topic: TOPIC_KEYS[P.topic] ? P.topic : "", exercises: ex,
+    keywords: (Array.isArray(P.keywords) ? P.keywords : []).map(String).slice(0, 10) };
+  if (stage === 1 && P.overview && typeof P.overview === "object") {
+    const o = P.overview; out.overview = { goal: clean(o.goal), what: clean(o.what), tools: (Array.isArray(o.tools) ? o.tools : []).map(clean).slice(0, 4), say: clean(o.say) };
+  }
+  return out;
+}
+
+async function practiceSet(env, body) {
+  const stage = [1, 2, 3].includes(+body.stage) ? +body.stage : 1;
+  const topicName = TOPIC_KEYS[body.topic] || String(body.topicName || "").slice(0, 80);
+  const levels = STAGES[stage];
+  const txt = [
+    topicName && `הנושא: ${topicName}${body.topic ? ` (מפתח: ${body.topic})` : ""}.`,
+    body.level && `הרמה של התלמיד: ${String(body.level).slice(0, 40)}.`,
+    body.note && `התלמיד ביקש: ${String(body.note).slice(0, 300)}`,
+    body.image ? "מצורף צילום של החומר שהתלמיד לומד עכשיו – בנה תרגילים בדיוק בסגנון ובנושא של החומר הזה (לא להעתיק את אותם מספרים)." : "",
+    `בנה ${levels.length} תרגילים ברמה: ${LEVEL_WORDS[levels[0]]}.`,
+    stage === 1 ? "כלול overview (סקירה קצרה של הנושא לפני שמתחילים)." : "בלי overview.",
+    Array.isArray(body.done) && body.done.length ? `תרגילים שכבר היו (אל תחזור עליהם): ${body.done.slice(0, 8).map(q => String(q).slice(0, 120)).join(" | ")}` : "",
+  ].filter(Boolean).join("\n");
+  const parts = [];
+  if (body.image && typeof body.image === "string" && body.image.length > 100 && body.image.length < MAX_IMAGE_BYTES)
+    parts.push({ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
+  parts.push({ text: txt });
+  const raw = await geminiHedged(env, PRACTICE_SYSTEM, parts, P => !!normPractice(JSON.parse(JSON.stringify(P)), stage));
+  const out = normPractice(raw, stage);
+  out.stage = stage; out.provider = raw._model;
+  if (!out.topic && body.topic && TOPIC_KEYS[body.topic]) out.topic = body.topic;
+  return out;
+}
+
+const CHECK_SYSTEM = STYLE_SHORT + `
+תלמיד כתב תשובה באצבע על המסך (תמונה). קרא בדיוק מה כתוב, והשווה לתשובה הנכונה.
+תשובה שקולה מתמטית נחשבת נכונה (למשל 4.5 ו-9/2, או x=9 ו-9).
+החזר JSON: {"read":"מה שכתוב, ב-LaTeX","correct":true/false,"unclear":true/false,"feedback":"משפט קצר אחד לתלמיד, בלי לגלות את התשובה אם טעה"}`;
+
+async function checkHandwriting(env, body) {
+  const parts = [{ inlineData: { mimeType: "image/png", data: body.image } },
+    { text: `השלב: ${String(body.prompt || "").slice(0, 400)}\nהתשובה הנכונה: ${String(body.answer || "").slice(0, 200)}` }];
+  const r = await geminiHedged(env, CHECK_SYSTEM, parts, j => typeof j.correct === "boolean", { deadline: 60000, hedgeMs: 6000 });
+  return { read: String(r.read || ""), correct: !!r.correct, unclear: !!r.unclear, feedback: String(r.feedback || "").replace(/יאללה/g, "") };
+}
+
+const REVIEW_SYSTEM = STYLE_SHORT + `
+תלמיד צילם את הפתרון שלו מהמחברת. עבור עליו שורה אחרי שורה, כמו מורה פרטי שיושב לידו.
+- lines: כל שורה בפתרון שלו, ב-LaTeX כמו שהוא כתב (גם אם שגוי), status: "ok" | "error" | "unclear", ו-note קצר רק לשורה עם טעות (מה לא נכון ואיך מתקנים – בלי לפתור את כל השאר בשבילו).
+- הטעות הראשונה היא הכי חשובה: שורות אחריה שנובעות ממנה – status "ok" אם החישוב בהן נכון ביחס לשורה הקודמת.
+- verdict: "correct" (הכל נכון), "mistake" (יש טעות), "unreadable" (לא רואים / זה לא פתרון).
+- say: 1–3 משפטים בקול של אוראל: קודם מה טוב, ואז איפה לתקן.
+החזר JSON: {"lines":[{"tex":"...","status":"ok","note":""}],"verdict":"...","say":"...","fix_tip":"טיפ קצר לפעם הבאה"}`;
+
+async function reviewNotebook(env, body) {
+  const parts = [{ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } },
+    { text: `התרגיל: ${String(body.question || "").slice(0, 600)}\nהתשובה הנכונה: ${String(body.answer || "").slice(0, 300)}` }];
+  const r = await geminiHedged(env, REVIEW_SYSTEM, parts, j => Array.isArray(j.lines) && !!j.verdict, { deadline: 90000 });
+  const S = v => String(v ?? "").replace(/יאללה/g, "");
+  return { verdict: ["correct", "mistake", "unreadable"].includes(r.verdict) ? r.verdict : "mistake", say: S(r.say), fix_tip: S(r.fix_tip),
+    lines: r.lines.slice(0, 20).map(l => ({ tex: S(l && l.tex), status: ["ok", "error", "unclear"].includes(l && l.status) ? l.status : "unclear", note: S(l && l.note) })) };
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -523,6 +645,12 @@ export default {
       return json({ error: "tts" }, 502);
     }
 
+    // בדיקת כתב יד (משטח האצבע) – קל ומהיר, לא נספר במכסה
+    if (body && body.mode === "check") {
+      if (typeof body.image !== "string" || body.image.length < 100 || body.image.length > 2_000_000) return json({ error: "no_image" }, 400);
+      try { return json(await checkHandwriting(env, body)); } catch (e) { return json({ error: "upstream", message: "לא הצלחתי לקרוא כרגע – נסו שוב או השתמשו במקלדת." }, 502); }
+    }
+
     // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS). נספרות רק שאלות שקיבלו תשובה.
     let quotaKey = null, used = 0;
     if (env.LIMITS) {
@@ -531,6 +659,28 @@ export default {
       used = parseInt((await env.LIMITS.get(quotaKey)) || "0", 10);
       const limit = parseInt(env.DAILY_LIMIT || "15", 10);
       if (used >= limit) return json({ error: "limit", message: `הגעת למכסה היומית (${limit} שאלות). נתראה מחר! 🌟` }, 429);
+    }
+
+    // שיעור פרטי: סט תרגילים / בדיקת מחברת – בזרם עם "דופק" כמו שאלה רגילה
+    if (body && (body.mode === "practice" || body.mode === "review")) {
+      if (body.mode === "review" && (typeof body.image !== "string" || body.image.length < 100)) return json({ error: "no_image", message: "לא התקבלה תמונה." }, 400);
+      if (body.image && body.image.length > MAX_IMAGE_BYTES) return json({ error: "too_big", message: "התמונה גדולה מדי." }, 413);
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter(), enc = new TextEncoder();
+      const beat = setInterval(() => writer.write(enc.encode(" ")).catch(() => {}), 10000);
+      const finish = async obj => { clearInterval(beat); try { await writer.write(enc.encode(JSON.stringify(obj))); await writer.close(); } catch {} };
+      const work = (async () => {
+        try {
+          const out = body.mode === "practice" ? await practiceSet(env, body) : await reviewNotebook(env, body);
+          if (quotaKey && (body.mode === "review" || +body.stage === 1 || !body.stage)) { try { await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 }); } catch {} }
+          return finish(body.mode === "practice" ? { practice: out } : { review: out });
+        } catch (e) {
+          console.log(body.mode, "failed", e.status, e.message);
+          return finish({ error: e.status === 429 ? "quota" : "upstream", message: "המורה הדיגיטלי עמוס כרגע 🙂 נסו שוב בעוד רגע.", detail: [String(e.message || e).slice(0, 200)] });
+        }
+      })();
+      if (ctx && ctx.waitUntil) ctx.waitUntil(work);
+      return new Response(readable, { status: 200, headers: { ...cors, "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
     }
 
     const { image, mediaType = "image/jpeg", note = "", level = "" } = body || {};

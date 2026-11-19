@@ -18,11 +18,14 @@ nav.links a{white-space:nowrap}
 </style>'''
 
 NAV_OLD = '<a class="cta" href="#contact">שיעור אישי</a>'
-NAV_NEW = '<a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>\n      ' + NAV_OLD
+NAV_NEW = ('<a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>\n      '
+           '<a class="snap" href="lesson.html" aria-label="שיעור פרטי">🎓<span class="t"> שיעור פרטי</span></a>\n      ' + NAV_OLD)
 
 HERO_OLD = '<div class="lp-day" id="lpDay"></div>'
 HERO_NEW = ('<a class="snapcta" href="solve.html"><span class="i">📸</span><div><b>נתקעתם בשאלה?</b>'
             '<span>צלמו אותה וקבלו שיעור קצר עם הסבר, שלב אחרי שלב</span></div><span class="go">צלמו ←</span></a>\n      '
+            '<a class="snapcta" href="lesson.html"><span class="i">🎓</span><div><b>רוצים לתרגל?</b>'
+            '<span>שיעור פרטי: תרגילים מקל ועד קשה, פותרים ביחד שלב אחרי שלב</span></div><span class="go">מתרגלים ←</span></a>\n      '
             + HERO_OLD)
 
 DEEPLINK = '''<script>
