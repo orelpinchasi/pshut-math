@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#141b3a">
+<title>מבט מורה – פשוט להצליח במתמטיקה</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--paper:#fbf7ef;--ink:#1d2140;--muted:#6b6f86;--line:#e7e1d3;--green:#22a36b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+header{background:var(--night);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+header b{font-size:17px}header a{color:#ffd77a;font-size:14px}
+main{max-width:1100px;margin:auto;padding:18px 16px 60px}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+h1{font-size:22px;margin:0 0 4px;color:var(--night)}h2{font-size:18px;margin:0 0 10px;color:var(--night)}
+.muted{color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat b{display:block;font-size:28px;color:var(--night)}.stat span{font-size:13px;color:var(--muted)}
+.bars{display:grid;gap:6px}.bars div{display:grid;grid-template-columns:70px 1fr 40px;gap:8px;align-items:center;font-size:14px}
+.bars i{display:block;height:12px;border-radius:6px;background:linear-gradient(90deg,#2bb3ab,#22a36b)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+select,input[type=search]{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;background:#fff}
+label.c{display:flex;gap:6px;align-items:center;font-size:14px}
+.btn{border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--night);color:#fff}
+.btn.gold{background:var(--gold);color:var(--night)}.btn.ghost{background:#fff;color:var(--night);border:1px solid var(--line)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+th,td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap}
+td.ltr{direction:ltr;text-align:right}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;background:#e8f6ef;color:var(--green)}.tag.no{background:#f1f2f6;color:var(--muted)}
+.center{text-align:center;padding:40px 16px}
+.google{display:inline-flex;align-items:center;gap:10px;background:#fff;border:1px solid #dadce0;border-radius:12px;padding:11px 18px;font:inherit;font-size:15px;cursor:pointer}
+textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
+.ok{color:var(--green);font-size:14px;margin-inline-start:8px}
+.err{color:#c0392b}
+</style>
+</head>
+<body>
+<header><b>📊 מבט מורה</b><a href="index.html">← לאתר</a></header>
+<main id="app"><div class="center muted">טוען…</div></main>
+
+<script src="firebase-config.js"></script>
+<script>
+(function(){
+const CFG=window.PSHUT_FIREBASE, ADMINS=(window.PSHUT_ADMINS||[]).map(e=>e.toLowerCase());
+const app=document.getElementById("app");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const GR=["ז׳","ח׳","ט׳","י׳","י״א","י״ב"];
+const ms=t=>!t?0:(typeof t==="number"?t:(t.toMillis?t.toMillis():0));
+const ago=t=>{t=ms(t);if(!t)return"—";const d=Math.floor((Date.now()-t)/864e5);return d<=0?"היום":d===1?"אתמול":d<7?`לפני ${d} ימים`:d<30?`לפני ${Math.floor(d/7)} שבועות`:new Date(t).toLocaleDateString("he-IL")};
+if(!CFG){app.innerHTML=`<div class="box center"><h1>עוד לא מחובר</h1><p class="muted">כדי שהדף הזה יעבוד צריך קודם להגדיר את Firebase – ההוראות בקובץ ACCOUNTS.md.</p></div>`;return;}
+const SDK="https://www.gstatic.com/firebasejs/10.12.2/";
+const sc=src=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+let U=[],F={grade:"",subs:false,q:"",sort:"lastSeen"};
+sc(SDK+"firebase-app-compat.js").then(()=>Promise.all([sc(SDK+"firebase-auth-compat.js"),sc(SDK+"firebase-firestore-compat.js")])).then(()=>{
+  firebase.initializeApp(CFG);
+  firebase.auth().onAuthStateChanged(u=>{
+    if(!u)return login();
+    if(ADMINS.length&&!ADMINS.includes((u.email||"").toLowerCase()))return denied(u);
+    firebase.firestore().collection("users").get().then(s=>{U=s.docs.map(d=>({id:d.id,...d.data()}));draw();}).catch(()=>denied(u));
+  });
+}).catch(()=>{app.innerHTML=`<div class="box center err">לא הצלחתי לטעון. בדקו את החיבור.</div>`});
+
+function login(){
+  app.innerHTML=`<div class="box center"><h1>כניסת מורה</h1><p class="muted">רק המיילים שהוגדרו כמורים יכולים לראות את רשימת התלמידים.</p><br><button class="google" id="g">כניסה עם Google</button></div>`;
+  document.getElementById("g").onclick=()=>{const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});firebase.auth().signInWithPopup(p).catch(()=>firebase.auth().signInWithRedirect(p));};
+}
+function denied(u){app.innerHTML=`<div class="box center"><h1>אין הרשאה</h1><p class="muted">נכנסת בתור <span dir="ltr">${esc(u.email)}</span>, והמייל הזה לא מוגדר כמורה.</p><br><button class="btn ghost" id="o">יציאה</button></div>`;document.getElementById("o").onclick=()=>firebase.auth().signOut();}
+
+function list(){
+  const q=F.q.trim().toLowerCase();
+  return U.filter(u=>(!F.grade||u.grade===F.grade)&&(!F.subs||u.updates)&&(!q||[u.name,u.email,u.school,u.phone].join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>F.sort==="name"?String(a.name).localeCompare(b.name,"he"):F.sort==="doneCount"?(b.doneCount||0)-(a.doneCount||0):ms(b[F.sort])-ms(a[F.sort]));
+}
+function draw(){
+  const wk=Date.now()-7*864e5;
+  const subs=U.filter(u=>u.updates).length, act=U.filter(u=>ms(u.lastSeen)>wk).length, nw=U.filter(u=>ms(u.createdAt)>wk).length;
+  const by=GR.map(g=>[g,U.filter(u=>u.grade===g).length]), mx=Math.max(1,...by.map(x=>x[1]));
+  const L=list();
+  app.innerHTML=`
+  <h1>התלמידים שלך</h1><p class="muted">רק תלמידים שנרשמו מופיעים כאן. מי שצופה בלי הרשמה לא נספר.</p>
+  <div class="stats">
+    <div class="stat"><b>${U.length}</b><span>תלמידים רשומים</span></div>
+    <div class="stat"><b>${nw}</b><span>נרשמו השבוע</span></div>
+    <div class="stat"><b>${act}</b><span>היו פעילים השבוע</span></div>
+    <div class="stat"><b>${subs}</b><span>הסכימו לקבל עדכונים</span></div>
+    <div class="stat"><b>${U.reduce((a,u)=>a+(u.doneCount||0),0)}</b><span>סרטונים שסומנו בסה״כ</span></div>
+  </div>
+  <div class="box"><h2>לפי כיתה</h2><div class="bars">${by.map(([g,n])=>`<div><span>כיתה ${g}</span><i style="width:${n/mx*100}%;min-width:${n?6:0}px"></i><span>${n}</span></div>`).join("")}</div></div>
+  <div class="box">
+    <h2>רשימת התלמידים</h2>
+    <div class="filters">
+      <select id="fg"><option value="">כל הכיתות</option>${GR.map(g=>`<option ${F.grade===g?"selected":""}>${g}</option>`).join("")}</select>
+      <label class="c"><input type="checkbox" id="fs" ${F.subs?"checked":""}> רק מי שהסכים לעדכונים</label>
+      <input type="search" id="fq" placeholder="חיפוש שם / מייל / בית ספר" value="${esc(F.q)}">
+    </div>
+    <div class="tw"><table><thead><tr>
+      <th data-s="name">שם</th><th>כיתה</th><th>בית ספר</th><th>מייל</th><th>טלפון</th><th data-s="doneCount">סרטונים ▾</th><th data-s="lastSeen">פעילות אחרונה ▾</th><th data-s="createdAt">נרשם ▾</th><th>עדכונים</th>
+    </tr></thead><tbody>${L.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.grade)} <span class="muted">${esc(u.units||"")}</span></td><td>${esc(u.school)||'<span class="muted">—</span>'}</td><td class="ltr">${esc(u.email)}</td><td class="ltr">${esc(u.phone)||'<span class="muted">—</span>'}</td><td>${u.doneCount||0}</td><td>${ago(u.lastSeen)}</td><td>${ago(u.createdAt)}</td><td><span class="tag ${u.updates?"":"no"}">${u.updates?"כן":"לא"}</span></td></tr>`).join("")||`<tr><td colspan="9" class="muted center">אין תלמידים שמתאימים לסינון</td></tr>`}</tbody></table></div>
+  </div>
+  <div class="box">
+    <h2>שליחת עדכון</h2>
+    <p class="muted">שולחים רק למי שסימן שהוא רוצה עדכונים${F.grade?` (כרגע מסונן: כיתה ${F.grade})`:""}. מעתיקים את המיילים ומדביקים בשדה <b>Bcc</b> (עותק מוסתר) ב-Gmail, כדי שהתלמידים לא יראו את המיילים של אחרים.</p>
+    <button class="btn gold" id="cp">העתקת ${L.filter(u=>u.updates&&u.email).length} מיילים של מנויים</button><span class="ok" id="ok"></span>
+    <textarea id="em" readonly hidden></textarea>
+    <p class="muted" style="margin-top:12px">כשיהיו הרבה מנויים (מעל כמה מאות), כדאי לעבור לשירות דיוור כמו Brevo או Mailchimp. הם מוסיפים קישור הסרה אוטומטי.</p>
+  </div>`;
+  const re=()=>draw();
+  document.getElementById("fg").onchange=e=>{F.grade=e.target.value;re()};
+  document.getElementById("fs").onchange=e=>{F.subs=e.target.checked;re()};
+  const fq=document.getElementById("fq");fq.oninput=e=>{F.q=e.target.value;clearTimeout(fq._t);fq._t=setTimeout(()=>{re();const n=document.getElementById("fq");n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};
+  app.querySelectorAll("th[data-s]").forEach(th=>th.onclick=()=>{F.sort=th.dataset.s;re()});
+  document.getElementById("cp").onclick=()=>{
+    const t=L.filter(u=>u.updates&&u.email).map(u=>u.email).join(", ");
+    const done=()=>{document.getElementById("ok").textContent="✓ הועתק";};
+    (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const a=document.getElementById("em");a.hidden=false;a.value=t;a.select();});
+  };
+}
+})();
+</script>
+</body>
+</html>
