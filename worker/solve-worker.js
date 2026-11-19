@@ -321,11 +321,11 @@ async function solveWithGemini(env, image, mediaType, userText) {
   const DEADLINE = 110000, HEDGE_MS = 8000, MAX_PAR = 4;
   const started = Date.now(), ctrls = [];
   let next = 0, running = 0, last = null, won = false, dl = null;
-  const alive = new Set();
+  const alive = new Set(), trace = [];
   const attempt = async model => {
     const ctrl = new AbortController(); ctrls.push(ctrl);
     const timer = setTimeout(() => ctrl.abort(), Math.max(5000, DEADLINE - (Date.now() - started)));
-    const t0 = Date.now();
+    const t0 = Date.now(), tr = { m: model, at: Math.round((t0 - started) / 1000) }; trace.push(tr);
     try {
       const gc = { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 };
       if (/gemini-3/.test(model)) gc.thinkingConfig = { thinkingLevel: "low" };
@@ -345,6 +345,7 @@ async function solveWithGemini(env, image, mediaType, userText) {
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
+        if (!alive.has(model) && tr.first == null) tr.first = Math.round((Date.now() - t0) / 1000);
         alive.add(model);
         buf += dec.decode(value, { stream: true });
         let nl;
@@ -359,10 +360,11 @@ async function solveWithGemini(env, image, mediaType, userText) {
       }
       const lesson = parseJsonLoose(text);
       if (!lesson || !normalize(JSON.parse(JSON.stringify(lesson)))) throw new ProviderError(502, `gemini ${model}: bad json (${finish || "?"})`, text.slice(-200));
-      lesson._model = model; lesson._ms = Date.now() - t0;
+      lesson._model = model; lesson._ms = Date.now() - t0; tr.r = "ok" + Math.round(lesson._ms / 1000); lesson._trace = trace;
       return lesson;
     } catch (e) {
-      throw e instanceof ProviderError ? e : new ProviderError(504, `gemini ${model}`, String(e && e.message || e));
+      tr.r = (e && e.status || "x") + "@" + Math.round((Date.now() - t0) / 1000);
+      const pe = e instanceof ProviderError ? e : new ProviderError(504, `gemini ${model}`, String(e && e.message || e)); pe.trace = trace; throw pe;
     } finally { clearTimeout(timer); alive.delete(model); }
   };
   try {
@@ -562,11 +564,11 @@ export default {
             ? await solveWithGemini(env, image, mediaType, userText)
             : await solveWithClaude(env, image, mediaType, userText);
           lesson = normalize(raw);
-          if (lesson) { lesson.provider = p + (raw && raw._model ? ":" + raw._model + ":" + Math.round(raw._ms / 1000) + "s" : ""); break; }
+          if (lesson) { lesson.provider = p + (raw && raw._model ? ":" + raw._model + ":" + Math.round(raw._ms / 1000) + "s" : ""); if (raw && raw._trace) lesson.trace = raw._trace; break; }
           fails.push(`${p}: lesson invalid`);
         } catch (e) {
           if (e.status === 429) quota = true;
-          fails.push(`${e.message} (${e.status || "?"}): ${String(e.detail || "").slice(0, 200)}`);
+          fails.push(`${e.message} (${e.status || "?"}): ${String(e.detail || "").slice(0, 200)}`); if (e.trace) fails.push(JSON.stringify(e.trace));
           console.log("provider failed", p, e.status, e.message);
         }
       }
