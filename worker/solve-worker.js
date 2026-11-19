@@ -486,6 +486,25 @@ async function liveSpeak(env, text, { model = "gemini-3.1-flash-live-preview", v
   return pcmToWav([new Uint8Array(out.buffer)], 16000);
 }
 
+
+async function benchGemini(env, image, mediaType, userText, model, thinking) {
+  const gemma = /gemma/.test(model);
+  const gc = gemma ? { temperature: 0.3, maxOutputTokens: 16000 } : { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 24000 };
+  if (thinking && !gemma) gc.thinkingConfig = { thinkingLevel: thinking };
+  const sys = SYSTEM_PROMPT + GEMINI_JSON_RULES;
+  const t0 = Date.now();
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: "POST",
+    headers: { "x-goog-api-key": env.GEMINI_API_KEY, "content-type": "application/json" },
+    body: JSON.stringify(Object.assign(gemma ? {} : { systemInstruction: { parts: [{ text: sys }] } }, {
+      contents: [{ role: "user", parts: [{ inlineData: { mimeType: mediaType, data: image } }, { text: (gemma ? sys + "\n\n" : "") + userText }] }], generationConfig: gc })) });
+  const ms = Date.now() - t0; const txt = await res.text();
+  if (!res.ok) return { model, status: res.status, ms, err: txt.slice(0, 300) };
+  const data = JSON.parse(txt); const text = (data.candidates?.[0]?.content?.parts || []).filter(p => !p.thought).map(p => p.text || "").join("");
+  const L = normalize(parseJsonLoose(text));
+  return { model, status: res.status, ms, finish: data.candidates?.[0]?.finishReason, usage: data.usageMetadata, ok: !!L,
+    answer: L && L.answer && L.answer.tex, steps: L && L.steps.length, fig: L && L.figure && L.figure.type, raw: L ? "" : text.slice(0, 300), lesson: L };
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -508,6 +527,10 @@ export default {
     let body;
     try { body = await request.json(); } catch { return json({ error: "bad_json" }, 400); }
 
+    if (body && body.bench && body.dbg === "2e966f967ddafd8d") {
+      const uT = "הנה השאלה שצילמתי.\nתסביר לי אותה בשיטה של פשוט להצליח.";
+      try { return json(await benchGemini(env, body.image, body.mediaType || "image/jpeg", uT, body.bench.model, body.bench.thinking)); } catch (e) { return json({ err: String(e) }, 500); }
+    }
     // קול טבעי לשלב אחד בשיעור: { tts: "טקסט", voice: "Puck" } → audio/wav
     if (body && typeof body.tts === "string") {
       const text = body.tts.slice(0, 1500).trim();
