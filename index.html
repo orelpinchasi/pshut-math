@@ -204,6 +204,26 @@ nav.links a{white-space:nowrap}
 </style>
 <link rel="stylesheet" href="path.css">
 <style>@media (max-width:480px){header.top .brand span{display:none}}</style>
+<style>
+.freeles{position:relative;overflow:hidden;background:radial-gradient(700px 300px at 15% 0%,rgba(255,215,122,.35),transparent 60%),linear-gradient(135deg,#f5b83d,#ffcf5c 55%,#f5b83d);color:#141b3a;padding:34px 0 30px}
+.freeles::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(2px 2px at 10% 20%,#fff 50%,transparent 51%),radial-gradient(2px 2px at 85% 30%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 60% 80%,#fff 50%,transparent 51%)}
+.freeles .wrap{position:relative;display:grid;gap:18px;align-items:center}
+.freeles .tag{display:inline-block;background:#141b3a;color:#ffd77a;font-weight:800;border-radius:999px;padding:5px 14px;font-size:14px;letter-spacing:.3px}
+.freeles h2{font-family:"Secular One",Rubik,sans-serif;font-weight:400;font-size:clamp(34px,8vw,58px);line-height:1.05;margin:10px 0 6px}
+.freeles h2 .free{display:inline-block;background:#141b3a;color:#ffd77a;border-radius:16px;padding:0 14px;transform:rotate(-2deg)}
+.freeles p.sub{font-size:clamp(17px,4.2vw,21px);margin:0;max-width:640px;font-weight:500}
+.freeles .feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 0;padding:0;list-style:none}
+.freeles .feats li{background:rgba(255,255,255,.55);border-radius:16px;padding:10px 12px;font-weight:600;font-size:15px;line-height:1.35}
+.freeles .feats li b{display:block;font-size:22px;line-height:1.1;margin-bottom:3px}
+.freeles .bigbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#141b3a;color:#fff;text-decoration:none;font-family:"Secular One",Rubik,sans-serif;font-size:clamp(20px,5vw,26px);border-radius:20px;padding:16px 28px;box-shadow:0 14px 30px rgba(20,27,58,.35);transition:transform .15s}
+.freeles .bigbtn:hover{transform:translateY(-2px)}
+.freeles .bigbtn em{font-style:normal;color:#ffd77a}
+.freeles .note{font-size:13.5px;opacity:.8;margin-top:6px}
+.freeles .pulse{animation:flp 2.2s ease-in-out infinite}
+@keyframes flp{0%,100%{box-shadow:0 14px 30px rgba(20,27,58,.35),0 0 0 0 rgba(20,27,58,.35)}50%{box-shadow:0 14px 30px rgba(20,27,58,.35),0 0 0 12px rgba(20,27,58,0)}}
+@media (min-width:900px){.freeles .wrap{grid-template-columns:1.25fr 1fr}.freeles .feats{grid-template-columns:repeat(4,1fr)}.freeles .cta{text-align:center}}
+nav.links a.free-nav{background:#f5b83d;color:#141b3a;opacity:1;font-weight:800;border-radius:999px}
+</style>
 </head>
 <body>
 
@@ -219,7 +239,7 @@ nav.links a{white-space:nowrap}
       <a href="#curriculum">תוכנית הלימודים</a>
       <a href="#method">השיטה</a>
       <a class="snap" href="solve.html" aria-label="צלמו שאלה">📸<span class="t"> צלמו שאלה</span></a>
-      <a class="snap" href="lesson.html" aria-label="שיעור פרטי">🎓<span class="t"> שיעור פרטי</span></a>
+      <a class="snap free-nav" href="lesson.html" aria-label="שיעור פרטי בחינם">🎓<span class="t"> שיעור פרטי בחינם</span></a>
       <a class="cta" href="#contact">שיעור אישי</a>
     </nav>
   </div>
@@ -239,7 +259,7 @@ nav.links a{white-space:nowrap}
         <button type="submit">חיפוש</button>
       </form>
       <a class="snapcta" href="solve.html"><span class="i">📸</span><div><b>נתקעתם בשאלה?</b><span>צלמו אותה וקבלו שיעור קצר עם הסבר, שלב אחרי שלב</span></div><span class="go">צלמו ←</span></a>
-      <a class="snapcta" href="lesson.html"><span class="i">🎓</span><div><b>רוצים לתרגל?</b><span>שיעור פרטי: תרגילים מקל ועד קשה, פותרים ביחד שלב אחרי שלב</span></div><span class="go">מתרגלים ←</span></a>
+      <a class="snapcta" href="lesson.html"><span class="i">🎓</span><div><b>🎁 שיעור פרטי – בחינם!</b><span>תרגילים מקל ועד קשה, פותרים ביחד שלב אחרי שלב</span></div><span class="go">מתחילים ←</span></a>
       <div class="lp-day" id="lpDay"></div>
       <div class="hero-stats">
         <div><b id="statVideos">0</b><span>סרטונים</span></div>
@@ -251,6 +271,26 @@ nav.links a{white-space:nowrap}
   </div>
 </section>
 
+<!-- free-lesson-banner -->
+<section class="freeles" id="private-lesson" aria-label="שיעור פרטי בחינם">
+  <div class="wrap">
+    <div>
+      <span class="tag">🎁 חדש באתר</span>
+      <h2>שיעור פרטי<br><span class="free">בחינם.</span> באמת.</h2>
+      <p class="sub">בוחרים נושא – או מצלמים את החומר שלכם – ומתרגלים איתי מתרגילים קלים ועד קשים, שלב אחרי שלב. טעיתם? מקבלים רמז, לא תשובה.</p>
+      <ul class="feats">
+        <li><b>🟢🟡🔴</b>מקל ועד קשה – בקצב שלכם</li>
+        <li><b>💡</b>רמז ברגע שנתקעים</li>
+        <li><b>📷</b>מצלמים את המחברת – ואני מראה איפה הטעות</li>
+        <li><b>🎬</b>הסרטונים שלי באמצע השיעור</li>
+      </ul>
+    </div>
+    <div class="cta">
+      <a class="bigbtn pulse" href="lesson.html">🎓 <span>מתחילים <em>שיעור פרטי</em> עכשיו</span></a>
+      <div class="note">בלי הרשמה · בלי תשלום · מכיתה ז׳ ועד 5 יח״ל</div>
+    </div>
+  </div>
+</section>
 <section id="path"></section>
 
 <main id="videos">
