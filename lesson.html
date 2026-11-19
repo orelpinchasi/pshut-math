@@ -344,16 +344,23 @@ function toJS(s, v){
 function safe(expr, v){ const rest = expr.replace(/Math\.(sqrt|PI)/g, "").replace(new RegExp(v, "g"), "").replace(/[\d+\-*/().,\s]/g, ""); return rest === ""; }
 function ev(expr, v, val){ if (!safe(expr, v)) return NaN; try { return Function(v, `return (${expr})`)(val); } catch(e){ return NaN; } }
 function nums(s, v){ return String(s).split(/,|או|;/).map(p => p.replace(new RegExp(`^${v}=|=${v}$`), "")).filter(Boolean).map(p => ev(toJS(p, v), v, 0)); }
+const unMath = t => String(t).replace(/Math\.sqrt/g, "√").replace(/Math\.PI/g, "π");
+function params(step){ const v = step.var || "x"; return [...new Set((unMath(step.answer).match(/[a-zA-Z]/g) || []).filter(c => c !== v))]; }
 function judge(step, input){
   const v = step.var || "x";
   let a = String(input).trim(); if (!a) return { empty: true };
   if (step.type === "expr") {
-    const A = toJS(a.replace(new RegExp(`^[a-zA-Z]\\(${v}\\)=|^y=`), ""), v), E = toJS(step.answer, v);
+    // פרמטרים (a, k, m...) מקבלים ערך קבוע זהה בשני הצדדים, ואז משווים כמו ביטוי רגיל
+    const PV = [1.37, 2.11, -0.73, 3.29], ps = params(step);
+    const sub = t => ps.reduce((acc, c, i) => acc.replace(new RegExp(c, "g"), `(${PV[i % 4]})`), unMath(t));
+    const A = toJS(sub(a.replace(new RegExp(`^[a-zA-Z]\\(${v}\\)=|^[a-zA-Z]'?\\(${v}\\)=|^y=`), "")), v), E = toJS(sub(step.answer), v);
     if (/=/.test(A)) return { bad: true, fmt: "בשלב הזה כותבים רק את הביטוי, בלי סימן שווה 🙂" };
-    const same = (p, q) => [1.7, -2.3, 3.1].every(x => { const u = ev(p, v, x), w = ev(q, v, x); return isFinite(u) && isFinite(w) && Math.abs(u - w) < 1e-6 * Math.max(1, Math.abs(w)); });
-    if (!isFinite(ev(E, v, 1.7))) return { unknown: true };
+    const PTS = [1.7, -2.3, 3.1, 0.6, 5.3, -0.4];
+    const same = (p, q) => { let n = 0; for (const x of PTS) { const u = ev(p, v, x), w = ev(q, v, x);
+        if (!isFinite(w)) continue; if (!isFinite(u) || Math.abs(u - w) > 1e-6 * Math.max(1, Math.abs(w))) return false; n++; } return n >= 2; };
+    if (PTS.filter(x => isFinite(ev(E, v, x))).length < 2) return { unknown: true };
     if (same(A, E)) return { ok: true };
-    const m = (step.mistakes || []).find(m => same(A, toJS(m.answer, v)));
+    const m = (step.mistakes || []).find(m => same(A, toJS(sub(m.answer), v)));
     return { bad: true, m };
   }
   const want = nums(step.answer, v), got = nums(a, v);
@@ -407,7 +414,7 @@ function drawLadder(){
   // מקומות שמורים לרמות שעוד לא הגיעו
   ["medium","hard"].forEach(l => { while (per[l].length < 2) per[l].push(-1); });
   const curLv = S.ex[S.cur] ? S.ex[S.cur].level : "easy";
-  $("#ladder").innerHTML = ["easy","medium","hard"].map(l => `<span class="lv${l===curLv?" on":""}">${LV_NAME[l]} ${per[l].map(i => `<i class="${i===S.cur?"cur":i>=0&&S.results[i]==="ok"?"ok":i>=0&&S.results[i]==="help"?"help":""}"></i>`).join("")}</span>`).join("")
+  $("#ladder").innerHTML = ["easy","medium","hard"].map(l => `<span class="lv${l===curLv?" on":""}">${LV_NAME[l]} ${per[l].map(i => `<i class="${i>=0&&S.results[i]==="ok"?"ok":i>=0&&S.results[i]==="help"?"help":i===S.cur?"cur":""}"></i>`).join("")}</span>`).join("")
     + `<span class="tp">${esc(S.title)}</span>`;
 }
 async function ensureNext(){
@@ -462,10 +469,11 @@ function renderStep(i, k){
 }
 function keyboard(st){
   const v = st.var || "x";
+  const ps = st.type === "expr" ? params(st).slice(0, 2) : [];
   const keys = ["7","8","9","+","−","⌫", "4","5","6","×","÷","נקה", "1","2","3","(",")","=", "0",".",v,"²","^","√"];
   const cls = k => /^[0-9.]$/.test(k) ? "" : k === v ? "v" : (k === "⌫" || k === "נקה") ? "fn" : "op";
   const lab = k => k === "²" ? "x²" : k === "^" ? "xⁿ" : k;
-  return `<div class="kb">${keys.map(k => `<button class="${cls(k)}" data-k="${k}">${lab(k)}</button>`).join("")}<button class="op" data-k="π">π</button><button class="op" data-k=",">,</button><button class="ok" data-k="ok" style="grid-column:span 4">בדיקה ✓</button></div>`;
+  return `<div class="kb">${keys.map(k => `<button class="${cls(k)}" data-k="${k}">${lab(k)}</button>`).join("")}<button class="op" data-k="π">π</button><button class="op" data-k=",">,</button>${ps.map(c => `<button class="v" data-k="${c}">${c}</button>`).join("")}<button class="ok" data-k="ok" style="grid-column:span ${4 - ps.length}">בדיקה ✓</button></div>`;
 }
 function wireStep(i, k, el){
   const e = S.ex[i], st = e.steps[k];
@@ -540,6 +548,7 @@ function wireStep(i, k, el){
     say2("wait", "👀 קורא את מה שכתבתם…");
     try {
       const r = await api({ mode: "check", image: pad.png(), prompt: st.prompt.replace(/\\[()]/g, ""), answer: st.answer_tex || st.answer }, 70000);
+      r.read = String(r.read || "").trim().replace(/^\\\(|\\\)$/g, "").replace(/^\$+|\$+$/g, "").trim();
       if (r.unclear) return say2("hint", "🙈 לא הצלחתי לקרוא. כתבו קצת יותר גדול, או השתמשו במקלדת.");
       const plain = String(r.read || "").replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g, "($1)/($2)").replace(/\\sqrt\{([^{}]*)\}/g, "√($1)").replace(/\\(cdot|times)/g, "*").replace(/\\pi/g, "π").replace(/\\[a-zA-Z]+/g, "").replace(/[{}\\]/g, "");
       const local = plain ? judge(st, plain) : {};
@@ -564,9 +573,9 @@ function makePad(cv, tip){
 }
 function exerciseDone(i){
   const e = S.ex[i];
-  S.results[i] = e.state.helped || e.state.wrong >= 3 ? "help" : "ok"; drawLadder();
+  S.results[i] = e.state.helped ? "help" : "ok"; drawLadder();
   const card = document.createElement("div"); card.className = "card done-card";
-  const praise = S.results[i] === "ok" ? pick(["מהמם! פתרתם לבד 👏","אתם גאונים, כל הכבוד!","יפה מאוד – בלי עזרה בכלל!"]) : "כל הכבוד שלא ויתרתם! 💪";
+  const praise = e.state.helped ? "כל הכבוד שלא ויתרתם! 💪" : e.state.wrong ? pick(["יפה! טעיתם ותיקנתם לבד – ככה לומדים 👏","כל הכבוד! מצאתם את הטעות בעצמכם 👏"]) : pick(["מהמם! פתרתם לבד בלי אף טעות 👏","אתם גאונים, כל הכבוד!","יפה מאוד – בלי עזרה ובלי טעויות!"]);
   card.innerHTML = `<h3>🎯 ${praise}</h3>${e.final_tex ? `<div class="ans">${tex(e.final_tex)}</div>` : ""}
     ${e.check_say ? `<p style="margin:6px 0">✅ ${mixed(e.check_say)}</p>` : ""}
     <label class="upl2">📷 רוצים שאבדוק גם את הדרך מהמחברת?<input type="file" accept="image/*"></label>
