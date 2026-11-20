@@ -19,7 +19,7 @@
 <title>צלמו שאלה – פשוט להצליח במתמטיקה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&family=Playpen+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&family=Playpen+Sans+Hebrew:wght@400;600&family=Varela+Round&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <style>
@@ -372,6 +372,50 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   .blk .ln.math{font-size:21px}
   .dock{margin:0}
 }
+
+/* ===== סגנון הסרטונים: דף משבצות גדול, כתב ברור בעטים צבעוניים, השאלה תמיד בצד ===== */
+.pg{background-color:#fdfdfb;background-image:linear-gradient(#e3ebf6 1.5px,transparent 1.5px),linear-gradient(90deg,#e3ebf6 1.5px,transparent 1.5px);background-size:32px 32px}
+.blk .hd,.blk .ln.text,.idea-h,.blk .num,.postit{font-family:"Varela Round",Rubik,sans-serif}
+.blk .hd{color:#c92a2a;font-size:22px;font-weight:700}
+.blk .hd .pen{border-bottom:3px solid #c92a2a;padding-bottom:1px}
+.blk .num{border:2.5px solid #c92a2a;color:#c92a2a;border-radius:50%;font-size:17px;font-weight:700}
+.blk .ln.text{color:#1b2a4a;font-size:19.5px;line-height:1.5}
+.blk .katex,.blk .ln.math{color:#1b2a4a}
+.idea-h{color:#1f5fd1;font-size:21px}
+.blk.now{background:rgba(255,214,10,.10);box-shadow:inset -4px 0 0 #f08c00}
+.chk{color:#2b8a3e;font-family:"Varela Round",Rubik}
+.ansbox{border-color:#c92a2a;border-radius:12px}
+.qcol{background:#fff}
+.qtext{font-family:Rubik,Arial,sans-serif;font-size:16px;line-height:1.7;color:#222}
+.qtext .sec{padding:1px 6px;border-radius:6px;transition:background .3s}
+.qtext .sec.on{background:linear-gradient(transparent 8%,rgba(255,214,10,.55) 8%,rgba(255,214,10,.55) 92%,transparent 92%)}
+.qnotes{display:block;font-family:"Varela Round",Rubik,sans-serif;color:#1b2a4a;font-size:16.5px}
+.qnotes b{font-family:Rubik;font-size:12.5px;color:#c92a2a;margin-top:6px}
+.qnotes .gi,.qnotes .wi{padding:2px 8px;border-radius:7px;margin:2px 0;transition:background .3s,outline-color .3s;outline:2px solid transparent}
+.qnotes .gi.on{background:linear-gradient(transparent 6%,rgba(255,214,10,.55) 6%,rgba(255,214,10,.55) 94%,transparent 94%)}
+.qnotes .gi.used:not(.on){color:#4a5874}
+.qnotes .wi.on{background:rgba(79,180,120,.18);outline-color:#2b8a3e}
+.qnotes .wi.done{color:#5d6b80}
+.qnotes .wi.done::before,.qnotes .gi.used:not(.on)::before{content:"✓ ";color:#2b8a3e;font-weight:800}
+.qnotes .im .katex{color:inherit}
+.qfig .glow,.wfig .glow{filter:drop-shadow(0 0 3px rgba(240,140,0,.75))}
+.wfig{display:none}
+@media (max-width:899px){ .qfig{float:left;width:44%;max-width:200px;margin:0 0 6px 10px;background:#fff;border:1px solid #d5dbea;border-radius:8px;padding:4px} .qbody{max-height:34vh} }
+@media (min-width:900px){
+  .stage:has(#pg){max-width:1480px}
+  .pg{grid-template-columns:minmax(0,1fr) 380px}
+  .work{display:grid;grid-template-columns:minmax(300px,40%) minmax(0,1fr);gap:0 24px;direction:ltr;align-items:start}
+  .work>*{direction:rtl}
+  .work .tap{grid-column:1 / -1}
+  #blocks{grid-column:2;grid-row:2}
+  .wfig{display:block;grid-column:1;grid-row:2;position:sticky;top:80px;background:#fff;border:1.5px solid #cfd8e6;border-radius:10px;padding:10px;box-shadow:0 6px 18px rgba(30,50,90,.08)}
+  .wfig svg{width:100%;height:auto;display:block}
+  .wfig:empty{display:none}
+  .qfig{display:none}
+  .qtext{font-size:17px}
+  .qnotes{font-size:18px}
+  .blk .ln.text{font-size:21px}
+}
 </style>
 </head>
 <body>
@@ -448,13 +492,14 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
       <aside class="qcol" id="qcol">
         <div class="qhead"><span class="qlbl">📄 השאלה</span><button class="qb" id="qPhoto" hidden>📷 הצילום שלי</button><button class="qb" id="qFold" aria-label="הקטנה">▴</button></div>
         <div class="qbody" id="qbody">
+          <div class="qfig" id="qFig"></div>
           <div class="qtext" id="qText"></div>
           <div class="qnotes" id="qNotes" data-k="givens"></div>
-          <div class="qfig" id="qFig"></div>
         </div>
       </aside>
       <div class="work" id="work">
         <button class="tap" id="tapStart"><span>▶ התחילו את ההסבר</span><small>אני כותב את הפתרון לידה, שלב אחרי שלב, עם קול</small></button>
+        <div class="wfig" id="wFig"></div>
         <div id="blocks"></div>
       </div>
     </div>
@@ -467,7 +512,6 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
         <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
         <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
         <button class="cb small" id="bMute" aria-label="קול">🔊</button>
-        <button class="cb small" id="bVoice" aria-label="החלפת קול">🗣️</button>
       </div>
       <div id="voiceToast" class="vtoast" hidden></div>
     </div>
@@ -677,7 +721,6 @@ function pickVoice(){
   heVoice = heVoices.find(v => v.name === saved) || heVoices.find(v => /natural|online|neural/i.test(v.name))
          || heVoices.find(v => /google/i.test(v.name)) || heVoices.find(v => /carmit/i.test(v.name)) || heVoices[0] || null;
   const b = document.getElementById("bVoice");
-  if (b) { b.hidden = false; b.title = "החלפת קול"; }
 }
 
 /* הגייה נכונה: מנוע הדיבור בעברית לא יודע לקרוא אותיות באנגלית וסימנים – מתרגמים למילים */
@@ -747,17 +790,6 @@ function buildScenes(L){
     html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
           ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
     say:`${L.answer.say || ""} ${L.check ? "ותמיד כדאי לבדוק: מציבים את התשובה בחזרה בשאלה." : ""}` });
-  // איפה משמיעים את הקול של אוראל
-  out[0].pre = [pick(["open","open_b"])];
-  const qScene = out.find(sc => sc.intro); if (qScene) (qScene.pre = qScene.pre || []).push(pick(["rule1","rule1_b","hide","hide_b"]));
-  const first = out.findIndex(sc => sc.num && sc.num.startsWith("שלב "));
-  const steps = out.slice(first, first + L.steps.length);
-  const wantIdx = L.steps.findIndex((st, i) => i > 0 && /רוצים|סעיף/.test(st.title || ""));
-  if (wantIdx > 0) (steps[wantIdx].pre = steps[wantIdx].pre || []).push(pick(["want","want_b"]));
-  const markIdx = L.steps.findIndex(st => st.mark);
-  if (markIdx >= 0 && markIdx !== wantIdx) (steps[markIdx].pre = steps[markIdx].pre || []).push("wait");
-  if (L.steps.length >= 3) { const mid = Math.floor(L.steps.length / 2); if (!steps[mid].pre) steps[mid].pre = [pick(["wow","wow_b","amazing"])]; }
-  const ans = out.find(sc => sc.answer); if (ans) ans.post = [pick(["genius","bravo"])];
   if (L.remember) out.push({ key:"remember", num:"לקחת הלאה", ttl:"⭐ מה זוכרים", html:`<div class="ln big">${esc(L.remember)}</div><div class="ln text">כל אחד יכול להצליח. רק צריך תנאים נכונים.</div>`,
     say:`${L.remember} כל הכבוד שלא ויתרתם!` });
   return out;
@@ -766,7 +798,7 @@ function buildScenes(L){
 function qHTML(q){
   // השאלה כמו בדף הבחינה: כל סעיף בשורה משלו
   const t = String(q || "").replace(/\s+([א-י]\.|\([0-9]\)|[א-י]\))\s/g, "\n$1 ");
-  return t.split("\n").map((line, i) => `<span class="sec">${i && /^([א-י]\.|\([0-9]\)|[א-י]\))/.test(line) ? `<b>${esc(line.split(" ")[0])}</b> ${mixed(line.slice(line.indexOf(" ") + 1))}` : mixed(line)}</span>`).join("");
+  return t.split("\n").map((line, i) => `<span class="sec" data-s="${i}">${i && /^([א-י]\.|\([0-9]\)|[א-י]\))/.test(line) ? `<b>${esc(line.split(" ")[0])}</b> ${mixed(line.slice(line.indexOf(" ") + 1))}` : mixed(line)}</span>`).join("");
 }
 function openLesson(L, notes=[], img=null){
   stopAll(); ttsReset();
@@ -785,8 +817,9 @@ function openLesson(L, notes=[], img=null){
   $("#qPhoto").hidden = !img;
   $("#qBigIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : `<div class="qtxt">${qHTML(L.question)}</div>`;
   const giv = (L.givens || []), want = (L.wanted || []);
-  $("#qNotes").innerHTML = (giv.length ? `<b>נתונים</b>${giv.map(g => `<div>${mixed(g)}</div>`).join("")}` : "") + (want.length ? `<b style="margin-top:4px">מחפשים</b>${want.map(g => `<div>${mixed(g)}</div>`).join("")}` : "");
-  $("#qFig").innerHTML = figSVG(L.figure, false);
+  $("#qNotes").innerHTML = (giv.length ? `<b>נתונים</b>${giv.map((g, i) => `<div class="gi" data-g="${i}">${mixed(g)}</div>`).join("")}` : "") + (want.length ? `<b style="margin-top:4px">מחפשים</b>${want.map((g, i) => `<div class="wi" data-w="${i}">${mixed(g)}</div>`).join("")}` : "");
+  $("#qFig").innerHTML = $("#wFig").innerHTML = figSVG(L.figure, false);
+  qState = { sec: -1, used: new Set() };
   $("#qcol").classList.remove("fold");
   renderPage(L);
   showMatches(L);
@@ -812,7 +845,7 @@ function figSVG(F, dark, hl){
   hl = hl || new Set();
   if (!F || !F.type || F.type === "none") return "";
   const W = 320, H = 240, P = 26, ink = dark ? "#ffffff" : "#1d2140", soft = dark ? "rgba(255,255,255,.25)" : "rgba(29,33,64,.18)";
-  const gold = "#f5b83d", cols = ["#f5b83d", "#4fc3d9", "#ef6f6c"];
+  const gold = "#f08c00", cols = ["#1f5fd1", "#2b8a3e", "#c92a2a"];
   const T = s => esc(String(s ?? "")).slice(0, 14);
   let o = "";
   if (F.type === "graph") {
@@ -943,7 +976,8 @@ function setSegs(){
 }
 function drawScene(i, animate=true){
   const sc = scenes[i]; cur = i; setSegs();
-  updateFigPane(sc);
+  if (i === 0) qState = { sec: -1, used: new Set() };
+  updateFigPane(sc); focusQ(sc, i);
   if (animate) { setUpTo(i); follow(blockOf(sc)); }
   const words = sc.say.trim().split(/\s+/).filter(Boolean);
   $("#cap").innerHTML = words.map(w => `<span class="w todo">${esc(w)}</span>`).join(" ");
@@ -964,13 +998,54 @@ function updateFigPane(sc){
   const L = window._lesson; if (!L || !L.figure) return;
   let hl = new Set();
   if (sc.hl && sc.hl !== "all") hl = hlSet(L.figure, sc.hl);
-  $("#qFig").innerHTML = figSVG(L.figure, false, hl);
+  $("#qFig").innerHTML = $("#wFig").innerHTML = figSVG(L.figure, false, hl);
+}
+/* ===== על מה מדברים עכשיו: מסמנים בדף השאלה את הנתון / הסעיף ===== */
+let qState = { sec: -1, used: new Set() };
+const HEB_L = "אבגדהוזחטי";
+const plainT = s => String(s || "").replace(/\\(text|mathrm|textbf)\{([^}]*)\}/g, "$2").replace(/\\(left|right|cdot|quad|,|;)/g, " ")
+  .replace(/\\(overline|vec|angle|triangle|perp|parallel|sqrt|frac)/g, " ").replace(/\\[a-zA-Z]+/g, " ").replace(/[{}$]/g, " ").replace(/\s+/g, "");
+function keyTokens(g){
+  const t = plainT(g); const toks = new Set();
+  (t.match(/[A-Z][A-Z′']+/g) || []).forEach(w => toks.add(w.replace(/[′']/g, "")));
+  (t.match(/\d+(\.\d+)?/g) || []).forEach(n => { if (n.length > 1 || +n > 2) toks.add(n); });
+  (t.match(/[a-z]\^?\d?[=<>≤≥]/g) || []).forEach(w => toks.add(w));
+  return [...toks];
+}
+function secOf(text){
+  const t = String(text || "");
+  for (let j = 0; j < HEB_L.length; j++) { const L = HEB_L[j];
+    if (new RegExp(`סעיף\\s*${L}(?![\\u05d0-\\u05ea])|(^|\\s)${L}[.)']\\s|\\(${L}\\)`).test(t)) return j; }
+  return -1;
+}
+function focusQ(sc, idx){
+  const L = window._lesson; if (!L || !sc) return;
+  const giv = L.givens || [], want = L.wanted || [];
+  const text = [sc.ttl, sc.say, sc.mark, ...(sc.lines || []).map(b => b.v)].join(" ");
+  const flat = plainT(text);
+  let on = new Set();
+  if (sc.key === "givens" || sc.intro) giv.forEach((_, i) => on.add(i));
+  else giv.forEach((g, i) => { const k = keyTokens(g); if (k.length && k.every(w => flat.includes(w))) on.add(i); });
+  on.forEach(i => qState.used.add(i));
+  document.querySelectorAll("#qNotes .gi").forEach(el => { const i = +el.dataset.g; el.classList.toggle("on", on.has(i)); el.classList.toggle("used", qState.used.has(i)); });
+  // סעיף: לפי מה שמוזכר בשלב; סעיף חדש מסמן את הקודמים כ"עשינו"
+  let sec = secOf(sc.ttl) >= 0 ? secOf(sc.ttl) : secOf(sc.say);
+  const wantSec = want.map(w => secOf(w + " "));
+  let wi = sec >= 0 ? wantSec.indexOf(sec) : -1;
+  if (sc.answer || sc.key === "remember") wi = want.length;
+  if (wi >= 0 && wi > qState.sec) qState.sec = wi;
+  document.querySelectorAll("#qNotes .wi").forEach(el => { const i = +el.dataset.w;
+    el.classList.toggle("on", i === wi); el.classList.toggle("done", i < qState.sec || (wi === want.length)); });
+  document.querySelectorAll("#qText .sec").forEach(el => {
+    const b = el.querySelector("b"); const s2 = b ? secOf(b.textContent + " ") : -1;
+    el.classList.toggle("on", (s2 >= 0 && s2 === sec) || (!b && on.size > 0 && sec < 0 && !sc.answer));
+  });
 }
 const sleep = (ms, id) => new Promise(r => setTimeout(() => r(id === runId), ms));
 
 /* ===== קול טבעי (Gemini) – כל שלב מוקלט בשרת, עם גיבוי לקול של המכשיר ===== */
 const NAT_VOICES = [["Charon","הקול של פשוט להצליח"],["Puck","קול טבעי 2"],["Orus","קול טבעי 3"],["Fenrir","קול טבעי 4"]];
-let natVoice = store.get("natVoice2") || "Charon"; // "device" = הקול של המכשיר
+let natVoice = "Charon"; // הקול של האתר (אם השרת לא עונה – גיבוי אוטומטי לקול המכשיר)
 let ttsCache = {}, ttsQueue = [], ttsBusy = 0, ttsFails = 0;
 const NA = new Audio(); NA.preload = "auto";
 function ttsReset(){ Object.values(ttsCache).forEach(e => e.url && URL.revokeObjectURL(e.url)); ttsCache = {}; ttsQueue = []; ttsFails = 0; }
@@ -1084,14 +1159,6 @@ $("#bPlay").onclick = () => { $("#tapStart").hidden = true;
 $("#bNext").onclick = () => { $("#tapStart").hidden = true; if (cur < scenes.length-1) { stopAll(); runFrom(cur+1); } };
 $("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(Math.max(0, cur-1)); };
 $("#bRate").onclick = () => { rate = rate===1 ? 1.25 : rate===1.25 ? 0.8 : 1; $("#bRate").textContent = (rate===0.8?"0.8":rate)+"×"; if (playing) runFrom(cur); };
-$("#bVoice").onclick = () => {
-  const opts = NAT_VOICES.map(v => v[0]).concat(heVoices.length ? ["device"] : []);
-  natVoice = opts[(opts.indexOf(natVoice) + 1) % opts.length]; store.set("natVoice2", natVoice); ttsFails = 0;
-  const label = natVoice === "device" ? "קול המכשיר" + (heVoice ? " (" + heVoice.name.replace(/Microsoft|Google|Online|\(Natural\)|-.*$/g, "").trim() + ")" : "") : NAT_VOICES.find(v => v[0] === natVoice)[1];
-  const n = document.getElementById("voiceToast"); n.textContent = "🗣️ " + label; n.hidden = false;
-  clearTimeout(window.__vt); window.__vt = setTimeout(() => n.hidden = true, 2500);
-  if (playing) runFrom(cur); else ttsPrefetch(cur);
-};
 $("#bMute").onclick = () => { muted = !muted; store.set("muted", muted?"1":"0"); $("#bMute").textContent = muted ? "🔇" : "🔊"; if (playing) runFrom(cur); };
 document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); } });
 

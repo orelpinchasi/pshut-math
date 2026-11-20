@@ -16,7 +16,7 @@
 <title>שיעור פרטי – פשוט להצליח במתמטיקה</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&family=Gveret+Levin&family=Varela+Round&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <style>
@@ -206,6 +206,29 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .hebmath{display:block;direction:rtl;text-align:center;unicode-bidi:isolate}
 .sum .big{font-family:"Secular One";font-size:40px;color:var(--ok);text-align:center}
 footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 34px}
+
+/* ===== סגנון הסרטונים: דף משבצות, השאלה תמיד מול העיניים, כתב ברור בעטים צבעוניים ===== */
+.expl,.card.ex{background-color:#fdfdfb;background-image:linear-gradient(#e3ebf6 1.5px,transparent 1.5px),linear-gradient(90deg,#e3ebf6 1.5px,transparent 1.5px);background-size:30px 30px}
+.part h4,.part .pb .t{font-family:"Varela Round",Rubik,sans-serif}
+.part h4{color:#c92a2a;font-size:22px}
+.part h4 .n{border-color:#c92a2a;color:#c92a2a;font-size:16px}
+.part .pb .t{color:#1b2a4a;font-size:19px}
+.part .pb .m,.part .pb .m .katex{color:#1b2a4a}
+.part.now{box-shadow:inset -4px 0 0 #f08c00;background:rgba(255,214,10,.08);border-radius:10px}
+.card.ex .exq{background:#fff;border:1.5px solid #cfd8e6;border-radius:10px;box-shadow:0 6px 16px rgba(30,50,90,.08);font-size:16.5px;line-height:1.75;
+  position:sticky;top:64px;z-index:4;max-height:32vh;overflow:auto}
+.card.ex .exq::before{content:"📄 התרגיל";display:block;font-size:12px;font-weight:800;color:#c92a2a;margin-bottom:2px}
+.exq .qs{border-radius:6px;padding:1px 3px;transition:background .3s}
+.exq .qs.on{background:linear-gradient(transparent 6%,rgba(255,214,10,.6) 6%,rgba(255,214,10,.6) 94%,transparent 94%)}
+.card.ex .worked{background:rgba(255,255,255,.9);border:1.5px solid #cfe0f5}
+.card.ex .worked .wt{font-family:"Varela Round",Rubik,sans-serif;color:#1b2a4a;font-size:16px}
+.card.ex .worked .wa{color:#1b2a4a}
+@media (min-width:1000px){
+  #scrLesson>.wrap{max-width:1100px}
+  .card.ex{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0 22px;direction:ltr;align-items:start}
+  .card.ex>*{direction:rtl;grid-column:1}
+  .card.ex>.exq{grid-column:2;grid-row:1 / span 30;top:76px;max-height:calc(100vh - 100px);font-size:18px}
+}
 </style>
 </head>
 <body>
@@ -550,12 +573,27 @@ async function nextExercise(){
   S.cur++; drawLadder(); renderExercise(S.cur);
 }
 
+
+/* ===== השאלה בצד: מסמנים את המשפט שעליו מדברים עכשיו ===== */
+function qSplit(q){
+  const keep = []; let t = String(q ?? "").replace(/\\\((.+?)\\\)/gs, m => { keep.push(m); return `\u0001${keep.length - 1}\u0002`; });
+  const parts = t.split(/(?<=[.?!:])\s+/).filter(x => x.trim());
+  return parts.map((x, k) => `<span class="qs" data-i="${k}">${mixed(x.replace(/\u0001(\d+)\u0002/g, (_, n) => keep[+n]))}</span>`).join(" ");
+}
+const qToks = s => new Set((String(s || "").replace(/\\[a-zA-Z]+/g, " ").match(/[A-Za-z]{1,3}\d?|\d+(\.\d+)?|[\u05d0-\u05ea]{4,}/g) || []).map(w => w.toLowerCase()));
+function exFocus(i, text){
+  const card = document.getElementById("ex" + i); if (!card) return;
+  const want = qToks(text); let best = null, bs = 0;
+  card.querySelectorAll(".exq .qs").forEach(el => { const k = qToks(el.textContent + " " + (el.querySelector("annotation") ? "" : ""));
+    let sc = 0; k.forEach(w => { if (want.has(w)) sc += /^\d|^[a-z]/.test(w) ? 2 : 1; }); if (sc > bs) { bs = sc; best = el; } });
+  card.querySelectorAll(".exq .qs").forEach(el => el.classList.toggle("on", el === best && bs >= 2));
+}
 /* ----- תרגיל ----- */
 function renderExercise(i){
   const e = S.ex[i]; e.state = { step: 0, wrong: 0, helped: false };
-  const card = document.createElement("div"); card.className = "card"; card.id = "ex" + i;
+  const card = document.createElement("div"); card.className = "card ex"; card.id = "ex" + i;
   card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2>${S.watch ? "" : `<button class="watchbtn">👀 פתור אתה</button>`}</div>
-    <div class="exq">${mixed(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", S.watch ? null : e.intro_say)}<div class="steps"></div>`;
+    <div class="exq">${qSplit(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", S.watch ? null : e.intro_say)}<div class="steps"></div>`;
   $("#feed").append(card);
   setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   if (S.watch) return workedFrom(i, 0);
@@ -574,6 +612,7 @@ async function workedFrom(i, k0){
     const correct = st.type === "choice" ? st.choices.find(c => c.correct) : null;
     const ans = correct ? mixed(correct.text) : (st.answer_tex ? `<span class="im" dir="ltr">${tex(st.answer_tex, false)}</span>` : esc(st.answer));
     const why = st.explain || (correct && correct.why) || st.hint || "";
+    exFocus(i, [st.prompt, st.say, why].filter(Boolean).join(" "));
     const el = document.createElement("div"); el.className = "step solved";
     el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}</div>
       <div class="teacher"><span class="av">🧑‍🏫</span><div class="say">${mixed(st.prompt)}</div></div>
@@ -590,6 +629,7 @@ async function workedFrom(i, k0){
 }
 function renderStep(i, k){
   const e = S.ex[i], st = e.steps[k], card = $("#ex" + i);
+  exFocus(i, [st.prompt, st.say, st.explain].filter(Boolean).join(" "));
   const el = document.createElement("div"); el.className = "step"; el.id = `st${i}_${k}`;
   let inp = "";
   if (st.type === "choice") inp = `<div class="opts">${st.choices.map((c, j) => `<button data-j="${j}">${mixed(c.text)}</button>`).join("")}</div>${micUI("או אמרו בקול איזו אפשרות – למשל: השנייה")}`;
