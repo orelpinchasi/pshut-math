@@ -46,7 +46,7 @@ function setDone(id,v){if(window.PSHUT){window.PSHUT.mark(id,!!v,VID[id]&&VID[id
 addEventListener("pshut-sync",()=>{if(window.PSHUT)done=window.PSHUT.done();if(cur)refresh()});
 function refresh(){root.querySelectorAll(".v[data-vid]").forEach(e=>e.classList.toggle("done",!!done[e.dataset.vid]));
   root.querySelectorAll(".unit").forEach(s=>{const u=cur.units[s.dataset.k],a=ids(u),dn=a.filter(i=>done[i]).length,f=a.length&&dn===a.length;s.querySelector(".cnt").textContent=a.length?`${dn}/${a.length} סרטונים`:"";s.classList.toggle("full",!!f);s.querySelector(".dot").textContent=f?"✓":(+s.dataset.k+1)});prog();}
-function play(id){setDone(id,true);const t=VID[id]?VID[id].title:"";if(typeof window.openModal==="function")window.openModal(id,t);else window.open("https://www.youtube.com/watch?v="+id,"_blank","noopener");}
+function play(id){const t=VID[id]?VID[id].title:"";if(window.PSHUT&&window.PSHUT.gate(id,t))return;setDone(id,true);if(typeof window.openModal==="function")window.openModal(id,t);else window.open("https://www.youtube.com/watch?v="+id,"_blank","noopener");}
 root.addEventListener("click",e=>{
   const g=e.target.closest("[data-gr]");if(g){const c=D.paths.filter(x=>x.grade===g.dataset.gr);const pref=st.get("pshut-lv")||"5";pick((c.find(x=>x.level===pref)||c.find(x=>x.level==="4")||c[0]).id);return}
   const l=e.target.closest("[data-pid]");if(l){const p=D.paths.find(x=>x.id===l.dataset.pid);st.set("pshut-lv",p.level);pick(p.id);return}

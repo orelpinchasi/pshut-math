@@ -38,6 +38,22 @@ td.ltr{direction:ltr;text-align:right}
 textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px}
 .ok{color:var(--green);font-size:14px;margin-inline-start:8px}
 .err{color:#c0392b}
+.tabs{display:flex;gap:6px;margin:12px 0 14px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;font:inherit;font-size:15px;padding:10px 14px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent}
+.tabs button.on{color:var(--night);font-weight:700;border-color:var(--gold)}
+.filters .btn{padding:6px 14px;font-size:14px}
+.chart{display:flex;align-items:flex-end;gap:3px;height:180px;padding-bottom:20px;position:relative}
+.chart .col{flex:1;height:100%;display:flex;align-items:flex-end;gap:1px;position:relative;min-width:3px}
+.chart .col i{flex:1;border-radius:3px 3px 0 0;min-height:1px}
+.chart i.a,.legend i.a{background:#2bb3ab}.chart i.b,.legend i.b{background:var(--gold)}
+.chart .col span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-top:8px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:5px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:800px){.two-col{grid-template-columns:1fr}}
+ol.top{margin:0;padding-inline-start:22px;display:grid;gap:6px;font-size:14px}ol.top li a{color:var(--ink);text-decoration:none}ol.top li b{float:left;color:var(--night)}
+.bars div{grid-template-columns:110px 1fr 40px}
+tr.row{cursor:pointer}tr.row:hover{background:#faf6ec}
+tr.det td{background:#fbf7ef;font-size:13.5px}tr.det ul{margin:6px 0;columns:2;padding-inline-start:18px}
+code{background:#f1f2f6;padding:1px 5px;border-radius:5px}
 </style>
 </head>
 <body>
@@ -56,13 +72,19 @@ const ago=t=>{t=ms(t);if(!t)return"—";const d=Math.floor((Date.now()-t)/864e5)
 if(!CFG){app.innerHTML=`<div class="box center"><h1>עוד לא מחובר</h1><p class="muted">כדי שהדף הזה יעבוד צריך קודם להגדיר את Firebase – ההוראות בקובץ ACCOUNTS.md.</p></div>`;return;}
 const SDK="https://www.gstatic.com/firebasejs/10.12.2/";
 const sc=src=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
-let U=[],F={grade:"",subs:false,q:"",sort:"lastSeen"};
+let U=[],D={},T={},F={grade:"",subs:false,q:"",sort:"lastSeen",days:7,tab:"stats",open:""};
+const dayOf=t=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Jerusalem"}).format(new Date(t));
 sc(SDK+"firebase-app-compat.js").then(()=>Promise.all([sc(SDK+"firebase-auth-compat.js"),sc(SDK+"firebase-firestore-compat.js")])).then(()=>{
   firebase.initializeApp(CFG);
   firebase.auth().onAuthStateChanged(u=>{
     if(!u)return login();
     if(ADMINS.length&&!ADMINS.includes((u.email||"").toLowerCase()))return denied(u);
-    firebase.firestore().collection("users").get().then(s=>{U=s.docs.map(d=>({id:d.id,...d.data()}));draw();}).catch(()=>denied(u));
+    const db=firebase.firestore(), from=dayOf(Date.now()-89*864e5);
+    Promise.all([
+      db.collection("users").get(),
+      db.collection("daily").where(firebase.firestore.FieldPath.documentId(),">=",from).get(),
+      fetch("videos.json").then(r=>r.json()).catch(()=>[])
+    ]).then(([us,ds,vj])=>{U=us.docs.map(d=>({id:d.id,...d.data()}));D={};ds.docs.forEach(d=>D[d.id]=d.data());vj.forEach(r=>T[r[0]]=r[3]);draw();}).catch(()=>denied(u));
   });
 }).catch(()=>{app.innerHTML=`<div class="box center err">לא הצלחתי לטעון. בדקו את החיבור.</div>`});
 
@@ -72,18 +94,55 @@ function login(){
 }
 function denied(u){app.innerHTML=`<div class="box center"><h1>אין הרשאה</h1><p class="muted">נכנסת בתור <span dir="ltr">${esc(u.email)}</span>, והמייל הזה לא מוגדר כמורה.</p><br><button class="btn ghost" id="o">יציאה</button></div>`;document.getElementById("o").onclick=()=>firebase.auth().signOut();}
 
+function bind(){
+  app.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{F.tab=b.dataset.tab;draw()});
+  app.querySelectorAll("[data-days]").forEach(b=>b.onclick=()=>{F.days=+b.dataset.days;draw()});
+}
+function detail(u){
+  const ids=Object.entries(u.done||{}).sort((a,b)=>b[1]-a[1]);
+  return `<tr class="det"><td colspan="9"><b>${ids.length} סרטונים שנצפו</b> ${u.days&&u.days.length?`· למד/ה ב-${u.days.length} ימים שונים`:""}
+    <ul>${ids.slice(0,40).map(([id,t])=>`<li>${esc(T[id]||id)} <span class="muted">${t>1?new Date(t).toLocaleDateString("he-IL"):""}</span></li>`).join("")||"<li class='muted'>עוד לא צפה בסרטונים</li>"}</ul>${ids.length>40?`<span class="muted">ועוד ${ids.length-40}…</span>`:""}</td></tr>`;
+}
 function list(){
   const q=F.q.trim().toLowerCase();
   return U.filter(u=>(!F.grade||u.grade===F.grade)&&(!F.subs||u.updates)&&(!q||[u.name,u.email,u.school,u.phone].join(" ").toLowerCase().includes(q)))
     .sort((a,b)=>F.sort==="name"?String(a.name).localeCompare(b.name,"he"):F.sort==="doneCount"?(b.doneCount||0)-(a.doneCount||0):ms(b[F.sort])-ms(a[F.sort]));
 }
+function statsHTML(){
+  const N=F.days, days=[];for(let i=N-1;i>=0;i--)days.push(dayOf(Date.now()-i*864e5));
+  const sum=k=>days.reduce((a,d)=>a+((D[d]||{})[k]||0),0);
+  const agg=k=>{const o={};days.forEach(d=>{const m=(D[d]||{})[k]||{};for(const x in m)o[x]=(o[x]||0)+m[x];});return Object.entries(o).sort((a,b)=>b[1]-a[1]);};
+  const vis=days.map(d=>(D[d]||{}).visits||0), pl=days.map(d=>(D[d]||{}).plays||0), mx=Math.max(1,...vis,...pl);
+  const top=agg("v").slice(0,15), src=agg("src"), smx=Math.max(1,...src.map(x=>x[1]));
+  const SN={direct:"ישיר / וואטסאפ",google:"גוגל",youtube:"יוטיוב",whatsapp:"וואטסאפ",instagram:"אינסטגרם",facebook:"פייסבוק",tiktok:"טיקטוק",bing:"Bing",other:"אתרים אחרים"};
+  const gate=sum("gate"), sig=sum("signups");
+  return `
+  <div class="filters"><b>תקופה:</b>${[7,30,90].map(n=>`<button class="btn ${F.days===n?"":"ghost"}" data-days="${n}">${n===7?"שבוע":n===30?"חודש":"3 חודשים"}</button>`).join("")}</div>
+  <div class="stats">
+    <div class="stat"><b>${sum("visits")}</b><span>ביקורים (מכשיר אחד = אחד ביום)</span></div>
+    <div class="stat"><b>${sum("newVisitors")}</b><span>מבקרים חדשים</span></div>
+    <div class="stat"><b>${sum("plays")}</b><span>צפיות בסרטונים</span></div>
+    <div class="stat"><b>${gate}</b><span>הגיעו למגבלת 3 הסרטונים</span></div>
+    <div class="stat"><b>${sig}</b><span>נרשמו${gate?` (${Math.round(100*sig/gate)}% מהם)`:""}</span></div>
+    <div class="stat"><b>${sum("lesson")}</b><span>לחצו על "שיעור פרטי"</span></div>
+  </div>
+  <div class="box"><h2>ביקורים וצפיות לפי יום</h2>
+    <div class="chart">${days.map((d,i)=>`<div class="col" title="${d}: ${vis[i]} ביקורים, ${pl[i]} צפיות"><i class="a" style="height:${vis[i]/mx*100}%"></i><i class="b" style="height:${pl[i]/mx*100}%"></i>${N<=31?`<span>${d.slice(8)}/${d.slice(5,7)}</span>`:""}</div>`).join("")}</div>
+    <div class="legend"><span><i class="a"></i>ביקורים</span><span><i class="b"></i>צפיות בסרטונים</span></div></div>
+  <div class="two-col">
+    <div class="box"><h2>הסרטונים הכי נצפים</h2>${top.length?`<ol class="top">${top.map(([id,n])=>`<li><a href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">${esc(T[id]||id)}</a><b>${n}</b></li>`).join("")}</ol>`:`<p class="muted">עוד אין צפיות בתקופה הזו.</p>`}</div>
+    <div class="box"><h2>מאיפה מגיעים</h2>${src.length?`<div class="bars">${src.map(([k,n])=>`<div><span>${esc(SN[k]||k)}</span><i style="width:${n/smx*100}%;min-width:6px"></i><span>${n}</span></div>`).join("")}</div><p class="muted" style="margin-top:10px">טיפ: בקישורים שאתם משתפים הוסיפו <code dir="ltr">?src=whatsapp</code> או <code dir="ltr">?src=insta</code> כדי לדעת בדיוק מאיפה הגיעו.</p>`:`<p class="muted">עוד אין נתונים.</p>`}</div>
+  </div>`;
+}
 function draw(){
+  const tabs=`<div class="tabs"><button class="${F.tab==="stats"?"on":""}" data-tab="stats">📈 סטטיסטיקה</button><button class="${F.tab==="students"?"on":""}" data-tab="students">👥 תלמידים (${U.length})</button></div>`;
+  if(F.tab==="stats"){ app.innerHTML=`<h1>מבט מורה</h1>${tabs}${statsHTML()}`; bind(); return; }
   const wk=Date.now()-7*864e5;
   const subs=U.filter(u=>u.updates).length, act=U.filter(u=>ms(u.lastSeen)>wk).length, nw=U.filter(u=>ms(u.createdAt)>wk).length;
   const by=GR.map(g=>[g,U.filter(u=>u.grade===g).length]), mx=Math.max(1,...by.map(x=>x[1]));
   const L=list();
   app.innerHTML=`
-  <h1>התלמידים שלך</h1><p class="muted">רק תלמידים שנרשמו מופיעים כאן. מי שצופה בלי הרשמה לא נספר.</p>
+  <h1>מבט מורה</h1>${tabs}<p class="muted">רק תלמידים שנרשמו מופיעים כאן. מי שצופה בלי הרשמה לא נספר.</p>
   <div class="stats">
     <div class="stat"><b>${U.length}</b><span>תלמידים רשומים</span></div>
     <div class="stat"><b>${nw}</b><span>נרשמו השבוע</span></div>
@@ -101,7 +160,7 @@ function draw(){
     </div>
     <div class="tw"><table><thead><tr>
       <th data-s="name">שם</th><th>כיתה</th><th>בית ספר</th><th>מייל</th><th>טלפון</th><th data-s="doneCount">סרטונים ▾</th><th data-s="lastSeen">פעילות אחרונה ▾</th><th data-s="createdAt">נרשם ▾</th><th>עדכונים</th>
-    </tr></thead><tbody>${L.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.grade)} <span class="muted">${esc(u.units||"")}</span></td><td>${esc(u.school)||'<span class="muted">—</span>'}</td><td class="ltr">${esc(u.email)}</td><td class="ltr">${esc(u.phone)||'<span class="muted">—</span>'}</td><td>${u.doneCount||0}</td><td>${ago(u.lastSeen)}</td><td>${ago(u.createdAt)}</td><td><span class="tag ${u.updates?"":"no"}">${u.updates?"כן":"לא"}</span></td></tr>`).join("")||`<tr><td colspan="9" class="muted center">אין תלמידים שמתאימים לסינון</td></tr>`}</tbody></table></div>
+    </tr></thead><tbody>${L.map(u=>`<tr class="row" data-open="${esc(u.id)}"><td>${F.open===u.id?"▾":"▸"} ${esc(u.name)}</td><td>${esc(u.grade)} <span class="muted">${esc(u.units||"")}</span></td><td>${esc(u.school)||'<span class="muted">—</span>'}</td><td class="ltr">${esc(u.email)}</td><td class="ltr">${esc(u.phone)||'<span class="muted">—</span>'}</td><td>${u.doneCount||0}</td><td>${ago(u.lastSeen)}</td><td>${ago(u.createdAt)}</td><td><span class="tag ${u.updates?"":"no"}">${u.updates?"כן":"לא"}</span></td></tr>${F.open===u.id?detail(u):""}`).join("")||`<tr><td colspan="9" class="muted center">אין תלמידים שמתאימים לסינון</td></tr>`}</tbody></table></div>
   </div>
   <div class="box">
     <h2>שליחת עדכון</h2>
@@ -110,7 +169,9 @@ function draw(){
     <textarea id="em" readonly hidden></textarea>
     <p class="muted" style="margin-top:12px">כשיהיו הרבה מנויים (מעל כמה מאות), כדאי לעבור לשירות דיוור כמו Brevo או Mailchimp. הם מוסיפים קישור הסרה אוטומטי.</p>
   </div>`;
+  bind();
   const re=()=>draw();
+  app.querySelectorAll("tr.row").forEach(r=>r.onclick=()=>{F.open=F.open===r.dataset.open?"":r.dataset.open;re()});
   document.getElementById("fg").onchange=e=>{F.grade=e.target.value;re()};
   document.getElementById("fs").onchange=e=>{F.subs=e.target.checked;re()};
   const fq=document.getElementById("fq");fq.oninput=e=>{F.q=e.target.value;clearTimeout(fq._t);fq._t=setTimeout(()=>{re();const n=document.getElementById("fq");n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};

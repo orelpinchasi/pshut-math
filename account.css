@@ -60,3 +60,23 @@ nav.links a.me{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255
 .acct-nudge .x{background:none;border:0;color:#fff;opacity:.7;font-size:15px;cursor:pointer}
 .acct-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--night,#141b3a);color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;z-index:70;transition:transform .3s;max-width:90vw}
 .acct-toast.on{transform:translate(-50%,0)}
+
+/* הרשמה / כניסה / חסימה / שיעור פרטי */
+.acct-btn.ghost{background:#fff;color:var(--night,#141b3a);border:1px solid var(--line,#e7e1d3)}
+.acct-btn[disabled]{opacity:.6;cursor:wait}
+.acct-btn.wa{display:block;text-align:center;text-decoration:none;margin-top:8px}
+.acct-two{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.acct-cta .acct-two .acct-btn{margin-top:0}
+.acct-form .pw{position:relative;display:block}
+.acct-form .pw input{padding-inline-start:44px}
+.acct-form .eye{position:absolute;inset-inline-start:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:16px;cursor:pointer;opacity:.6;padding:6px}
+.acct-gate{text-align:center;margin-bottom:14px}
+.acct-gate .big{font-size:44px;line-height:1}
+.acct-gate h2{margin:8px 0 6px}
+.acct-gate p{margin:0 0 10px;color:var(--ink,#1d2140);font-size:15px;line-height:1.55}
+.acct-gate ul{list-style:none;padding:0;margin:0 auto;display:inline-grid;gap:3px;text-align:start;font-size:14px;color:#1d7a52}
+.acct-lesson{display:flex;gap:12px;align-items:center;margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,#fff3d6,#ffe6b0);border:1px solid #f1d58c;text-decoration:none;color:var(--night,#141b3a)}
+.acct-lesson>span{font-size:26px}
+.acct-lesson div{flex:1}
+.acct-lesson small{display:block;color:#7a5a12;font-size:12.5px}
+.acct-lesson i{font-style:normal;font-weight:700}
