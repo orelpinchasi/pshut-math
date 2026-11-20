@@ -1,6 +1,6 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v22";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html", "lesson.html"];
+const CACHE = "pshut-v23";
+const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html", "lesson.html", "bagrut.html", "worksheets.html"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))));

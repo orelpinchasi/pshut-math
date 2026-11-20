@@ -12,7 +12,10 @@ root.innerHTML=`<div class="p-hd"><span class="p-kick">לפי תוכנית הל�
 <div class="p-units" id="pUnits"></div><div class="practice" id="pPr"></div><div class="p-note" id="pNote"></div>`;
 function save(){st.set("pshut-done",JSON.stringify(done))}
 function vrow(id,n,rest){const r=VID[id];if(!r)return"";return `<div class="v${done[id]?" done":""}${rest?" rest":""}" data-vid="${id}" role="button" tabindex="0"><span class="n">${n}</span><img loading="lazy" src="t/${id}.webp" alt="" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/mqdefault.jpg'"><span class="vt">${esc(r.title)}</span><button class="ck" type="button" aria-label="סימון צפיתי">✓</button></div>`}
-function mat(m){return `<a class="m" href="${m[1]}" target="_blank" rel="noopener"><span class="ft">${esc(m[2])}</span>${esc(m[0])}<span class="src">משרד החינוך</span></a>`}
+function mat(m){if(!Array.isArray(m))return mbm(m);return `<a class="m" href="${m[1]}" target="_blank" rel="noopener"><span class="ft">${esc(m[2])}</span>${esc(m[0])}<span class="src">משרד החינוך</span></a>`}
+function mbm(m,rest){const pm=m.t.match(/^(פרק(?:ים)? [\d-]+) · (.*)$/);return `<div class="m mb${rest?" rest":""}"><span class="ft">PDF</span><span class="mt">${pm?`<b>${esc(pm[2])}</b> <small>${esc(pm[1])} · תשפ״ז</small>`:esc(m.t)}</span><span class="lk">${m.l.map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}</span></div>`}
+function mats(u,p){const a=u.mats.filter(Array.isArray),b=u.mats.filter(x=>!Array.isArray(x));if(!a.length&&!b.length)return `<div class="none">${p.practice?"דפי עבודה לתרגול – בהמשך העמוד":"תרגלו עם הסרטונים, ואם נתקעתם – צלמו שאלה 📸"}</div>`;
+let o=a.map(mat).join("");if(b.length){const S=5;o+=`<div class="mbh">דפי עבודה להדפסה · <span>משבצת</span></div>`+b.map((m,i)=>mbm(m,i>=S)).join("")+(b.length>S?`<button type="button" class="mball">עוד ${b.length-S} דפים ▾</button>`:"")}return o}
 const ids=u=>[...u.v,...u.q];
 function firstOpen(p){for(let k=0;k<p.units.length;k++){if(ids(p.units[k]).some(i=>!done[i]))return k}return 0}
 function render(){
@@ -27,10 +30,10 @@ function render(){
     if(u.q.length)vids+=`<div class="sub">📝 בוחן עצמי – נסו לבד, ואז בדקו בסרטון</div>`+u.q.map(i=>vrow(i,"✎")).join("");
     if(!all.length)vids=`<div class="gap">🎬 הסרטונים לנושא הזה בדרך. בינתיים אפשר לתרגל עם חומרי העבודה, או <a href="solve.html">לצלם שאלה</a> ולקבל הסבר.</div>`;
     const more=u.v.length>SHOW?`<button type="button" class="showall">הצגת כל ${u.v.length} הסרטונים לפי הסדר ▾</button>`:"";
-    const mats=u.mats.length?u.mats.map(mat).join(""):`<div class="none">${p.practice?"דפי עבודה לתרגול – בהמשך העמוד":"תרגלו עם הסרטונים, ואם נתקעתם – צלמו שאלה 📸"}</div>`;
+    const mts=mats(u,p);
     return `<div class="unit${k===fo?" open":""}${full?" full":""}" data-k="${k}"><div class="dot">${full?"✓":k+1}</div><div class="card">
 <div class="uh"><h3>${esc(u.t)}</h3>${u.m?`<span class="mo">${esc(u.m)}</span>`:""}<span class="cnt">${all.length?`${dn}/${all.length} סרטונים`:""}</span><button class="tg" type="button" aria-label="פתיחה">▾</button></div>
-<div class="body"><div class="cols"><div><h4>מה לומדים</h4><ul>${u.learn.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div><div><h4>חומרי עבודה</h4>${mats}</div></div>
+<div class="body"><div class="cols"><div><h4>מה לומדים</h4><ul>${u.learn.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div><div><h4>חומרי עבודה</h4>${mts}</div></div>
 <h4>🎬 הסרטונים לפי הסדר</h4><div class="vs">${vids}</div>${more}</div></div></div>`}).join("");
   q("#pPr").innerHTML=p.practice?`<div class="card"><div class="uh"><h3>📄 ${esc(p.practice[0])}</h3><span class="mo">משרד החינוך</span></div><p class="none" style="margin:8px 0 12px">דפי עבודה ותרגול של משרד החינוך, לחזרה ולתרגול נוסף לאורך השנה.</p><div class="grid2">${p.practice[1].map(mat).join("")}</div></div>`:"";
   q("#pNote").innerHTML=`סדר הנושאים לפי <a href="${p.src[1]}" target="_blank" rel="noopener">${esc(p.src[0])}</a> של משרד החינוך. דפי העבודה וחומרי התרגול הם של משרד החינוך (<a href="${MOE}" target="_blank" rel="noopener">המרחב הפדגוגי</a>), והקישורים מובילים לקבצים המקוריים באתר המשרד.`;
@@ -46,6 +49,7 @@ root.addEventListener("click",e=>{
   const l=e.target.closest("[data-pid]");if(l){const p=D.paths.find(x=>x.id===l.dataset.pid);st.set("pshut-lv",p.level);pick(p.id);return}
   const ck=e.target.closest(".ck");if(ck){e.stopPropagation();const id=ck.closest(".v").dataset.vid;setDone(id,!done[id]);return}
   const v=e.target.closest(".v");if(v){play(v.dataset.vid);return}
+  const mb=e.target.closest(".mball");if(mb){const c=mb.parentElement;c.classList.toggle("mbopen");mb.textContent=c.classList.contains("mbopen")?"הצגת פחות ▴":`עוד ${c.querySelectorAll(".mb.rest").length} דפים ▾`;return}
   const sa=e.target.closest(".showall");if(sa){const vs=sa.previousElementSibling;vs.classList.toggle("all");sa.textContent=vs.classList.contains("all")?"הצגת פחות ▴":sa.textContent.replace("▴","▾").replace("הצגת פחות",`הצגת כל ${vs.querySelectorAll(".v:not(.rest)").length+vs.querySelectorAll(".rest").length} הסרטונים לפי הסדר`);return}
   const h=e.target.closest(".uh");if(h){h.closest(".unit").classList.toggle("open");return}
 });

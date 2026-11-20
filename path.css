@@ -55,3 +55,12 @@
 .gradepick a:hover{transform:translateY(-2px);background:#ffd77a}
 .gradepick-l{color:#ffd77a;font-weight:700;font-size:15px;margin-top:18px}
 @media(max-width:480px){.gradepick{gap:6px}.gradepick a{min-width:0;flex:1 1 0;font-size:16px;padding:10px 0}#path .p-tabs button{min-width:0;padding:8px 10px}}
+
+#path .mbh{font-size:12.5px;font-weight:700;color:var(--pm);margin:12px 0 6px}#path .mbh span{color:#a8700b}
+#path .m.mb{background:#fffaf0;border-color:#f0e2c2;flex-wrap:wrap;row-gap:6px}#path .m.mb .ft{background:#c98a12}
+#path .m.mb .mt{flex:1 1 140px;line-height:1.35}#path .m.mb .mt b{font-weight:600}#path .m.mb small{color:var(--pm);font-size:11.5px}
+#path .m.mb .lk{display:flex;gap:5px;flex-wrap:wrap;margin-inline-start:auto}
+#path .m.mb .lk a{font-size:12.5px;font-weight:700;text-decoration:none;color:#7a5200;background:#fff;border:1px solid #f0d9a6;border-radius:8px;padding:3px 9px;white-space:nowrap}
+#path .m.mb .lk a:hover{background:var(--pg);color:var(--pn)}
+#path .m.mb.rest{display:none}#path .mbopen .m.mb.rest{display:flex}
+#path .mball{font:inherit;background:none;border:0;color:#13756f;font-weight:700;cursor:pointer;padding:2px 4px;font-size:13.5px}

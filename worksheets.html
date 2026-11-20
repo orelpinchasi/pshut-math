@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>דפי עבודה להדפסה – משבצת | פשוט להצליח במתמטיקה</title>
+<style>
+:root{--c:#fff;--g:#f5b83d;--g2:#ffd77a;--i:#1d2140;--l:#e7e1d3;--m:#6b6f86;--n:#141b3a;--n2:#1f2a57;--p:#fbf7ef;--t:#2bb3ab}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Rubik","Assistant","Segoe UI",Arial,sans-serif;background:var(--p);color:var(--i)}
+.hd{background:linear-gradient(160deg,var(--n),var(--n2));color:#fff;padding:30px 16px 70px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:980px;margin:0 auto 18px;font-size:14px;gap:10px;flex-wrap:wrap}
+.top a{text-decoration:none;color:#cfd4ee}
+.kick{display:inline-block;background:rgba(245,184,61,.15);color:var(--g2);border:1px solid rgba(245,184,61,.4);border-radius:99px;padding:5px 14px;font-size:13px}
+h1{font-size:clamp(28px,5vw,42px);margin:12px 0 8px}
+.hd p{margin:0 auto;max-width:640px;color:#cfd4ee;line-height:1.6}
+.gr{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.gr button{font:inherit;border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:12px;padding:8px 15px;font-weight:700;cursor:pointer;font-size:15px}
+.gr button.on{background:var(--g);color:var(--n);border-color:var(--g)}
+.wrap{max-width:980px;margin:-44px auto 0;padding:0 14px 40px;position:relative}
+.card{background:var(--c);border-radius:18px;box-shadow:0 12px 30px rgba(20,27,58,.10);padding:18px 20px;margin-bottom:16px}
+h3{margin:2px 0 12px;font-size:19px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:8px}
+.it{border:1px solid var(--l);border-radius:12px;padding:10px 12px;background:#fffdf8;display:flex;flex-direction:column;gap:8px}
+.it .t{font-weight:700;font-size:15px;line-height:1.35}
+.it .t .n{color:var(--m);font-weight:500;font-size:13px;margin-inline-end:4px}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;text-decoration:none;border-radius:9px;padding:5px 11px;font-size:13.5px;font-weight:700;border:1px solid #f0d9a6;background:#fff6e0;color:#7a5200}
+.btn:hover{background:var(--g);color:var(--n)}
+.srcl{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--m)}
+.srcl a{color:#13756f;font-weight:700}
+.note{font-size:13px;color:var(--m);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="hd">
+  <div class="top"><a href="index.html">← חזרה לאתר</a><span><a href="bagrut.html">📝 שאלוני בגרות</a> &nbsp;·&nbsp; <a href="index.html#path">🗺️ מסלול למידה</a></span></div>
+  <span class="kick">באדיבות הוצאת "משבצת" · דפים פתוחים לתלמידים</span>
+  <h1>דפי עבודה להדפסה</h1>
+  <p>דפי עבודה לפי כיתה ונושא, ברמה א׳ וברמה ב׳. לוחצים, מורידים, מדפיסים ומתרגלים, ואם נתקעים יש סרטון במסלול הלמידה.</p>
+  <div class="gr" id="gr"></div>
+</div>
+<div class="wrap" id="app"></div>
+<script>
+(async function(){
+const D=await (await fetch('mishbetzet-data.json')).json();
+let cur='z';try{cur=localStorage.getItem('pshut-mb')||'z'}catch(e){}
+const h=location.hash.slice(1);if(D.g.some(g=>g.id===h))cur=h;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+  try{localStorage.setItem('pshut-mb',cur)}catch(e){}
+  document.getElementById('gr').innerHTML=D.g.map(g=>`<button data-g="${g.id}" class="${g.id===cur?'on':''}">${g.t}</button>`).join('');
+  const g=D.g.find(x=>x.id===cur);
+  let o='';
+  g.sec.forEach(s=>{o+=`<div class="card"><h3>${esc(s.t)}</h3><div class="list">`+s.it.map(([t,f],i)=>{
+    const m=t.match(/^(פרק(?:ים)? [\d-]+) · (.*)$/);
+    const title=m?`<span class="n">${m[1]}</span>${esc(m[2])}`:esc(t);
+    return `<div class="it"><div class="t">${title}</div><div class="row">`+f.map(([l,u])=>`<a class="btn" target="_blank" rel="noopener" href="${u}">📄 ${esc(l)}</a>`).join('')+`</div></div>`}).join('')+`</div></div>`});
+  o+=`<div class="card srcl"><span>המקור: אתר הוצאת משבצת (גבי יקואל), עמוד ${g.t}</span><a target="_blank" rel="noopener" href="${g.src}">לעמוד המקורי ←</a></div>`;
+  o+=`<p class="note">הקבצים שייכים להוצאת משבצת בע"מ, כל הזכויות שמורות להם. הם מקושרים לאתר שלהם ולא מאוחסנים כאן. מקושרים רק הדפים שמשבצת פרסמה לתלמידים ללא סיסמה.</p>`;
+  document.getElementById('app').innerHTML=o;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(b){cur=b.dataset.g;history.replaceState(null,'','#'+cur);render()}});
+render();
+})();
+</script>
+</body>
+</html>
