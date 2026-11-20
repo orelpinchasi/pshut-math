@@ -1176,6 +1176,15 @@ $("#ytm").onclick = e => { if (e.target.id === "ytm") $("#ytx").click(); };
 addEventListener("load", () => { if (!$("#scrLesson").hidden && window._lesson) { renderWritten(window._lesson); if (!playing) drawScene(cur,false); } });
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
 if (new URLSearchParams(location.search).has("demo")) addEventListener("load", () => $("#demoBtn").click());
+{ const LK = new URLSearchParams(location.search).get("lesson");
+  if (LK && /^[0-9_]+$/.test(LK)) addEventListener("load", async () => {
+    try {
+      const L = await (await fetch("sol/lessons/" + LK + ".json")).json();
+      const k = LK.split("_"), back = `bagrut.html#${k[0]}_${k[1]}_${k[2]}`;
+      openLesson(L, [{cls:"info", html:`🎓 שאלה ${k[3]} מבחינת הבגרות · <a href="${back}">חזרה לשאלון</a>`}]);
+    } catch (e) { alert("לא הצלחנו לטעון את השיעור"); }
+  });
+}
 </script>
 </body>
 </html>

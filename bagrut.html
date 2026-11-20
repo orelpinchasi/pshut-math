@@ -134,7 +134,7 @@ async function showSol(q,s,scroll){
     box.innerHTML=`<div class="card sol"><h3><span>🧠 פתרון מלא · שאלון ${q.id} · ${s.lbl}</span>${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:''}</h3>
      <p class="note">פותחים את השאלה בטופס המקורי, מנסים לפתור לבד, ורק אז לוחצים "הצגת הפתרון" בכל סעיף.${S.ver?` הפתרון מתאים ל<b>גרסה ${S.ver}</b> של השאלון.`:''}</p>`+
      S.q.map(x=>`<details class="qq"><summary><span class="n">${x.n}</span><span class="tt">${esc(x.t)}</span><span class="ar">▾</span></summary><div class="qb">
-       ${s.pdf?`<a class="btn" target="_blank" rel="noopener" href="${s.pdf}#page=${x.p}">📄 שאלה ${x.n} בטופס (עמ' ${x.p})</a>`:''}
+       ${x.vid?`<a class="btn fs" href="solve.html?lesson=${s.k}_${x.n}">🎬 שיעור וידאו עם אוראל</a> `:''}${s.pdf?`<a class="btn" target="_blank" rel="noopener" href="${s.pdf}#page=${x.p}">📄 שאלה ${x.n} בטופס (עמ' ${x.p})</a>`:''}
        ${x.s.map(p=>`<div class="pp"><div class="pl2">סעיף ${p.l}</div><button class="rv">👀 הצגת הפתרון</button><div class="hid"><ol>${p.b.map(b=>`<li>${M(b)}</li>`).join('')}</ol><div class="ans">✔️ ${p.a.split('||').map(M).join('<br>')}</div></div></div>`).join('')}
        <button class="rv" data-all="1" style="margin-top:6px">הצגת כל הסעיפים</button></div></details>`).join('')+`</div>`;
     if(scroll)box.scrollIntoView({behavior:'smooth',block:'start'});
