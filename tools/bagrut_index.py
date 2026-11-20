@@ -11,7 +11,8 @@ for q in D["q"]:
 json.dump(D,open(p,"w",encoding="utf-8"),ensure_ascii=False,separators=(",",":"))
 print(n,"sessions with full solutions")
 # מסמן בכל קובץ פתרון אילו שאלות יש להן שיעור וידאו ב-sol/lessons/
-les={f[:-5] for f in os.listdir(os.path.join(root,"sol","lessons")) if f.endswith(".json")}
+ld=os.path.join(root,"sol","lessons")
+les={f[:-5] for f in os.listdir(ld) if f.endswith(".json")} if os.path.isdir(ld) else set()
 for k in have:
   sp=os.path.join(root,"sol",k+".json");S=json.load(open(sp,encoding="utf-8"))
   for x in S["q"]:
