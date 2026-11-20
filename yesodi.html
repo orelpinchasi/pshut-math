@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>יסודי א׳–ו׳ | פשוט להצליח במתמטיקה</title>
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{--c:#fff;--g:#f5b83d;--g2:#ffd77a;--i:#1d2140;--l:#e7e1d3;--m:#6b6f86;--n:#141b3a;--n2:#1f2a57;--p:#fbf7ef;--t:#2bb3ab;--r:#e2675b}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;font-family:"Rubik","Assistant","Segoe UI",Arial,sans-serif;background:var(--p);color:var(--i)}
+button{font:inherit;cursor:pointer}
+.hd{background:linear-gradient(160deg,var(--n),var(--n2));color:#fff;padding:26px 16px 70px;text-align:center}
+.top{display:flex;justify-content:space-between;align-items:center;max-width:980px;margin:0 auto 16px;font-size:14px;gap:10px;flex-wrap:wrap}
+.top a{text-decoration:none;color:#cfd4ee}
+.crumb{max-width:980px;margin:0 auto 6px;font-size:14px;color:#cfd4ee;text-align:right}
+.crumb a{color:var(--g2);text-decoration:none;font-weight:700}
+.kick{display:inline-block;background:rgba(245,184,61,.15);color:var(--g2);border:1px solid rgba(245,184,61,.4);border-radius:99px;padding:5px 14px;font-size:13px}
+h1{font-family:"Secular One",Rubik,sans-serif;font-weight:400;font-size:clamp(28px,5vw,42px);margin:12px 0 8px;text-wrap:balance}
+.hd p{margin:0 auto;max-width:640px;color:#cfd4ee;line-height:1.6}
+.wrap{max-width:980px;margin:-44px auto 0;padding:0 14px 40px;position:relative}
+.card{background:var(--c);border-radius:18px;box-shadow:0 12px 30px rgba(20,27,58,.10);padding:18px 20px;margin-bottom:16px}
+h3{margin:2px 0 4px;font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sub{color:var(--m);font-size:14px;margin:0 0 14px;line-height:1.5}
+.note{font-size:13px;color:var(--m);line-height:1.6}
+/* grade cards */
+.grades{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.gc{display:block;text-decoration:none;color:inherit;border-radius:16px;padding:16px;background:#fffdf8;border:1px solid var(--l);transition:transform .15s}
+.gc:hover{transform:translateY(-2px);border-color:var(--g)}
+.gc .L{font-family:"Secular One",Rubik;font-size:40px;line-height:1;color:var(--n)}
+.gc b{display:block;margin:6px 0 2px;font-size:15px}
+.gc span{font-size:13px;color:var(--m);line-height:1.4;display:block}
+.gc .pr{margin-top:10px;height:6px;border-radius:99px;background:#f0ebe0;overflow:hidden}.gc .pr i{display:block;height:100%;background:var(--t)}
+/* topics */
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.tc{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;border:1px solid var(--l);border-radius:14px;padding:12px;background:#fffdf8}
+.tc:hover{border-color:var(--g)}
+.tc .n{flex:none;width:42px;height:42px;border-radius:12px;background:var(--n);color:var(--g2);display:grid;place-items:center;font-weight:800;font-size:18px}
+.tc b{display:block;font-size:15.5px}
+.tc span{font-size:13px;color:var(--m);line-height:1.4}
+.tc .st{margin-inline-start:auto;color:var(--g);font-size:15px;letter-spacing:1px;flex:none}
+.inc{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.inc span{font-size:12.5px;background:#eef0fa;color:#3b4580;border-radius:99px;padding:3px 10px;font-weight:700}
+/* topic tabs */
+.tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.tabs button{border:1px solid rgba(255,255,255,.25);background:transparent;color:#fff;border-radius:12px;padding:9px 14px;font-weight:700;font-size:15px}
+.tabs button.on{background:var(--g);color:var(--n);border-color:var(--g)}
+.lv{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.lv button{border:1px solid var(--l);background:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px;color:var(--m)}
+.lv button.on{background:var(--n);color:#fff;border-color:var(--n)}
+/* math formatting */
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1;margin:0 .08em;font-size:.82em}
+.fr b{font-weight:inherit;padding:0 .12em}.fr b:first-child{border-bottom:.08em solid currentColor;padding-bottom:.06em}.fr b:last-child{padding-top:.06em}
+.m{unicode-bidi:isolate;direction:ltr;white-space:nowrap}
+/* video player */
+.player{border-radius:16px;overflow:hidden;background:var(--n);color:#fff;box-shadow:0 10px 26px rgba(20,27,58,.25)}
+.stage{position:relative;aspect-ratio:16/9;container-type:size;display:grid;place-items:center;padding:16px;background:radial-gradient(120% 90% at 80% 0%,#2a3672 0%,var(--n) 60%);overflow:hidden}
+.stage .logo{position:absolute;top:10px;left:12px;font-size:12px;color:#9aa3cf;display:flex;gap:6px;align-items:center}
+.scene{width:100%;height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.cap{min-height:64px;padding:12px 16px;font-size:clamp(15px,2.4vw,19px);line-height:1.5;background:#0e1430;text-align:center;display:flex;align-items:center;justify-content:center}
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 14px;background:#0e1430;border-top:1px solid #222b55}
+.ctrl button{background:#26305f;color:#fff;border:0;border-radius:10px;padding:8px 12px;font-weight:700;min-width:44px;min-height:40px}
+.ctrl .prog{flex:1 1 100%;order:-1;cursor:pointer;height:8px;background:#26305f;border-radius:99px;overflow:hidden}.ctrl .prog i{display:block;height:100%;width:0;background:var(--g);transition:width .4s}
+.ctrl .cnt{font-size:13px;color:#9aa3cf;white-space:nowrap;direction:ltr;margin-inline-start:auto}
+.pop{opacity:0;animation:pop .5s cubic-bezier(.3,1.6,.6,1) forwards}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.fade{opacity:0;animation:fade .6s ease forwards}@keyframes fade{to{opacity:1}}
+.draw{stroke-dasharray:400;stroke-dashoffset:400;animation:draw 1s ease forwards}@keyframes draw{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.pop,.fade,.draw{animation-duration:.01s!important}}
+.v-title{text-align:center}.v-title .k{color:var(--g2);font-size:clamp(14px,2.4vw,18px)}.v-title h2{font-family:"Secular One",Rubik;font-weight:400;font-size:clamp(26px,5.5vw,46px);margin:8px 0 0}
+.v-eq{font-size:min(15cqh,9cqw);font-weight:800;display:flex;flex-direction:column;align-items:center;gap:6px}
+.v-eq>div{direction:ltr;unicode-bidi:isolate}
+.v-eq .gold{color:var(--g)}
+.v-txt{display:flex;flex-direction:column;gap:2.5cqh;font-size:min(9cqh,5.5cqw);font-weight:700;text-align:right;max-width:90%}
+.v-txt div{background:rgba(255,255,255,.07);border-radius:12px;padding:8px 14px}
+.frame{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;background:rgba(255,255,255,.08);padding:7px;border-radius:10px;direction:ltr}
+.frame i{width:min(14cqh,5.5cqw);aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.18)}
+.frame i.a{background:var(--t);border:0}.frame i.b{background:var(--g);border:0}
+.row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center}
+.lbl{font-size:min(9cqh,5cqw);font-weight:800;direction:ltr}
+.arr{display:grid;gap:6px;direction:ltr}.arr i{width:min(7cqh,4cqw);aspect-ratio:1;border-radius:50%;background:var(--g)}
+.grp{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-content:center;width:min(38cqh,18cqw);aspect-ratio:1;border:2px solid rgba(255,255,255,.3);border-radius:50%;padding:8px}
+.grp i,.rem i{width:clamp(10px,2.2vw,16px);aspect-ratio:1;border-radius:50%;background:var(--t)}.rem i{background:var(--r)}
+.bar{display:grid;height:min(13cqh,7cqw);width:min(460px,72vw);border:2px solid #fff;border-radius:6px;overflow:hidden;direction:ltr}
+.bar i{border-inline-end:2px solid rgba(255,255,255,.6)}.bar i:last-child{border:0}.bar i.on{background:var(--t)}.bar.b2 i.on{background:var(--g)}
+.blk{display:flex;gap:10px;align-items:flex-end;direction:ltr;flex-wrap:wrap;justify-content:center}
+.hund{width:min(30cqh,12cqw);aspect-ratio:1;background:repeating-linear-gradient(90deg,transparent 0 9%,rgba(0,0,0,.25) 9% 10%),repeating-linear-gradient(0deg,var(--g) 0 9%,#d99a22 9% 10%);border-radius:3px}
+.ten{width:min(3cqh,1.6cqw);height:min(30cqh,12cqw);background:repeating-linear-gradient(0deg,var(--t) 0 9%,#1d8a84 9% 10%);border-radius:2px}
+.one{width:min(5cqh,2.6cqw);aspect-ratio:1;background:var(--r);border-radius:2px}
+.cols{direction:ltr;display:flex;gap:18px;align-items:flex-end;justify-content:center}.cols>div{display:flex;flex-direction:column;align-items:center;gap:6px}.cols small{font-size:min(6cqh,3.4cqw);color:#cfd4ee;direction:rtl}
+.grid{display:grid;gap:2px;direction:ltr}.grid i{width:min(9cqh,5cqw);aspect-ratio:1;background:rgba(255,255,255,.1)}.grid i.on{background:var(--t)}
+.tab{border-collapse:collapse;direction:ltr;font-size:min(10cqh,5.5cqw);font-weight:800}
+.tab th{font-size:clamp(11px,1.8vw,14px);color:var(--g2);font-weight:700;padding:4px 10px}
+.tab td{border:2px solid rgba(255,255,255,.25);padding:6px 14px;text-align:center;min-width:44px}
+.bars{display:flex;gap:12px;align-items:flex-end;height:55cqh;margin-top:6cqh;position:relative;direction:ltr}
+.bars>div{width:clamp(30px,7vw,54px);background:var(--t);border-radius:6px 6px 0 0;position:relative;transform-origin:bottom}
+.bars>div b{position:absolute;top:-24px;width:100%;text-align:center;font-size:15px}
+.bars .avg{position:absolute;left:-10px;right:-10px;border-top:3px dashed var(--g);background:none;width:auto}
+.coin{width:min(26cqh,12cqw);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe7a6,#d9a12e);color:#5a3d00;display:grid;place-items:center;font-weight:800;font-size:clamp(13px,2.4vw,18px);box-shadow:0 3px 0 #a9761a}
+.coin.s{background:radial-gradient(circle at 35% 30%,#f2f2f2,#a8adb8);color:#333;box-shadow:0 3px 0 #7c8190}
+svg.v{height:62cqh;width:auto;max-width:100%;direction:ltr;flex:none}
+/* video list */
+.vlist{display:grid;gap:8px;margin-top:12px}
+.vlist button{display:flex;gap:10px;align-items:center;text-align:right;border:1px solid var(--l);background:#fffdf8;border-radius:12px;padding:10px 12px;color:var(--i)}
+.vlist button.on{border-color:var(--g);background:#fff6e0}
+.vlist .vn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--n);color:var(--g2);display:grid;place-items:center;font-weight:800;font-size:14px}
+.vlist b{display:block;font-size:15px}.vlist small{color:var(--m);font-size:13px}
+/* practice + games */
+.q{font-size:clamp(28px,7vw,46px);font-weight:800;margin:10px 0 18px;text-align:center;line-height:1.35}
+.q.he{font-size:clamp(19px,4.4vw,26px);font-weight:700;line-height:1.6}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:460px;margin:0 auto}
+.opts button{font-size:clamp(19px,4.6vw,26px);font-weight:700;padding:12px 6px;min-height:58px;border-radius:14px;border:2px solid var(--l);background:#fffdf8;color:var(--i)}
+.opts button.ok{background:#dff5ef;border-color:var(--t)}.opts button.no{background:#fde6e3;border-color:var(--r)}
+.big{font-weight:800;font-size:17px;border:0;border-radius:14px;padding:12px 22px;background:var(--g);color:var(--n);text-decoration:none;display:inline-block}
+.big.alt{background:#fff6e0;border:1px solid #f0d9a6;color:#7a5200;font-size:15px;padding:9px 15px}
+.center{text-align:center}
+.pbar{height:8px;background:#f0ebe0;border-radius:99px;overflow:hidden;margin:6px 0 4px}.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--t),var(--g));transition:width .5s}
+.stats{display:flex;justify-content:space-between;font-size:14px;color:var(--m);font-weight:700}
+.hint{background:#eef7f6;border:1px solid #bfe6e2;border-radius:12px;padding:10px 14px;margin:14px auto 0;max-width:520px;font-size:15px;line-height:1.6;color:#13534f}
+.end{font-size:18px;line-height:1.6;margin:8px 0 14px;text-align:center}.end .s{font-size:46px;font-weight:800;color:var(--t);display:block}
+.gpick{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.gpick button{border:1px solid var(--l);background:#fffdf8;border-radius:14px;padding:14px;text-align:right;color:var(--i)}
+.gpick button.on{border-color:var(--g);background:#fff6e0}
+.gpick b{display:block;font-size:16px;margin-bottom:3px}.gpick span{font-size:13px;color:var(--m)}
+.sky{position:relative;height:340px;border-radius:14px;background:linear-gradient(#cfe9ff,#fbf7ef);overflow:hidden;margin-top:6px}
+.bl{position:absolute;bottom:-90px;width:84px;height:100px;border:0;border-radius:50% 50% 46% 46%;color:#fff;font-weight:800;font-size:20px;display:grid;place-items:center;animation:rise linear forwards;box-shadow:inset -8px -10px 0 rgba(0,0,0,.12)}
+.bl::after{content:"";position:absolute;bottom:-14px;left:50%;width:1px;height:16px;background:#8a8a8a}
+.bl.popd{animation:burst .25s forwards}
+@keyframes rise{to{bottom:360px}}@keyframes burst{to{transform:scale(1.6);opacity:0}}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:560px;margin:10px auto 0}
+.mem button{aspect-ratio:1/1.05;border-radius:12px;border:0;background:var(--n);color:#fff;font-weight:800;font-size:clamp(14px,3.6vw,22px);padding:4px;line-height:1.3}
+.mem button.up{background:#fff;color:var(--i);border:2px solid var(--l)}.mem button.done{background:#dff5ef;color:#13534f;border:2px solid var(--t)}
+.mem button.he{font-size:clamp(11px,2.8vw,15px);font-weight:700}
+/* worksheet */
+.wsbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ws{border:1px dashed var(--l);border-radius:12px;padding:14px}
+.ws .wh{display:flex;justify-content:space-between;font-size:14px;color:var(--m);margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.ws .wt{font-weight:800;font-size:18px;margin-bottom:10px}
+.ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px 20px}
+.ex.he{grid-template-columns:1fr}
+.ex div{font-size:19px;display:flex;gap:8px;align-items:baseline;line-height:1.6}
+.ex em{font-style:normal;color:var(--m);font-size:13px;min-width:22px}
+.ex .ans{color:var(--t);font-weight:800;display:none}.ws.show .ans{display:inline}
+.ex .ln{flex:1;border-bottom:1.5px solid #c9c2b2;min-width:50px;align-self:flex-end;margin-bottom:6px}.ws.show .ln{display:none}
+.cta{background:linear-gradient(160deg,var(--n),var(--n2));color:#fff;text-align:center}.cta p{color:#cfd4ee;margin:6px 0 14px;line-height:1.6}
+.nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media print{
+  body{background:#fff}.hd,.card:not(.wscard),.wsbar,.sub,.wscard h3,.note,.lv{display:none!important}
+  .wrap{margin:0;padding:0}.card{box-shadow:none;padding:0}.ws{border:0}
+}
+</style>
+</head>
+<body>
+<div class="hd" id="hd"></div>
+<div class="wrap" id="app"></div>
+<script src="yesodi-videos.js"></script>
+<script src="yesodi-audio.js"></script>
+<script>
+{
+/* ---------- עזרים ---------- */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[R(0,a.length-1)];
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const F=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;return d===1?String(n):n+'/'+d};
+const MX=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;const w=Math.floor(n/d),r=n%d;return r?(w?w+' '+r+'/'+d:r+'/'+d):String(w)};
+const fx=x=>String(Math.round(x*1000)/1000);
+const C=n=>n.toLocaleString('en-US');
+const Q=(q,a,o,he)=>({q,a:String(a),o:o?o.map(String):null,he:!!he});
+const H=(q,a,o)=>Q(q,a,o,true);
+/* ⟦...⟧ = קטע מתמטי בתוך טקסט עברי; n/d = שבר */
+const fmt=s=>String(s).replace(/(\d+)\/(\d+)/g,'<span class="fr"><b>$1</b><b>$2</b></span>').replace(/⟦(.*?)⟧/g,'<span class="m">$1</span>');
+const plain=s=>String(s).replace(/⟦|⟧/g,'').replace(/(\d+)\/(\d+)/g,'$1 חלקי $2');
+const hasHe=s=>/[֐-׿]/.test(s);
+function near(a){
+  const s=String(a);let x;
+  if(/^\d+\/\d+$/.test(s)){const[n,d]=s.split('/').map(Number);return shuf([F(n+1,d),F(Math.max(1,n-1),d),F(n,d+1),n+'/'+(d*2),F(d,n)].filter(v=>v!==s))}
+  if(/^\d+ \d+\/\d+$/.test(s)){const[w,f]=s.split(' ');const[n,d]=f.split('/').map(Number);return [`${+w+1} ${n}/${d}`,`${w} ${d-n||1}/${d}`,`${Math.max(1,w-1)} ${n}/${d}`]}
+  if(/^\d+:\d\d$/.test(s)){const[h,m]=s.split(':').map(Number);return [`${h%12+1}:${String(m).padStart(2,'0')}`,`${h}:${String((m+30)%60).padStart(2,'0')}`,`${(h+10)%12+1}:${String(m).padStart(2,'0')}`]}
+  x=Number(s.replace(/,/g,''));if(isNaN(x))return[];
+  const dec=s.includes('.'),big=Math.abs(x)>=1000,com=s.includes(',');
+  const steps=dec?[0.1,1,0.01,x*9]:big?[10,100,1000,x>=10000?10000:1]:x>=50?[1,2,10,5]:[1,2,3];
+  const out=new Set();let g=0;
+  while(out.size<6&&g++<60){let w=x+pick(steps)*pick([1,-1]);if(dec)w=Number(fx(w));if(w<0||w===x)continue;out.add(com?C(w):fx(w))}
+  return shuf([...out]);
+}
+function options(it,gen){
+  const set=new Set([it.a]);
+  let pool=it.o?shuf(it.o):near(it.a);
+  for(const p of pool){if(set.size>=4)break;set.add(String(p))}
+  let g=0;while(set.size<4&&g++<40){set.add(gen().a)}
+  return shuf([...set]);
+}
+const he=(q,a,o)=>H(q,a,o);
+
+/* ---------- תוכן: כיתות ונושאים ----------
+ g(l) מחזיר תרגיל ברמה l (1 או 2)
+ v = סצנות הסרטון: k=סוג ההמחשה, t=כתובית */
+const D=[
+{id:'a',t:'א׳',lead:'מספרים עד 100, חיבור וחיסור ותחושת מספר.',T:[
+ {id:'cmp',t:'השוואת מספרים עד 20',s:'גדול, קטן ושווה',hint:'הפה של התנין ( < או > ) תמיד פתוח לכיוון המספר הגדול.',
+  g:l=>{const m=l==1?20:100,a=R(1,m),b=R(1,m);return Q(`${a} ○ ${b}`,a>b?'>':a<b?'<':'=',['>','<','='])},
+  v:[{k:'dots',a:7,b:0,t:'כאן יש 7 עיגולים.'},{k:'dots',a:7,b:5,t:'אם נוסיף עוד 5, יהיו 12. 12 גדול מ־7.'},{k:'eq',s:['12 > 7','7 < 12'],t:'הסימן פתוח תמיד לכיוון המספר הגדול, כמו פה רעב.'}]},
+ {id:'add10',t:'חיבור עד 10',s:'מחברים ומונים',hint:'מתחילים מהמספר הגדול וממשיכים לספור קדימה.',
+  g:l=>{const a=R(1,l==1?6:9),b=R(1,10-a);return Q(`${a} + ${b}`,a+b)},
+  v:[{k:'dots',a:4,b:3,t:'יש 4 עיגולים טורקיז ו־3 צהובים.'},{k:'line',f:0,to:10,s:1,st:4,j:[3],t:'מתחילים ב־4 וקופצים 3 קדימה על ישר המספרים.'},{k:'eq',s:['4 + 3 = 7'],t:'הגענו ל־7. ארבע ועוד שלוש זה שבע.'}]},
+ {id:'add20',t:'חיבור וחיסור עד 20',s:'השלמה לעשר',hint:'משלימים קודם ל־10, ואז מוסיפים את מה שנשאר. למשל ⟦8 + 5 = 8 + 2 + 3⟧.',
+  g:l=>{if(R(0,1)){const a=R(l==1?2:6,9),b=R(10-a+1,9);return Q(`${a} + ${b}`,a+b)}const a=R(11,l==1?15:19),b=R(a-9,9);return Q(`${a} − ${b}`,a-b)},
+  v:[{k:'eq',s:['8 + 5 = ?'],t:'איך מחשבים 8 ועוד 5 בלי לספור על האצבעות?'},{k:'dots',a:8,b:5,t:'ממלאים קודם את העשר: 2 מתוך ה־5 משלימים ל־10.'},{k:'eq',s:['8 + 2 = 10','10 + 3 = 13'],t:'נשארו עוד 3. עשר ועוד שלוש זה 13.'}]},
+ {id:'n100',t:'מספרים עד 100',s:'עשרות ויחידות',hint:'כל ספרה שמאלית היא עשרות: ב־47 יש 4 עשרות ו־7 יחידות.',
+  g:l=>{const t=R(1,9),o=R(0,9);return pick([Q(`${t*10} + ${o}`,t*10+o),H(`כמה עשרות יש במספר ${t*10+o}?`,t),H(`איזה מספר בא אחרי ${t*10+o}?`,t*10+o+1)])},
+  v:[{k:'place',h:0,te:4,o:7,t:'המספר 47 בנוי מ־4 עשרות ו־7 יחידות.'},{k:'eq',s:['40 + 7 = 47'],t:'ארבעים ועוד שבע זה ארבעים ושבע.'},{k:'line',f:40,to:50,s:1,st:46,j:[1],t:'מספר אחד אחרי 46 בא 47.'}]},
+ {id:'shp',t:'צורות',s:'צלעות וקודקודים',hint:'צלע היא קו ישר, קודקוד הוא הפינה. במצולע יש אותו מספר של צלעות וקודקודים.',
+  g:l=>{const S=[['משולש',3],['ריבוע',4],['מלבן',4],['מחומש',5],['משושה',6]];const[s,n]=pick(l==1?S.slice(0,3):S);return pick([H(`כמה צלעות יש ל${s}?`,n,[3,4,5,6,8]),H(`כמה קודקודים יש ל${s}?`,n,[3,4,5,6,8])])},
+  v:[{k:'shape',n:3,t:'למשולש יש 3 צלעות ו־3 קודקודים.'},{k:'shape',n:4,t:'לריבוע יש 4 צלעות שוות ו־4 קודקודים.'},{k:'shape',n:6,t:'למשושה יש 6 צלעות. כמו תא בכוורת!'}]},
+ {id:'wrd',t:'בעיות מילוליות',s:'סיפור חשבוני',hint:'שואלים: מוסיפים או מורידים? "קיבל" זה חיבור, "נתן" או "אכל" זה חיסור.',
+  g:l=>{const m=l==1?10:20;if(R(0,1)){const a=R(2,m-3),b=R(1,m-a);return H(`לדנה ${a} מדבקות. היא קיבלה עוד ${b}. כמה מדבקות יש לה עכשיו?`,a+b)}const a=R(5,m),b=R(1,a-1);return H(`על העץ ${a} ציפורים. ${b} עפו. כמה ציפורים נשארו?`,a-b)},
+  v:[{k:'txt',s:['לנועם 6 בלונים.','הוא קיבל עוד 3.','כמה בלונים יש לו?'],t:'קוראים את הסיפור ומחפשים מה קרה.'},{k:'dots',a:6,b:3,t:'"קיבל" אומר שמוסיפים. 6 ועוד 3.'},{k:'eq',s:['6 + 3 = 9'],t:'לנועם יש 9 בלונים.'}]}
+]},
+{id:'b',t:'ב׳',lead:'מספרים עד 1000, חיבור וחיסור, כפל וחילוק ראשונים.',T:[
+ {id:'n1000',t:'מספרים עד 1000',s:'מאות, עשרות ויחידות',hint:'במספר תלת־ספרתי: הספרה השמאלית היא המאות, האמצעית העשרות והימנית היחידות.',
+  g:l=>{const h=R(1,9),t=R(0,9),o=R(0,9);return pick([Q(`${h*100} + ${t*10} + ${o}`,h*100+t*10+o),H(`כמה מאות יש במספר ${h}${t}${o}?`,h),H(`${h} מאות, ${t} עשרות ו־${o} יחידות. איזה מספר זה?`,h*100+t*10+o)])},
+  v:[{k:'place',h:2,te:3,o:5,t:'2 מאות, 3 עשרות ו־5 יחידות.'},{k:'tab',h:['מאות','עשרות','יחידות'],r:[[2,3,5]],t:'כותבים כל ספרה בעמודה שלה.'},{k:'eq',s:['200 + 30 + 5 = 235'],t:'ויוצא המספר מאתיים שלושים וחמש.'}]},
+ {id:'as100',t:'חיבור וחיסור עד 100',s:'עם ובלי המרה',hint:'מחברים קודם עשרות לעשרות, ואז יחידות ליחידות.',
+  g:l=>{if(R(0,1)){const a=R(11,l==1?50:79),b=R(5,99-a);return Q(`${a} + ${b}`,a+b)}const a=R(30,99),b=R(5,a-5);return Q(`${a} − ${b}`,a-b)},
+  v:[{k:'eq',s:['34 + 25 = ?'],t:'נחבר 34 ועוד 25.'},{k:'eq',s:['30 + 20 = 50','4 + 5 = 9'],t:'עשרות עם עשרות, יחידות עם יחידות.'},{k:'eq',s:['50 + 9 = 59'],t:'מחברים את שני החלקים: 59.'}]},
+ {id:'mul1',t:'כפל ראשון',s:'חיבור חוזר',hint:'⟦3 × 4⟧ זה 3 קבוצות של 4: ⟦4 + 4 + 4⟧.',
+  g:l=>{const m=pick(l==1?[2,5,10]:[2,3,4,5,10]),a=R(1,10);return Q(`${a} × ${m}`,a*m)},
+  v:[{k:'arr',r:3,c:4,t:'כאן 3 שורות, ובכל שורה 4 עיגולים.'},{k:'eq',s:['4 + 4 + 4 = 12'],t:'אפשר לחבר: ארבע ועוד ארבע ועוד ארבע.'},{k:'eq',s:['3 × 4 = 12'],t:'וזה בדיוק כפל: 3 פעמים 4 זה 12.'}]},
+ {id:'div1',t:'חילוק ראשון',s:'חלוקה שווה',hint:'מחלקים לקבוצות שוות ובודקים כמה יש בכל קבוצה.',
+  g:l=>{const b=pick(l==1?[2,5,10]:[2,3,4,5]),c=R(1,10);return Q(`${b*c} : ${b}`,c)},
+  v:[{k:'grp',n:12,g:3,t:'יש 12 סוכריות ו־3 ילדים.'},{k:'eq',s:['12 : 3 = 4'],t:'כל ילד מקבל 4. חילקנו שווה בשווה.'},{k:'eq',s:['3 × 4 = 12'],t:'בדיקה: 3 פעמים 4 זה באמת 12.'}]},
+ {id:'time',t:'שעון וזמן',s:'שעות, חצאים ורבעים',hint:'בשעה יש 60 דקות. חצי שעה זה 30 דקות, ורבע שעה זה 15.',
+  g:null,
+  v:[{k:'clock',h:3,m:0,t:'המחוג הקצר מראה שעה, הארוך מראה דקות. עכשיו 3:00.'},{k:'clock',h:3,m:30,t:'המחוג הארוך עבר חצי סיבוב: 3 וחצי, כלומר 3:30.'},{k:'clock',h:3,m:15,t:'רבע סיבוב זה רבע שעה: 3:15.'}]},
+ {id:'money',t:'כסף',s:'שקלים ואגורות',hint:'מחברים קודם את המטבעות הגדולים, ואז את הקטנים.',
+  g:l=>{const c=l==1?[1,2,5,10]:[1,2,5,10];const n=R(2,l==1?3:4),arr=Array.from({length:n},()=>pick(c));const s=arr.reduce((x,y)=>x+y,0);return pick([H(`במארנק: ${arr.map(x=>x+' ₪').join(', ')}. כמה כסף יש?`,s),H(`יש לי 20 ₪. קניתי מחברת ב־${s} ₪. כמה עודף אקבל?`,20-s)])},
+  v:[{k:'coins',c:[10,5,2,1],t:'מטבעות של 10, 5, 2 ו־1 שקלים.'},{k:'eq',s:['10 + 5 = 15','15 + 2 + 1 = 18'],t:'מחברים מהגדול לקטן: יש 18 שקלים.'},{k:'eq',s:['20 − 18 = 2'],t:'אם משלמים 20 על משהו שעולה 18, העודף הוא 2.'}]}
+]},
+{id:'g',t:'ג׳',lead:'לוח הכפל, חילוק עם שארית, מספרים עד 10,000 ושברים ראשונים.',T:[
+ {id:'tab',t:'לוח הכפל',s:'עד ⟦10 × 10⟧',hint:'אם לא זוכרים: ⟦7 × 8⟧ זה ⟦7 × 4⟧ פעמיים: ⟦28 + 28 = 56⟧.',
+  g:l=>{const a=R(l==1?2:3,l==1?6:10),b=R(2,10);return Q(`${a} × ${b}`,a*b)},
+  v:[{k:'arr',r:6,c:7,t:'6 שורות של 7. כמה עיגולים יש?'},{k:'eq',s:['6 × 7 = 3 × 7 + 3 × 7','21 + 21 = 42'],t:'מפרקים לשני חצאים קלים: 21 ועוד 21.'},{k:'eq',s:['6 × 7 = 42'],t:'שש כפול שבע זה ארבעים ושתיים.'}]},
+ {id:'rem',t:'חילוק עם שארית',s:'מה נשאר בחוץ',hint:'מחפשים את המספר הכי גדול בלוח הכפל שלא עובר. מה שחסר הוא השארית.',
+  g:l=>{const b=R(2,l==1?5:9),c=R(2,9),r=R(1,b-1);return H(`⟦${b*c+r} : ${b}⟧ = ? (מנה ושארית)`,`${c} ושארית ${r}`,[`${c} ושארית ${r+1}`,`${c+1} ושארית ${r}`,`${c-1} ושארית ${r}`,`${c} ושארית ${Math.max(0,r-1)}`])},
+  v:[{k:'grp',n:14,g:4,t:'מחלקים 14 כדורים ל־4 קבוצות שוות.'},{k:'eq',s:['4 × 3 = 12','14 − 12 = 2'],t:'בכל קבוצה 3, ונשארו 2 שלא אפשר לחלק.'},{k:'eq',s:['14 : 4 = 3 (2)'],t:'המנה היא 3 והשארית היא 2.'}]},
+ {id:'rnd',t:'מספרים עד 10,000 ועיגול',s:'עיגול לעשרות ולמאות',hint:'מסתכלים על הספרה שמימין: 5 ומעלה מעגלים למעלה, 4 ומטה למטה.',
+  g:l=>{const n=R(1000,9999);const to=l==1?10:pick([10,100]);return H(`עגלו את ${C(n)} ל${to==10?'עשרות':'מאות'}`,C(Math.round(n/to)*to))},
+  v:[{k:'line',f:3460,to:3470,s:1,st:3468,j:[2],t:'3,468 קרוב יותר ל־3,470 מאשר ל־3,460.'},{k:'tab',h:['אלפים','מאות','עשרות','יחידות'],r:[[3,4,6,8]],t:'מסתכלים על היחידות: 8 זה 5 ומעלה, אז מעגלים למעלה.'},{k:'eq',s:['3,468 ≈ 3,470'],t:'בעיגול לעשרות: 3,470.'}]},
+ {id:'col',t:'חיבור וחיסור במאונך',s:'תרגילים תלת־ספרתיים',hint:'מתחילים מהיחידות. אם עוברים 10, מעבירים עשרת אחת לעמודה הבאה.',
+  g:l=>{if(R(0,1)){const a=R(100,l==1?499:899),b=R(100,999-a);return Q(`${a} + ${b}`,a+b)}const a=R(300,999),b=R(100,a-50);return Q(`${a} − ${b}`,a-b)},
+  v:[{k:'tab',h:['מאות','עשרות','יחידות'],r:[[2,4,7],['+1',8,5]],t:'כותבים את המספרים אחד מתחת לשני: 247 ועוד 185.'},{k:'eq',s:['7 + 5 = 12','2 ← 1 ↑'],t:'7 ועוד 5 זה 12: כותבים 2 ומעבירים 1 לעשרות.'},{k:'eq',s:['247 + 185 = 432'],t:'ממשיכים כך בכל עמודה, והתשובה 432.'}]},
+ {id:'frac1',t:'שברים ראשונים',s:'חצי, שליש, רבע',hint:'כדי למצוא רבע של מספר מחלקים אותו ב־4.',
+  g:l=>{const d=pick(l==1?[2,4]:[2,3,4,5]),x=d*R(1,l==1?5:10);return H(`כמה זה 1/${d} מ־${x}?`,x/d)},
+  v:[{k:'frac',b:[[1,4]],t:'מחלקים שלם ל־4 חלקים שווים. כל חלק הוא רבע.'},{k:'grp',n:12,g:4,t:'רבע מ־12: מחלקים 12 ל־4 קבוצות.'},{k:'eq',s:['1/4 × 12 = 3'],t:'בכל קבוצה 3. רבע מ־12 הוא 3.'}]},
+ {id:'per',t:'היקף',s:'סכום הצלעות',hint:'היקף זה המרחק מסביב: מחברים את כל הצלעות.',
+  g:l=>{const a=R(2,l==1?9:20),b=R(2,l==1?9:20);return pick([H(`מה ההיקף של מלבן שאורכו ${a} ס"מ ורוחבו ${b} ס"מ?`,2*(a+b)),H(`מה ההיקף של ריבוע שצלעו ${a} ס"מ?`,4*a)])},
+  v:[{k:'rect',w:5,h:3,m:'per',t:'מלבן באורך 5 וברוחב 3.'},{k:'eq',s:['5 + 3 + 5 + 3 = 16'],t:'הולכים מסביב ומחברים את כל ארבע הצלעות.'},{k:'eq',s:['2 × (5 + 3) = 16'],t:'קיצור דרך: פעמיים אורך ועוד רוחב.'}]}
+]},
+{id:'d',t:'ד׳',lead:'מספרים גדולים, כפל וחילוק ארוכים, התחלקות ושברים.',T:[
+ {id:'mil',t:'מספרים עד מיליון',s:'קריאה והשוואה',hint:'מפרידים בפסיק כל שלוש ספרות מימין. מה שמשמאל לפסיק הוא אלפים.',
+  g:null,
+  v:[{k:'tab',h:['מאות אלפים','עשרות אלפים','אלפים','מאות','עשרות','יחידות'],r:[[3,4,5,2,0,7]],t:'המספר 345,207: שלוש מאות ארבעים וחמישה אלף, מאתיים ושבע.'},{k:'eq',s:['345,207 > 340,999'],t:'משווים משמאל: ספרה ראשונה שונה מחליטה.'},{k:'eq',s:['345 אלף'],t:'יש בו 345 אלפים שלמים.'}]},
+ {id:'mulc',t:'כפל במאונך',s:'כפל ברב־ספרתי',hint:'מפרקים: ⟦23 × 4 = 20 × 4 + 3 × 4⟧.',
+  g:l=>{if(l==1){const a=R(12,99),b=R(3,9);return Q(`${a} × ${b}`,a*b)}const a=R(12,49),b=R(11,29);return Q(`${a} × ${b}`,a*b)},
+  v:[{k:'eq',s:['23 × 4 = ?'],t:'נכפול 23 ב־4.'},{k:'eq',s:['20 × 4 = 80','3 × 4 = 12'],t:'מפרקים את 23 לעשרים ושלוש, וכופלים כל חלק.'},{k:'eq',s:['80 + 12 = 92'],t:'מחברים: 23 כפול 4 זה 92.'}]},
+ {id:'ldiv',t:'חילוק ארוך',s:'חילוק בחד־ספרתי',hint:'מחלקים ספרה אחרי ספרה משמאל, ומורידים את הספרה הבאה.',
+  g:l=>{const b=R(2,9),c=R(l==1?12:100,l==1?99:199);return Q(`${b*c} : ${b}`,c)},
+  v:[{k:'eq',s:['84 : 4 = ?'],t:'נחלק 84 ל־4.'},{k:'eq',s:['80 : 4 = 20','4 : 4 = 1'],t:'מפרקים: 80 חלקי 4 זה 20, ו־4 חלקי 4 זה 1.'},{k:'eq',s:['84 : 4 = 21'],t:'מחברים: 21.'}]},
+ {id:'divis',t:'סימני התחלקות',s:'ב־2, 3, 5, 9, 10',hint:'ב־3 וב־9: מחברים את הספרות. ב־5: הספרה האחרונה 0 או 5. ב־2: מספר זוגי.',
+  g:l=>{const k=pick(l==1?[2,5,10]:[3,9,5]);const yes=k*R(12,111);const no=new Set();let x=yes;while(no.size<5){x+=R(1,7);if(x%k)no.add(x)}return H(`איזה מספר מתחלק ב־${k} בלי שארית?`,yes,[...no])},
+  v:[{k:'txt',s:['ב־2: המספר זוגי','ב־5: נגמר ב־0 או 5','ב־10: נגמר ב־0'],t:'מסתכלים רק על הספרה האחרונה.'},{k:'eq',s:['531','5 + 3 + 1 = 9'],t:'ב־3 וב־9: מחברים את הספרות.'},{k:'eq',s:['531 : 9 = 59'],t:'הסכום 9 מתחלק ב־9, אז גם 531 מתחלק ב־9.'}]},
+ {id:'mixed',t:'שברים שקולים ומעורבים',s:'כתיבה בכמה דרכים',hint:'שבר גדול מ־1: כמה פעמים המכנה נכנס במונה זה השלמים, והשארית נשארת בשבר.',
+  g:l=>{if(R(0,1)){const d=pick([2,3,4,5]),n=d*R(1,3)+R(1,d-1);return H(`כתבו את ⟦${n}/${d}⟧ כמספר מעורב`,MX(n,d))}const d=pick([2,3,4]),n=R(1,d-1),k=R(2,4);return Q(`${n}/${d} = ?/${d*k}`,n*k)},
+  v:[{k:'frac',b:[[4,4],[3,4]],t:'7 רבעים: 4 רבעים ממלאים שלם, ונשארים עוד 3.'},{k:'eq',s:['7/4 = 1 3/4'],t:'לכן שבעה רבעים זה אחד ושלושה רבעים.'},{k:'frac',b:[[1,2],[2,4]],t:'חצי ושני רבעים: אותו גודל. אלה שברים שקולים.'}]},
+ {id:'area',t:'שטח מלבן',s:'יחידות ריבועיות',hint:'שטח מלבן = אורך × רוחב. סופרים כמה ריבועים מכסים אותו.',
+  g:l=>{const a=R(2,l==1?9:15),b=R(2,l==1?9:15);return pick([H(`מה השטח של מלבן ${a} ס"מ על ${b} ס"מ? (סמ"ר)`,a*b),H(`שטח ריבוע הוא ${a*a} סמ"ר. מה אורך הצלע?`,a)])},
+  v:[{k:'rect',w:6,h:4,m:'area',t:'מכסים את המלבן בריבועים של סנטימטר.'},{k:'eq',s:['6 × 4 = 24'],t:'4 שורות של 6: 24 ריבועים.'},{k:'eq',s:['24 סמ"ר'],t:'השטח הוא 24 סנטימטרים רבועים.'}]}
+]},
+{id:'e',t:'ה׳',lead:'שברים, מספרים עשרוניים, ממוצע ושטחים.',T:[
+ {id:'red',t:'צמצום והרחבה',s:'אותו שבר, כתיבה אחרת',hint:'מכפילים או מחלקים את המונה ואת המכנה באותו מספר.',
+  g:l=>{if(R(0,1)){const d=pick([2,3,4,5]),n=R(1,d-1),k=R(2,l==1?3:6);return H(`צמצמו עד הסוף: ⟦${n*k}/${d*k}⟧`,F(n,d))}const d=pick([3,4,5,6]),n=R(1,d-1),k=R(2,5);return Q(`${n}/${d} = ?/${d*k}`,n*k)},
+  v:[{k:'frac',b:[[2,3],[4,6]],t:'שני שלישים וארבע שישיות: אותו גודל בדיוק.'},{k:'eq',s:['2/3 = 4/6','× 2'],t:'הרחבה: כופלים מונה ומכנה ב־2.'},{k:'eq',s:['6/9 = 2/3',': 3'],t:'צמצום: מחלקים מונה ומכנה ב־3.'}]},
+ {id:'fcmp',t:'השוואת שברים',s:'מי גדול יותר?',hint:'מביאים למכנה משותף, ואז משווים את המונים.',
+  g:l=>{let a,b,c,d;do{b=pick([2,3,4,5,6,8]);d=pick([2,3,4,5,6,8]);a=R(1,b-1);c=R(1,d-1)}while(a*d===c*b&&R(0,3));const x=a*d,y=c*b;return Q(`${a}/${b} ○ ${c}/${d}`,x>y?'>':x<y?'<':'=',['>','<','='])},
+  v:[{k:'frac',b:[[3,4],[2,3]],t:'מה גדול יותר: שלושה רבעים או שני שלישים?'},{k:'eq',s:['3/4 = 9/12','2/3 = 8/12'],t:'מביאים למכנה 12.'},{k:'eq',s:['3/4 > 2/3'],t:'9 שנים־עשר גדול מ־8, אז שלושה רבעים גדול יותר.'}]},
+ {id:'fadd',t:'חיבור וחיסור שברים',s:'מכנה משותף',hint:'במכנה שווה: מחברים רק את המונים. במכנה שונה: קודם מכנה משותף.',
+  g:l=>{if(l==1){const d=pick([3,4,5,6,8,10]),a=R(1,d-2),b=R(1,d-a-1);return Q(`${a}/${d} + ${b}/${d}`,F(a+b,d))}const[b,d]=pick([[2,4],[2,3],[3,6],[4,8],[2,6],[3,4]]),a=R(1,b-1),c=R(1,d-1);return Q(`${a}/${b} + ${c}/${d}`,MX(a*d+c*b,b*d))},
+  v:[{k:'eq',s:['1/2 + 1/4 = ?'],t:'אי אפשר לחבר חצאים ורבעים ישירות.'},{k:'frac',b:[[2,4],[1,4]],t:'חצי זה בדיוק שני רבעים.'},{k:'eq',s:['2/4 + 1/4 = 3/4'],t:'עכשיו המכנה שווה: 2 רבעים ועוד רבע זה 3 רבעים.'}]},
+ {id:'dec',t:'מספרים עשרוניים',s:'עשיריות ומאיות',hint:'מיישרים את הנקודות העשרוניות אחת מתחת לשנייה, ומחברים עמודה עמודה.',
+  g:l=>{if(R(0,1)){const a=R(11,l==1?49:99)/10,b=R(11,49)/10;return Q(`${fx(a)} + ${fx(b)}`,fx(a+b))}const a=R(150,999)/100,b=R(10,140)/100;return l==1?H(`כמה עשיריות יש ב־${fx(R(2,9)/10)}?`,0):Q(`${a.toFixed(2)} − ${b.toFixed(2)}`,fx(a-b))},
+  v:[{k:'tab',h:['יחידות','.','עשיריות','מאיות'],r:[[2,'.',3,5]],t:'2.35: שתי יחידות, 3 עשיריות ו־5 מאיות.'},{k:'tab',h:['יחידות','.','עשיריות'],r:[[1,'.',7],['+2','.',5]],t:'מחברים 1.7 ועוד 2.5, הנקודה מתחת לנקודה.'},{k:'eq',s:['1.7 + 2.5 = 4.2'],t:'7 ועוד 5 עשיריות זה 12 עשיריות, כלומר 1.2. התשובה 4.2.'}]},
+ {id:'avg',t:'ממוצע',s:'מיישרים את הערכים',hint:'ממוצע = סכום כל הערכים חלקי מספר הערכים.',
+  g:l=>{const n=l==1?3:R(4,5),m=R(4,l==1?9:20);let v=Array.from({length:n},()=>m);for(let i=0;i<n-1;i++){const k=R(0,3);v[i]+=k;v[n-1]-=k}if(v.some(x=>x<1))v=v.map(()=>m);v=shuf(v);return H(`מה הממוצע של ${v.join(', ')}?`,m)},
+  v:[{k:'bars',v:[4,8,6],t:'שלושה ילדים קראו 4, 8 ו־6 ספרים.'},{k:'eq',s:['4 + 8 + 6 = 18','18 : 3 = 6'],t:'מחברים הכל ומחלקים במספר הילדים.'},{k:'bars',v:[4,8,6],avg:6,t:'הממוצע הוא 6: כאילו כל אחד קרא אותה כמות.'}]},
+ {id:'tri',t:'שטח משולש ומקבילית',s:'בסיס וגובה',hint:'מקבילית: בסיס × גובה. משולש: בסיס × גובה, חלקי 2.',
+  g:l=>{const a=R(2,12)*(l==1?2:1),h=R(2,12);return pick([H(`מה שטח משולש שבסיסו ${a} ס"מ וגובהו ${h} ס"מ?`,fx(a*h/2)),H(`מה שטח מקבילית שבסיסה ${a} ס"מ וגובהה ${h} ס"מ?`,a*h)])},
+  v:[{k:'rect',w:6,h:4,m:'tri',t:'משולש הוא בדיוק חצי ממלבן עם אותו בסיס וגובה.'},{k:'eq',s:['6 × 4 = 24','24 : 2 = 12'],t:'שטח המלבן 24, אז שטח המשולש 12.'},{k:'eq',s:['S = a × h : 2'],t:'בסיס כפול גובה, חלקי 2.'}]}
+]},
+{id:'v',t:'ו׳',lead:'שברים ועשרוניים, אחוזים, יחס, נפח וסדר פעולות. הכנה לחטיבה.',T:[
+ {id:'fmul',t:'כפל וחילוק שברים',s:'מונה במונה, מכנה במכנה',hint:'כפל: מונה כפול מונה, מכנה כפול מכנה. חילוק: כופלים בשבר ההפוך.',
+  g:l=>{const b=pick([2,3,4,5]),d=pick([2,3,4,5,6]),a=R(1,b-1),c=R(1,d-1);return l==1||R(0,1)?Q(`${a}/${b} × ${c}/${d}`,F(a*c,b*d)):Q(`${a}/${b} : ${c}/${d}`,MX(a*d,b*c))},
+  v:[{k:'eq',s:['2/3 × 3/4 = ?'],t:'נכפול שני שלישים בשלושה רבעים.'},{k:'eq',s:['2 × 3 = 6','3 × 4 = 12'],t:'מונה כפול מונה ומכנה כפול מכנה.'},{k:'eq',s:['6/12 = 1/2'],t:'מצמצמים: יוצא חצי.'}]},
+ {id:'dmul',t:'כפל וחילוק עשרוניים',s:'הזזת הנקודה',hint:'כפל ב־10 מזיז את הנקודה צעד ימינה במספר, ב־100 שני צעדים.',
+  g:l=>{if(l==1){const a=R(11,999)/100,m=pick([10,100]);return Q(`${a} × ${m}`,fx(a*m))}const a=R(2,9)/10,b=R(2,9);return pick([Q(`${fx(a)} × ${b}`,fx(a*b)),Q(`${fx(a*b)} : ${b}`,fx(a))])},
+  v:[{k:'tab',h:['עשרות','יחידות','.','עשיריות','מאיות'],r:[['',3,'.',4,5],[3,4,'.',5,'']],t:'3.45 כפול 10: כל ספרה עולה עמודה אחת.'},{k:'eq',s:['3.45 × 10 = 34.5','3.45 × 100 = 345'],t:'ב־10 צעד אחד, ב־100 שני צעדים.'},{k:'eq',s:['0.3 × 4 = 1.2'],t:'3 עשיריות כפול 4 זה 12 עשיריות, כלומר 1.2.'}]},
+ {id:'pct',t:'אחוזים',s:'אחוז מכמות',hint:'10% זה עשירית. 25% זה רבע. 50% זה חצי.',
+  g:l=>{const p=pick(l==1?[10,50,25]:[20,25,30,75,15,40]),x=pick([40,60,80,120,200,240,300,400]);return pick([H(`כמה זה ${p}% מ־${x}?`,fx(p*x/100)),H(`חולצה עולה ${x} ₪ ויש הנחה של ${p}%. כמה נשלם?`,fx(x-p*x/100))])},
+  v:[{k:'pct',p:25,t:'אחוז הוא חלק מ־100. כאן צבועים 25 מתוך 100.'},{k:'eq',s:['25% = 25/100 = 1/4'],t:'25 אחוז זה בדיוק רבע.'},{k:'eq',s:['25% × 80 = 20'],t:'רבע מ־80 הוא 20.'}]},
+ {id:'ratio',t:'יחס וקנה מידה',s:'השוואה בעזרת חילוק',hint:'ביחס ⟦2 : 3⟧, על כל 2 מהסוג הראשון יש 3 מהשני. בקנה מידה ⟦1 : 100⟧, ס"מ במפה הוא מטר במציאות.',
+  g:l=>{const a=R(1,4),b=R(2,5),k=R(2,l==1?4:8);return pick([H(`היחס בין בנים לבנות הוא ⟦${a} : ${b}⟧. יש ${a*k} בנים. כמה בנות?`,b*k),H(`במפה בקנה מידה ⟦1 : 100,000⟧, מרחק של ${k} ס"מ הוא כמה ק"מ?`,k)])},
+  v:[{k:'ratio',a:2,b:3,n:3,t:'על כל 2 טורקיז יש 3 צהובים. זה יחס של 2 ל־3.'},{k:'eq',s:['2 : 3 = 6 : 9'],t:'אם יש 6 טורקיז, יש 9 צהובים. כופלים את שני הצדדים ב־3.'},{k:'eq',s:['1 : 100,000','1 ס"מ = 1 ק"מ'],t:'במפה כזו כל סנטימטר הוא קילומטר במציאות.'}]},
+ {id:'vol',t:'נפח תיבה',s:'אורך × רוחב × גובה',hint:'נפח = אורך × רוחב × גובה. יחידה: סמ"ק.',
+  g:l=>{const a=R(2,l==1?5:10),b=R(2,l==1?5:10),c=R(2,l==1?5:10);return pick([H(`מה הנפח של תיבה ${a}×${b}×${c} ס"מ? (סמ"ק)`,a*b*c),H(`נפח קובייה שצלעה ${a} ס"מ? (סמ"ק)`,a*a*a)])},
+  v:[{k:'box',a:4,b:3,c:2,t:'תיבה באורך 4, רוחב 3 וגובה 2.'},{k:'eq',s:['4 × 3 = 12'],t:'בשכבה אחת יש 12 קוביות.'},{k:'eq',s:['12 × 2 = 24'],t:'שתי שכבות: 24 סנטימטרים מעוקבים.'}]},
+ {id:'ord',t:'סדר פעולות',s:'סוגריים, כפל וחילוק, חיבור וחיסור',hint:'קודם סוגריים, אחר כך כפל וחילוק, ובסוף חיבור וחיסור.',
+  g:l=>{const a=R(2,9),b=R(2,9),c=R(2,9);return l==1?pick([Q(`${a} + ${b} × ${c}`,a+b*c),Q(`${a*c+b} − ${b*c} : ${c}`,a*c+b-b)]):pick([Q(`(${a} + ${b}) × ${c}`,(a+b)*c),Q(`${a} × ${b} − ${c} × 2`,a*b-c*2)])},
+  v:[{k:'eq',s:['3 + 4 × 5 = ?'],t:'האם התשובה 35? לא!'},{k:'eq',s:['4 × 5 = 20','3 + 20 = 23'],t:'כפל לפני חיבור: קודם 4 כפול 5.'},{k:'eq',s:['(3 + 4) × 5 = 35'],t:'רק עם סוגריים מחברים קודם.'}]}
+]}
+];
+/* תיקון: נושא השעון – מחולל נפרד */
+D[1].T[4].g=l=>{const h=R(1,11),k=R(1,l==1?3:4),m=pick(l==1?[0,30]:[0,15,30,45]),pad=x=>String(x).padStart(2,'0');
+  if(R(0,2))return H(`השעה ⟦${h}:${pad(m)}⟧. עברו ${k} שעות. מה השעה עכשיו?`,`${(h+k-1)%12+1}:${pad(m)}`);
+  const[w,v]=pick([['חצי שעה',30],['רבע שעה',15],['שעה',60],['שלושה רבעי שעה',45]]);return H(`כמה דקות יש ב${w}?`,v,[15,30,45,60,90])};
+/* תיקון: עשרוניים רמה 1 */
+D[4].T[3].g=l=>{if(l==1){const a=R(11,49)/10,b=R(11,49)/10;return Q(`${fx(a)} + ${fx(b)}`,fx(a+b))}const a=R(150,999)/100,b=R(10,140)/100;return Q(`${a.toFixed(2)} − ${b.toFixed(2)}`,fx(a-b))};
+/* תיקון: מספרים עד מיליון */
+D[3].T[0].g=l=>{const n=R(10,999)*1000+R(0,999);if(R(0,1)){const m=n+pick([-1,1])*R(1,9)*(l==1?1000:10);return Q(`${C(n)} ○ ${C(m)}`,n>m?'>':'<',['>','<','='])}return R(0,1)?H(`כמה אלפים שלמים יש במספר ${C(n)}?`,Math.floor(n/1000)):Q(`${C(n)} + 1,000`,C(n+1000))};
+
+const byId={};D.forEach(g=>g.T.forEach((t,i)=>{t.gid=g.id;t.i=i;byId[g.id+'-'+t.id]=t}));
+const ls={get(k,d){try{return JSON.parse(localStorage.getItem('pshut-y-'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('pshut-y-'+k,JSON.stringify(v))}catch(e){}}};
+const stars=k=>ls.get('st',{})[k]||0;
+const starStr=n=>'★'.repeat(n)+'☆'.repeat(3-n);
+
+/* ---------- המחשות לסרטון ---------- */
+const dl=(i,b=0)=>`style="animation-delay:${(b+i*0.12).toFixed(2)}s"`;
+const V={
+ title:s=>`<div class="v-title"><div class="k fade">${s.k}</div><h2 class="pop" ${dl(0,.3)}>${fmt(s.h)}</h2></div>`,
+ eq:s=>`<div class="v-eq">${s.s.map((x,i)=>`<div class="pop ${i==s.s.length-1&&s.s.length>1?'gold':''}" ${dl(0,.3+i*1.3)}>${fmt(x)}</div>`).join('')}</div>`,
+ txt:s=>`<div class="v-txt">${s.s.map((x,i)=>`<div class="pop" ${dl(0,.3+i*1)}>${fmt(x)}</div>`).join('')}</div>`,
+ dots:s=>{const tot=s.a+s.b,fr=Math.max(1,Math.ceil(tot/10));let k=0,o='';for(let f=0;f<fr;f++){o+='<div class="frame">';for(let c=0;c<10;c++){const cls=k<s.a?'a':k<tot?'b':'';o+=`<i class="${cls?cls+' pop':''}" ${cls?dl(k,k<s.a?0.2:0.8):''}></i>`;k++}o+='</div>'}return `<div class="row">${o}</div><div class="lbl fade" style="animation-delay:2s">${s.b?s.a+' + '+s.b+' = '+tot:s.a}</div>`},
+ line:s=>{const W=560,n=(s.to-s.f)/s.s,x=v=>30+(v-s.f)/(s.to-s.f)*(W-60);let o=`<line x1="20" y1="120" x2="${W-20}" y2="120" stroke="#fff" stroke-width="3"/>`;for(let i=0;i<=n;i++){const v=s.f+i*s.s;o+=`<line x1="${x(v)}" y1="112" x2="${x(v)}" y2="128" stroke="#fff" stroke-width="2"/><text x="${x(v)}" y="152" fill="#cfd4ee" font-size="${n>10?11:15}" text-anchor="middle">${C(v)}</text>`}let cur=s.st;o+=`<circle cx="${x(cur)}" cy="120" r="8" fill="#2bb3ab" class="pop" style="transform-origin:${x(cur)}px 120px"/>`;s.j.forEach((j,i)=>{const nx=cur+j,mx=(x(cur)+x(nx))/2,h=Math.min(80,Math.abs(x(nx)-x(cur))*.6+20);o+=`<path d="M${x(cur)} 116 Q${mx} ${116-h*1.6} ${x(nx)} 116" fill="none" stroke="#f5b83d" stroke-width="3" class="draw" style="animation-delay:${.8+i}s"/><text x="${mx}" y="${100-h*.8}" fill="#ffd77a" font-size="18" font-weight="800" text-anchor="middle" class="fade" style="animation-delay:${1.4+i}s">${j>0?'+':''}${j}</text><circle cx="${x(nx)}" cy="120" r="8" fill="#f5b83d" class="pop" style="animation-delay:${1.6+i}s;transform-origin:${x(nx)}px 120px"/>`;cur=nx});return `<svg class="v" viewBox="0 0 ${W} 170">${o}</svg>`},
+ arr:s=>{let o='';for(let r=0;r<s.r;r++)for(let c=0;c<s.c;c++)o+=`<i class="pop" ${dl(r,.2+c*.05)}></i>`;return `<div class="arr" style="grid-template-columns:repeat(${s.c},auto)">${o}</div><div class="lbl fade" style="animation-delay:1.6s">${s.r} × ${s.c}</div>`},
+ grp:s=>{const per=Math.floor(s.n/s.g),rem=s.n%s.g;let o='';for(let g=0;g<s.g;g++){o+='<div class="grp">';for(let i=0;i<per;i++)o+=`<i class="pop" ${dl(i*s.g+g,.3)}></i>`;o+='</div>'}if(rem){o+='<div class="rem" style="display:flex;gap:4px">';for(let i=0;i<rem;i++)o+=`<i class="pop" ${dl(per*s.g+i,.5)}></i>`;o+='</div>'}return `<div class="row">${o}</div>`},
+ frac:s=>s.b.map(([n,d],j)=>`<div class="row fade" style="animation-delay:${j*1.2}s"><div class="bar ${j?'b2':''}" style="grid-template-columns:repeat(${d},1fr)">${Array.from({length:d},(_,i)=>`<i class="${i<n?'on pop':''}" ${i<n?dl(i,.3+j*1.2):''}></i>`).join('')}</div><div class="lbl">${fmt(n+'/'+d)}</div></div>`).join(''),
+ place:s=>{let o='';const add=(cls,k,lab)=>{if(!k)return;let x='';for(let i=0;i<k;i++)x+=`<div class="${cls} pop" ${dl(i,.2)}></div>`;o+=`<div><div class="blk">${x}</div><small>${k} ${lab}</small></div>`};add('hund',s.h,'מאות');add('ten',s.te,'עשרות');add('one',s.o,'יחידות');return `<div class="cols">${o}</div><div class="lbl fade" style="animation-delay:1.8s">${s.h*100+s.te*10+s.o}</div>`},
+ shape:s=>{const cx=150,cy=105,r=80,P=Array.from({length:s.n},(_,i)=>{const a=-Math.PI/2+i*2*Math.PI/s.n+(s.n==4?Math.PI/4:0);return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});let o=`<polygon points="${P.map(p=>p.join(',')).join(' ')}" fill="rgba(43,179,171,.25)" stroke="#2bb3ab" stroke-width="4" class="draw" style="stroke-dasharray:700;stroke-dashoffset:700"/>`;P.forEach((p,i)=>o+=`<circle cx="${p[0]}" cy="${p[1]}" r="8" fill="#f5b83d" class="pop" style="animation-delay:${1+i*.3}s;transform-origin:${p[0]}px ${p[1]}px"/>`);return `<svg class="v" viewBox="0 0 300 210" >${o}</svg><div class="lbl fade" style="animation-delay:${1.2+s.n*.3}s">${s.n}</div>`},
+ rect:s=>{let o='';for(let r=0;r<s.h;r++)for(let c=0;c<s.w;c++){const on=s.m==='area'||(s.m==='tri'&&c/s.w+(s.h-1-r)/s.h<1-.5/s.w);o+=`<i class="${on?'on pop':''}" ${on?dl(r*s.w+c,.2):''} ${s.m=='per'?'style="background:rgba(43,179,171,.35)"':''}></i>`}return `<div class="row"><div class="lbl fade" style="animation-delay:1s">${s.h}</div><div class="grid" style="grid-template-columns:repeat(${s.w},auto);${s.m=='per'?'outline:4px solid #f5b83d;outline-offset:2px':''}">${o}</div></div><div class="lbl fade" style="animation-delay:1s">${s.w}</div>`},
+ pct:s=>{let o='';for(let i=0;i<100;i++)o+=`<i class="${i<s.p?'on pop':''}" ${i<s.p?dl(i*.25,.2):''} style="width:min(6cqh,3.4cqw)"></i>`;return `<div class="grid" style="grid-template-columns:repeat(10,auto)">${o}</div><div class="lbl fade" style="animation-delay:1.6s">${s.p}%</div>`},
+ tab:s=>`<table class="tab fade"><tr>${s.h.map(x=>`<th>${x}</th>`).join('')}</tr>${s.r.map((r,j)=>`<tr class="pop" ${dl(0,.4+j*1.2)}>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>`.replace('<table class="tab fade"><tr>','<table class="tab fade"><tr>'),
+ clock:s=>{const ha=(s.h%12)*30+s.m/2,ma=s.m*6;let o='<circle cx="100" cy="100" r="88" fill="#fff" stroke="#f5b83d" stroke-width="6"/>';for(let i=1;i<=12;i++){const a=i*Math.PI/6;o+=`<text x="${100+70*Math.sin(a)}" y="${106-70*Math.cos(a)}" font-size="16" font-weight="700" text-anchor="middle" fill="#141b3a">${i}</text>`}o+=`<line x1="100" y1="100" x2="100" y2="52" stroke="#141b3a" stroke-width="7" stroke-linecap="round" style="transform-origin:100px 100px;transform:rotate(${ha}deg);transition:transform 1.5s"/><line x1="100" y1="100" x2="100" y2="28" stroke="#2bb3ab" stroke-width="4" stroke-linecap="round" style="transform-origin:100px 100px;transform:rotate(${ma}deg)"/><circle cx="100" cy="100" r="6" fill="#141b3a"/>`;return `<svg class="v pop" viewBox="0 0 200 200" >${o}</svg><div class="lbl fade" style="animation-delay:1s">${s.h}:${String(s.m).padStart(2,'0')}</div>`},
+ coins:s=>`<div class="row">${s.c.map((c,i)=>`<div class="coin ${c<1?'s':''} pop" ${dl(i*3,.2)}>${c} ₪</div>`).join('')}</div>`,
+ bars:s=>{const mx=Math.max(...s.v);return `<div class="bars">${s.v.map((v,i)=>`<div class="pop" style="height:${v/mx*100}%;animation-delay:${.2+i*.4}s"><b>${v}</b></div>`).join('')}${s.avg?`<div class="avg fade" style="bottom:${s.avg/mx*100}%;animation-delay:1s"></div>`:''}</div>`},
+ ratio:s=>{let o='';for(let k=0;k<s.n;k++){o+='<div class="row" style="gap:5px">';for(let i=0;i<s.a+s.b;i++)o+=`<span class="pop" ${dl(k*5+i,.2)} style="width:min(10cqh,5cqw);aspect-ratio:1;border-radius:6px;background:${i<s.a?'#2bb3ab':'#f5b83d'}"></span>`;o+='</div>'}return `<div style="display:flex;flex-direction:column;gap:8px">${o}</div><div class="lbl fade" style="animation-delay:2s">${s.a} : ${s.b}</div>`},
+ box:s=>{const u=26,ox=150,oy=150,cos=.87,sin=.5;const P=(x,y,z)=>[ox+(x-y)*u*cos,oy+(x+y)*u*sin-z*u];let o='';let mnx=1e9,mny=1e9,mxx=-1e9,mxy=-1e9;for(let z=0;z<s.c;z++)for(let y=0;y<s.b;y++)for(let x=0;x<s.a;x++){if(x<s.a-1&&y<s.b-1&&z<s.c-1)continue;[P(x,y,z+1),P(x+1,y+1,z),P(x+1,y,z+1),P(x,y+1,z+1),P(x+1,y+1,z+1)].forEach(([px,py])=>{mnx=Math.min(mnx,px);mxx=Math.max(mxx,px);mny=Math.min(mny,py);mxy=Math.max(mxy,py)});const f=(pts,c)=>`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="${c}" stroke="#141b3a" stroke-width="1.5"/>`;const d=(.2+z*.6+(s.a-x+s.b-y)*.04).toFixed(2);o+=`<g class="pop" style="animation-delay:${d}s;transform-origin:${P(x,y,z)[0]}px ${P(x,y,z)[1]}px">${f([P(x,y,z+1),P(x+1,y,z+1),P(x+1,y+1,z+1),P(x,y+1,z+1)],'#ffd77a')}${f([P(x+1,y,z),P(x+1,y+1,z),P(x+1,y+1,z+1),P(x+1,y,z+1)],'#d99a22')}${f([P(x,y+1,z),P(x+1,y+1,z),P(x+1,y+1,z+1),P(x,y+1,z+1)],'#f5b83d')}</g>`}return `<svg class="v" viewBox="${mnx-6} ${mny-6} ${mxx-mnx+12} ${mxy-mny+12}">${o}</svg><div class="lbl fade" style="animation-delay:2s">${s.a} × ${s.b} × ${s.c}</div>`}
+};
+
+/* ---------- נגן הסרטונים (קול מוקלט + המחשה מסונכרנת) ---------- */
+let P=null;
+const VIDS=window.VIDS||{},VAUD=window.VAUD||{};
+function vidList(key,t){return (VIDS[key]||[{t:'ההסבר',sc:t.v}])}
+function buildP(key,t,g,vi){
+  const L=vidList(key,t),v=L[vi];
+  const sc=[{k:'title',h:t.t,kk:`כיתה ${g.t} · סרטון ${vi+1} מתוך ${L.length}`,sub:v.t,t:vi==0?`שלום! היום נלמד ${t.t}. נתחיל מ${v.t}.`:`${v.t}.`},...v.sc,
+    vi<L.length-1?{k:'txt',s:['בסרטון הבא: '+L[vi+1].t],t:'בסרטון הבא נראה עוד דוגמה.'}:{k:'txt',s:['עכשיו תורכם! ✏️'],t:'עכשיו תורכם! לחצו על תרגול, ונראה מה למדתם.'}];
+  return {key,vi,n:L.length,sc,i:-1,tm:null,st:VAUD[key+'-'+vi]||null,au:null,noaud:false};
+}
+function drawScene(i){
+  if(!P||i===P.i)return;P.i=i;const s=P.sc[i];const st=document.getElementById('stage');if(!st)return;
+  const html=s.k==='title'?`<div class="v-title"><div class="k fade">${s.kk}</div><h2 class="pop" style="animation-delay:.3s">${fmt(s.h)}</h2><div class="k fade" style="animation-delay:.9s;margin-top:10px;color:#fff">${fmt(s.sub)}</div></div>`:V[s.k](s);
+  st.innerHTML=`<div class="logo">⭐ פשוט להצליח</div><div class="scene">${html}</div>`;
+  document.getElementById('cap').innerHTML=fmt(s.t);
+}
+function tick(){
+  if(!P)return;const a=P.au;
+  if(P.st&&a&&!P.noaud){const t=a.currentTime;let i=0;while(i<P.st.length-2&&t>=P.st[i+1])i++;drawScene(i);
+    document.getElementById('vp').style.width=(t/(a.duration||P.st[P.st.length-1])*100)+'%';
+    const f=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0');document.getElementById('vc').textContent=f(t)+' / '+f(P.st[P.st.length-1])}
+}
+function setPlay(on){const b=document.getElementById('pp');if(b)b.textContent=on?'⏸':'▶'}
+function silentStep(){ /* גיבוי כשאין קובץ קול: מתקדם לפי זמן קריאה */
+  clearTimeout(P.tm);const s=P.sc[P.i];
+  document.getElementById('vp').style.width=((P.i+1)/P.sc.length*100)+'%';document.getElementById('vc').textContent=`${P.i+1}/${P.sc.length}`;
+  if(!P.playing)return;
+  P.tm=setTimeout(()=>{if(P.i<P.sc.length-1){drawScene(P.i+1);silentStep()}else{P.playing=false;setPlay(false);ended()}},Math.max(4200,s.t.length*75+1500));
+}
+function seek(i){i=Math.max(0,Math.min(P.sc.length-1,i));if(P.noaud||!P.st){P.i=-1;drawScene(i);silentStep();return}P.au.currentTime=P.st[i]+.01;P.i=-1;tick()}
+function ended(){const w=ls.get('w',{});w[P.key+'-'+P.vi]=1;ls.set('w',w);renderList();
+  if(P.vi<P.n-1){GA.push(setTimeout(()=>loadVideo(P.vi+1,true),1600))}}
+function loadVideo(vi,auto){
+  const{g,t}=route;stopAll();const key=g.id+'-'+t.id;P=buildP(key,t,g,vi);renderList();
+  const au=new Audio();P.au=au;au.preload='auto';au.src=`audio/yesodi/${key}-${vi}.mp3`;
+  const me=()=>P&&P.au===au;
+  au.ontimeupdate=()=>{if(me())tick()};au.onplay=()=>{if(me())setPlay(true)};au.onpause=()=>{if(me())setPlay(false)};au.onended=()=>{if(me()){setPlay(false);ended()}};
+  au.onerror=()=>{if(!me()||!au.getAttribute('src'))return;P.noaud=true;const v=document.getElementById('vo');if(v)v.style.display='none'};
+  drawScene(0);P.noaud=!P.st;silentStep();setPlay(false);
+  if(auto)play();
+}
+function play(){if(P.noaud){P.playing=!P.playing;setPlay(P.playing);silentStep();return}
+  if(P.au.paused){if(P.au.ended||P.au.currentTime>=P.st[P.st.length-1]-.2)P.au.currentTime=0;P.au.play().catch(()=>{P.noaud=true;P.playing=true;setPlay(true);silentStep()})}else P.au.pause()}
+function renderList(){const el=document.getElementById('vl');if(!el||!P)return;const{t}=route;const w=ls.get('w',{});
+  el.innerHTML=vidList(P.key,t).map((v,i)=>{const d=VAUD[P.key+'-'+i];const dur=d?Math.round(d[d.length-1]):0;return `<button data-vi="${i}" class="${i===P.vi?'on':''}"><span class="vn">${w[P.key+'-'+i]?'✓':i+1}</span><span><b>${fmt(v.t)}</b><small>${i==0?'הסבר':'דוגמה'}${dur?` · ${Math.floor(dur/60)}:${String(dur%60).padStart(2,'0')}`:''}</small></span></button>`}).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>loadVideo(+b.dataset.vi,true));}
+
+/* ---------- ניתוב ---------- */
+let route={};
+function parse(){const h=location.hash.slice(1);const[gid,tid,tab]=h.split('-');const g=D.find(x=>x.id===gid);route={g,t:g&&tid?byId[gid+'-'+tid]:null,tab:tab||'video'}}
+function go(h){location.hash=h}
+window.addEventListener('hashchange',()=>{parse();render();scrollTo(0,0)});
+
+function header(){
+  const hd=document.getElementById('hd');const{g,t,tab}=route;
+  const top=`<div class="top"><a href="index.html">← חזרה לאתר</a><span><a href="index.html#path">🗺️ מסלול ז׳–י״ב</a> &nbsp;·&nbsp; <a href="index.html#contact">שיעור אישי</a></span></div>`;
+  if(!g){hd.innerHTML=top+`<span class="kick">🎒 יסודי</span><h1>מתמטיקה לכיתות א׳–ו׳</h1><p>בחרו כיתה. בכל נושא יש 3 סרטונים עם הסבר בקול, תרגול עם רמזים, משחקים ודף עבודה להדפסה.</p>`;return}
+  if(!t){hd.innerHTML=top+`<div class="crumb"><a href="#">יסודי</a> › כיתה ${g.t}</div><span class="kick">כיתה ${g.t}</span><h1>מתמטיקה לכיתה ${g.t}</h1><p>${g.lead}</p>`;return}
+  const tabs=[['video','🎬 סרטון'],['prac','✏️ תרגול'],['game','🎮 משחקים'],['ws','🖨️ דף עבודה']];
+  hd.innerHTML=top+`<div class="crumb"><a href="#">יסודי</a> › <a href="#${g.id}">כיתה ${g.t}</a> › ${t.t}</div><span class="kick">כיתה ${g.t} · נושא ${t.i+1} מתוך ${g.T.length}</span><h1>${fmt(t.t)}</h1><p>${fmt(t.s)}</p><div class="tabs">${tabs.map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('')}</div>`;
+}
+
+function render(){
+  header();stopAll();
+  const app=document.getElementById('app');const{g,t,tab}=route;
+  if(!g){
+    app.innerHTML=`<div class="card"><h3>בחרו כיתה</h3><p class="sub">${D.reduce((s,x)=>s+x.T.length,0)} נושאים, וכל אחד עם 3 סרטונים מוסברים בקול, תרגול, 3 משחקים ודף עבודה.</p><div class="grades">${D.map(x=>{const done=x.T.filter(tt=>stars(x.id+'-'+tt.id)>0).length;return `<a class="gc" href="#${x.id}"><div class="L">${x.t}</div><b>כיתה ${x.t}</b><span>${x.lead}</span><div class="pr"><i style="width:${done/x.T.length*100}%"></i></div></a>`}).join('')}</div></div>
+    <div class="card"><h3>איך זה עובד?</h3><div class="inc"><span>🎬 3 סרטונים עם הסבר בקול</span><span>✏️ תרגול עם רמזים</span><span>🎮 מרוץ, בלונים וזיכרון</span><span>🖨️ דף עבודה בשתי רמות</span><span>⭐ כוכבים על כל נושא</span></div></div>`+cta();
+    return}
+  if(!t){
+    app.innerHTML=`<div class="card"><h3>הנושאים של כיתה ${g.t}</h3><p class="sub">מומלץ ללכת לפי הסדר. הכוכבים מראים איך הלך בתרגול.</p><div class="topics">${g.T.map((x,i)=>`<a class="tc" href="#${g.id}-${x.id}"><div class="n">${i+1}</div><div><b>${fmt(x.t)}</b><span>${fmt(x.s)}</span></div><div class="st">${starStr(stars(g.id+'-'+x.id))}</div></a>`).join('')}</div></div>`+cta(g);
+    return}
+  const key=g.id+'-'+t.id,i=t.i,prev=g.T[i-1],next=g.T[i+1];
+  const nav=`<div class="card nav2">${prev?`<a class="big alt" href="#${g.id}-${prev.id}">→ ${fmt(prev.t)}</a>`:'<span></span>'}${next?`<a class="big alt" href="#${g.id}-${next.id}">${fmt(next.t)} ←</a>`:`<a class="big alt" href="#${g.id}">לכל נושאי כיתה ${g.t}</a>`}</div>`;
+  if(tab==='video'){
+    app.innerHTML=`<div class="card"><div class="player"><div class="stage" id="stage"></div><div class="cap" id="cap"></div><div class="ctrl"><button id="pv" aria-label="הקודם">⏮</button><button id="pp" aria-label="נגן">▶</button><button id="nx" aria-label="הבא">⏭</button><div class="prog" id="pg"><i id="vp"></i></div><span class="cnt" id="vc"></span><button id="vo" aria-label="קול">🔊</button></div></div>
+    <div class="vlist" id="vl"></div><p class="note" style="margin:10px 0 0">💡 ${fmt(t.hint)}</p></div>
+    <div class="card center"><a class="big" href="#${key}-prac">✏️ עכשיו לתרגול</a></div>`+nav;
+    loadVideo(0,false);
+    document.getElementById('pp').onclick=play;
+    document.getElementById('nx').onclick=()=>seek(P.i+1);
+    document.getElementById('pv').onclick=()=>seek(P.i-1);
+    document.getElementById('pg').onclick=e=>{if(P.noaud||!P.st)return;const r=e.currentTarget.getBoundingClientRect();const f=(r.right-e.clientX)/r.width;P.au.currentTime=f*(P.au.duration||P.st[P.st.length-1])};
+    document.getElementById('vo').onclick=e=>{P.au.muted=!P.au.muted;e.target.textContent=P.au.muted?'🔇':'🔊'};
+    return}
+  if(tab==='prac'){app.innerHTML=`<div class="card"><div class="lv" id="lv"></div><div id="pr"></div></div>`+nav;levelBar(()=>practice(t,key));practice(t,key);return}
+  if(tab==='game'){app.innerHTML=`<div class="card"><h3>🎮 משחקים על ${fmt(t.t)}</h3><p class="sub">בחרו משחק ורמה. השיא שלכם נשמר.</p><div class="gpick" id="gp"></div></div><div class="card"><div class="lv" id="lv"></div><div id="gm"></div></div>`+nav;gamePick(t,key);return}
+  if(tab==='ws'){app.innerHTML=`<div class="card wscard"><h3>🖨️ דף עבודה: ${fmt(t.t)}</h3><p class="sub">כל לחיצה יוצרת דף חדש. הפתרונות מוסתרים עד שתבקשו.</p><div class="lv" id="lv"></div><div class="wsbar"><button class="big alt" id="nw">🔄 דף חדש</button><button class="big alt" id="sol">👁️ פתרונות</button><button class="big alt" id="prn">🖨️ הדפסה</button></div><div class="ws" id="ws"></div></div>`+nav;
+    const mk=()=>sheet(t,g);levelBar(mk);mk();
+    document.getElementById('nw').onclick=mk;document.getElementById('sol').onclick=()=>document.getElementById('ws').classList.toggle('show');document.getElementById('prn').onclick=()=>{try{print()}catch(e){}};return}
+}
+const cta=g=>`<div class="card cta"><h3 style="justify-content:center">⭐ ${g&&g.id==='v'?'עולים לחטיבה?':'צריכים עוד חיזוק?'}</h3><p>${g&&g.id==='v'?'מסלול הלמידה של כיתה ז׳ מחכה לכם, עם סרטונים ודפי עבודה.':'שיעור אישי שבונה ביטחון ומחזיר את ההנאה מהמתמטיקה.'}</p><a class="big" href="${g&&g.id==='v'?'index.html#p-z':'index.html#contact'}">${g&&g.id==='v'?'למסלול כיתה ז׳ ←':'לשיעור אישי ←'}</a></div>`;
+let LV=ls.get('lv',1);
+function levelBar(cb){const el=document.getElementById('lv');const draw=()=>{el.innerHTML=[[1,'רמה א׳ · בסיס'],[2,'רמה ב׳ · אתגר']].map(([k,l])=>`<button data-lv="${k}" class="${k==LV?'on':''}">${l}</button>`).join('');el.querySelectorAll('button').forEach(b=>b.onclick=()=>{LV=+b.dataset.lv;ls.set('lv',LV);draw();cb()})};draw()}
+const qHTML=it=>`<div class="q ${it.he?'he':''}">${it.he?fmt(it.q):`<span class="m">${fmt(it.q)} = ?</span>`}</div>`;
+const btn=o=>`<button dir="${hasHe(o)?'rtl':'ltr'}" data-v="${o}">${fmt(o)}</button>`;
+
+/* ---------- תרגול ---------- */
+function practice(t,key){
+  const N=10;let n=0,ok=0,hintUsed=false;const el=document.getElementById('pr');const gen=()=>t.g(LV);
+  const step=()=>{
+    if(n>=N){const s=ok>=9?3:ok>=7?2:ok>=5?1:0;const all=ls.get('st',{});if(s>(all[key]||0)){all[key]=s;ls.set('st',all)}
+      el.innerHTML=`<div class="end"><span class="s">${ok}/${N}</span><span style="font-size:34px;color:var(--g)">${starStr(s)}</span><br>${s==3?'מושלם! אתם שולטים בנושא 🌟':s==2?'יפה מאוד! עוד קצת ותגיעו לשלושה כוכבים':'כל תרגול מקדם. אולי שווה לראות שוב את הסרטון 🙂'}</div><div class="center" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="big" id="again">🔁 עוד תרגול</button><a class="big alt" href="#${key}-game">🎮 למשחקים</a></div>`;
+      document.getElementById('again').onclick=()=>practice(t,key);return}
+    const it=gen();hintUsed=false;
+    el.innerHTML=`<div class="stats"><span>שאלה ${n+1} מתוך ${N}</span><span>✔ ${ok}</span></div><div class="pbar"><i style="width:${n/N*100}%"></i></div>${qHTML(it)}<div class="opts">${options(it,gen).map(btn).join('')}</div><div class="center" style="margin-top:12px"><button class="big alt" id="hb">💡 רמז</button></div><div id="hn"></div>`;
+    document.getElementById('hb').onclick=()=>{hintUsed=true;document.getElementById('hn').innerHTML=`<div class="hint">${fmt(t.hint)}</div>`};
+    el.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
+      const right=b.dataset.v===it.a;el.querySelectorAll('.opts button').forEach(x=>{x.disabled=true;if(x.dataset.v===it.a)x.classList.add('ok')});
+      if(right){ok++;n++;setTimeout(step,700)}else{b.classList.add('no');n++;document.getElementById('hn').innerHTML=`<div class="hint">התשובה הנכונה: <b>${fmt(it.a)}</b><br>${fmt(t.hint)}</div><div class="center" style="margin-top:10px"><button class="big" id="nq">הבא ←</button></div>`;document.getElementById('nq').onclick=step}
+    });
+  };step();
+}
+
+/* ---------- משחקים ---------- */
+let GT=null,GA=[];
+function stopAll(){clearInterval(GT);GA.forEach(clearTimeout);GA=[];if(P){P.playing=false;clearTimeout(P.tm);if(P.au){const o=P.au;P.au=null;o.pause();o.removeAttribute('src');o.load()}}}
+const GAMES=[['race','⚡ מרוץ 60 שניות','כמה תספיקו בדקה?'],['balloon','🎈 בלונים','פוצצו את הבלון עם התשובה'],['memory','🃏 זיכרון','מצאו תרגיל ותשובה מתאימים']];
+let curG='race';
+function gamePick(t,key){
+  const gp=document.getElementById('gp');
+  const draw=()=>{gp.innerHTML=GAMES.map(([k,b,s])=>{const best=ls.get('best',{})[key+'-'+k];return `<button data-gm="${k}" class="${k===curG?'on':''}"><b>${b}</b><span>${s}${best!=null?` · שיא: ${best}`:''}</span></button>`}).join('');gp.querySelectorAll('button').forEach(b=>b.onclick=()=>{curG=b.dataset.gm;draw();intro()})};
+  const intro=()=>{stopAll();document.getElementById('gm').innerHTML=`<div class="end">${GAMES.find(x=>x[0]===curG)[2]}</div><div class="center"><button class="big" id="go">▶ מתחילים</button></div>`;document.getElementById('go').onclick=()=>({race,balloon,memory})[curG](t,key,()=>{draw();})};
+  levelBar(intro);draw();intro();
+}
+function saveBest(key,k,v,lower){const b=ls.get('best',{});const id=key+'-'+k;const nb=b[id]==null||(lower?v<b[id]:v>b[id]);if(nb){b[id]=v;ls.set('best',b)}return nb}
+function finish(el,big,line,nb,again){el.innerHTML=`<div class="end"><span class="s">${big}</span>${line}<br>${nb?'🏆 שיא חדש!':''}</div><div class="center"><button class="big" id="go">🔁 עוד סיבוב</button></div>`;document.getElementById('go').onclick=again}
+function race(t,key,done){
+  const el=document.getElementById('gm'),gen=()=>t.g(LV);let left=60,sc=0,tr=0;
+  el.innerHTML=`<div class="stats"><span>✔ <b id="sc">0</b></span><span>⏱ <b id="tl">60</b></span></div><div class="pbar"><i id="br" style="width:100%;transition:width 1s linear"></i></div><div id="qq"></div>`;
+  const nx=()=>{const it=gen();document.getElementById('qq').innerHTML=qHTML(it)+`<div class="opts">${options(it,gen).map(btn).join('')}</div>`;
+    el.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{tr++;const r=b.dataset.v===it.a;if(r)sc++;b.classList.add(r?'ok':'no');el.querySelectorAll('.opts button').forEach(x=>{x.disabled=true;if(x.dataset.v===it.a)x.classList.add('ok')});document.getElementById('sc').textContent=sc;GA.push(setTimeout(()=>{if(left>0)nx()},r?350:900))})};
+  nx();GT=setInterval(()=>{left--;document.getElementById('tl').textContent=left;document.getElementById('br').style.width=left/60*100+'%';if(left<=0){clearInterval(GT);const nb=saveBest(key,'race',sc);finish(el,sc,`תשובות נכונות מתוך ${tr}`,nb,()=>race(t,key,done));done()}},1000);
+}
+function balloon(t,key,done){
+  const el=document.getElementById('gm'),gen=()=>t.g(LV);let round=0,sc=0;const N=10,cols=['#e2675b','#2bb3ab','#f5b83d','#6a7bd8'];
+  el.innerHTML=`<div class="stats"><span>בלון ${'<b id="rd">1</b>'} מתוך ${N}</span><span>🎈 <b id="sc">0</b></span></div><div id="qq"></div><div class="sky" id="sky"></div>`;
+  const nx=()=>{if(round>=N){const nb=saveBest(key,'balloon',sc);finish(el,`${sc}/${N}`,'בלונים נכונים',nb,()=>balloon(t,key,done));done();return}
+    round++;document.getElementById('rd').textContent=round;const it=gen();document.getElementById('qq').innerHTML=qHTML(it).replace('class="q','style="margin:6px 0 8px;font-size:clamp(17px,4vw,24px)" class="q');
+    const sky=document.getElementById('sky');sky.innerHTML='';const W=sky.clientWidth;const os=options(it,gen);const dur=LV==1?7.5:5.5;let over=false;
+    os.forEach((o,i)=>{const b=document.createElement('button');b.className='bl';b.innerHTML=fmt(o);b.dir=hasHe(o)?'rtl':'ltr';b.style.background=cols[i];b.style.left=(8+i*(W-100)/3)+'px';b.style.animationDuration=(dur+R(-8,8)/10)+'s';b.style.animationDelay=(i*.25)+'s';
+      b.onclick=()=>{if(over)return;over=true;const r=o===it.a;if(r){sc++;document.getElementById('sc').textContent=sc;b.classList.add('popd')}else{b.style.filter='grayscale(1)';sky.querySelectorAll('.bl').forEach(x=>{if(x.innerHTML===fmt(it.a))x.style.outline='4px solid #2bb3ab'})}GA.push(setTimeout(nx,r?450:1100))};sky.appendChild(b)});
+    GA.push(setTimeout(()=>{if(!over){over=true;nx()}},(dur+1.2)*1000));
+  };nx();
+}
+function memory(t,key,done){
+  const el=document.getElementById('gm'),gen=()=>t.g(LV);const items=[],seen=new Set();let g=0;
+  while(items.length<6&&g++<300){const it=gen();if(seen.has(it.a)||it.o&&it.o.length<=3&&items.some(x=>x.o))continue;seen.add(it.a);items.push(it)}
+  const cards=shuf(items.flatMap((it,i)=>[{p:i,h:it.he?fmt(it.q):`<span class="m">${fmt(it.q)}</span>`,he:it.he},{p:i,h:fmt(it.a),he:hasHe(it.a)}]));
+  let open=[],moves=0,found=0,lock=false;const t0=Date.now();
+  el.innerHTML=`<div class="stats"><span>ניסיונות: <b id="mv">0</b></span><span>זוגות: <b id="fd">0</b>/${items.length}</span></div><div class="mem" id="mm" style="${items.some(x=>x.he)?'grid-template-columns:repeat(3,1fr)':''}">${cards.map((c,i)=>`<button data-i="${i}" class="${c.he?'he':''}">?</button>`).join('')}</div>`;
+  el.querySelectorAll('.mem button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,c=cards[i];if(lock||b.classList.contains('up')||b.classList.contains('done'))return;b.classList.add('up');b.innerHTML=c.h;open.push([b,c]);
+    if(open.length===2){moves++;document.getElementById('mv').textContent=moves;const[[b1,c1],[b2,c2]]=open;open=[];
+      if(c1.p===c2.p){[b1,b2].forEach(x=>{x.classList.remove('up');x.classList.add('done')});found++;document.getElementById('fd').textContent=found;if(found===items.length){const nb=saveBest(key,'memory',moves,true);GA.push(setTimeout(()=>{finish(el,moves,`ניסיונות · ${Math.round((Date.now()-t0)/1000)} שניות`,nb,()=>memory(t,key,done));done()},700))}}
+      else{lock=true;GA.push(setTimeout(()=>{[b1,b2].forEach(x=>{x.classList.remove('up');x.innerHTML='?'});lock=false},1000))}}});
+}
+
+/* ---------- דף עבודה ---------- */
+function sheet(t,g){
+  const items=[],seen=new Set();let k=0;while(items.length<16&&k++<400){const it=t.g(LV);if(seen.has(it.q))continue;seen.add(it.q);items.push(it)}
+  const anyHe=items.some(x=>x.he);
+  document.getElementById('ws').className='ws';
+  document.getElementById('ws').innerHTML=`<div class="wh"><span>שם: ____________ &nbsp; תאריך: ________</span><span>כיתה ${g.t} · ${LV==1?'רמה א׳':'רמה ב׳'} · פשוט להצליח במתמטיקה</span></div><div class="wt">${fmt(t.t)}</div><div class="ex ${anyHe?'he':''}">${items.map((it,i)=>`<div><em>${i+1}.</em>${it.he?`<span>${fmt(it.q)}</span>`:`<span class="m">${fmt(it.q)} =</span>`}<span class="ln"></span><span class="ans">${fmt(it.a)}</span></div>`).join('')}</div>`;
+}
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){const{g,t}=route;go(`${g.id}-${t.id}${b.dataset.tab==='video'?'':'-'+b.dataset.tab}`)}});
+window.__D=D;window.__gp=()=>P;window.__opt=options;window.__V=V;
+parse();render();
+}
+</script>
+</body>
+</html>
