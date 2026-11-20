@@ -62,6 +62,33 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .go b{color:var(--gold)}
 .go:disabled{opacity:.45}
 .smallnote{font-size:12.5px;color:var(--muted);text-align:center;margin-top:8px}
+.modes2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modes2 button{border:1.5px solid var(--line);background:#fffdf8;border-radius:16px;padding:10px;text-align:right;color:var(--ink)}
+.modes2 button b{display:block;font-size:16px}
+.modes2 button small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35;margin-top:2px}
+.modes2 button.on{border-color:var(--gold);background:#fff4d6;box-shadow:0 0 0 2px var(--gold) inset}
+/* ההסבר על הנושא */
+.expl{background:#fff;border:2px solid #e9e2cf;background-image:linear-gradient(#eef2fa 1px,transparent 1px),linear-gradient(90deg,#eef2fa 1px,transparent 1px);background-size:24px 24px}
+.expl .eh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.expl .eh h2{font-size:21px}
+.expl .eh .dur{font-size:12.5px;background:#141b3a;color:#ffd77a;border-radius:999px;padding:2px 10px;font-weight:700}
+.part{margin:14px 0 6px;animation:pin .5s ease}
+@keyframes pin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.part h4{font-family:"Gveret Levin",cursive;font-size:25px;color:#1d2a6b;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.part h4 .n{flex:0 0 32px;height:32px;border:2.5px solid #e0312b;border-radius:50%;display:grid;place-items:center;color:#e0312b;font-size:19px}
+.part .pb{background:rgba(255,255,255,.85);border-radius:12px;padding:4px 10px;margin:4px 0}
+.part .pb .m{direction:ltr;text-align:left;font-size:19px;color:#1d2a6b;overflow-x:auto}
+.part .pb .m .katex{color:#1d2a6b}
+.part .pb .t{font-family:"Gveret Levin",cursive;font-size:21px;color:#1d2a6b}
+.part .ps{font-size:14.5px;color:#3b4060;line-height:1.6}
+.part.now .ps{background:#fff8e1;border-radius:10px;padding:4px 8px}
+.ectl{display:flex;gap:8px;margin-top:12px;position:sticky;bottom:8px}
+.ectl .btn{flex:1}
+.ladder .lv i.seen{background:#9fb4ea}
+.watchbtn{margin-inline-start:auto;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700;color:var(--ink)}
+.worked{background:#eef6ff;border-radius:14px;padding:10px 12px;margin:8px 0;animation:pin .5s ease}
+.worked .wa{direction:ltr;text-align:center;font-size:20px;margin:4px 0}
+.worked .wt{font-size:15px;line-height:1.6}
 .msg{margin-top:10px}
 .note{border-radius:14px;padding:10px 12px;font-size:14.5px;margin:10px 0}
 .note.err{background:#fde8e7;color:#8c2320}.note.info{background:#eef3ff;color:#283a7a}.note.warn{background:#fff3db;color:#7a5200}
@@ -94,6 +121,8 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .btn.gold{background:var(--gold);color:var(--night)}
 .btn.light{background:#eef0f7;color:var(--ink)}
 .btn.wide{width:100%;margin-top:10px}
+.pulse{animation:pl 1.6s ease-in-out infinite}
+@keyframes pl{50%{box-shadow:0 0 0 8px rgba(245,184,61,.25)}}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .row .btn{flex:1}
 .exq{border:2px dashed #d9cfb5;background:#fffdf6;border-radius:16px;padding:12px 14px;font-size:16px;margin:8px 0 4px}
@@ -193,8 +222,13 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 3
     <label class="upl" id="upl"><span class="ic">📄</span><span>העלו את החומר שאתם לומדים<small>דף עבודה, עמוד מהספר או שאלה מהמבחן – והתרגילים יהיו בדיוק בסגנון שלו</small></span><img id="uplImg" hidden alt=""><input type="file" accept="image/*" id="uplIn"></label>
     <span class="lbl" style="margin-top:14px">משהו שחשוב לכם? <small>(לא חובה)</small></span>
     <textarea id="note" maxlength="300" placeholder="למשל: יש לי מבחן ביום ראשון / קשה לי עם שברים"></textarea>
+    <span class="lbl" style="margin-top:14px">איך תרצו ללמוד?</span>
+    <div class="modes2" id="modeChips">
+      <button data-m="try"><b>✍️ אני פותר</b><small>אני מנסה בעצמי, ומקבל רמזים כשנתקעים</small></button>
+      <button data-m="watch"><b>👀 רק לצפות</b><small>אוראל פותר את התרגילים ומסביר – בלי לכתוב כלום</small></button>
+    </div>
     <button class="go" id="startBtn" disabled>✨ <b>מתחילים</b> שיעור</button>
-    <p class="smallnote">6 תרגילים: 2 קלים, 2 בינוניים, 2 קשים · כ־20 דקות</p>
+    <p class="smallnote">הסבר של כ־2–3 דקות על הנושא · ואז 6 תרגילים: 2 קלים, 2 בינוניים, 2 קשים</p>
     <div class="msg" id="setupMsg"></div>
   </div></div>
 </section>
@@ -253,6 +287,8 @@ function drawTopics(){
   $("#topics").innerHTML = lvl.t.map(k => { const n = VIDS.filter(v => v.topic === k && v.codes.some(c => lvl.codes.includes(c))).length;
     return `<button class="topic${topic===k?" on":""}" data-k="${k}">${TOPICS[k]}${n ? `<small>🎬 ${n} סרטונים שלי</small>` : ""}</button>`; }).join("");
 }
+let learnMode = store.get("pl_learn") || "try";
+function drawModes(){ $$("#modeChips button").forEach(b => b.classList.toggle("on", b.dataset.m === learnMode)); }
 function canStart(){ $("#startBtn").disabled = !(lvl && (topic || material)); }
 $("#lvChips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return; lvl = LEVELS.find(l => l.k === b.dataset.k); store.set("pl_lvl", lvl.k); topic = null; drawLevels(); drawTopics(); canStart(); };
 $("#topics").onclick = e => { const b = e.target.closest(".topic"); if (!b) return; topic = topic === b.dataset.k ? null : b.dataset.k; drawTopics(); canStart(); };
@@ -260,7 +296,8 @@ $("#topics").onclick = e => { const b = e.target.closest(".topic"); if (!b) retu
   if (l && LEVELS.find(x => x.k === l)) lvl = LEVELS.find(x => x.k === l);
   if (t && TOPICS[t]) { topic = t; if (!lvl || !lvl.t.includes(t)) lvl = lvl && lvl.t.includes(t) ? lvl : (LEVELS.find(x => x.t.includes(t)) || lvl); }
   canStart(); })();
-drawLevels(); drawTopics();
+drawLevels(); drawTopics(); drawModes();
+$("#modeChips").onclick = e => { const b = e.target.closest("button"); if (!b) return; learnMode = b.dataset.m; store.set("pl_learn", learnMode); drawModes(); };
 async function compress(file, max = 1600){
   const url = URL.createObjectURL(file);
   const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
@@ -315,13 +352,30 @@ function say(text){
   ttsUrl(text); vqueue.push(text); if (vqueue.length > 2) vqueue.splice(0, vqueue.length - 2);
   vpump();
 }
+let waiting = false;
 async function vpump(){
+  if (waiting) { vqueue = []; return; }
   if (vplaying || !vqueue.length) return;
   vplaying = true; const my = vid, t = vqueue.shift();
   const u = await ttsUrl(t);
   if (!u || my !== vid || !voiceOn) { vplaying = false; return vpump(); }
   NA.onended = NA.onerror = () => { vplaying = false; vpump(); };
   NA.src = u; const p = NA.play(); if (p && p.catch) p.catch(() => { vplaying = false; });
+}
+let cancelSay = null;
+function sayWait(text){
+  // משמיע ומחכה לסוף (לנגן ההסבר ולמצב "רק לצפות")
+  vid++; vqueue = []; NA.pause(); vplaying = false; if (cancelSay) cancelSay();
+  if (!voiceOn || !text) return Promise.resolve(true);
+  const my = vid; waiting = true;
+  return new Promise(async res0 => {
+    const res = v => { waiting = false; NA.onended = NA.onerror = null; res0(v); };
+    cancelSay = () => res(false);
+    const u = await ttsUrl(text);
+    if (!u || my !== vid || !voiceOn) return res(true);
+    NA.onended = NA.onerror = () => res(true);
+    NA.src = u; const p = NA.play(); if (p && p.catch) p.catch(() => res(true));
+  });
 }
 function sayNow(text){ vid++; vqueue = []; NA.pause(); vplaying = false; const v = voiceOn; voiceOn = true; say(text); voiceOn = v; }
 function unlockAudio(){ try { NA.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="; const p = NA.play(); p && p.catch && p.catch(()=>{}); } catch(e){} }
@@ -386,20 +440,26 @@ function stageReq(stage){
 }
 $("#startBtn").onclick = async () => {
   unlockAudio();
-  S = { ex: [], cur: -1, results: [], stages: {}, topic, title: "" };
+  S = { ex: [], cur: -1, results: [], stages: {}, topic, title: "", watch: learnMode === "watch" };
   loading(true);
+  const ex = { mode: "explain", topic: topic || "", level: lvl ? lvl.n : "", note: $("#note").value.trim() };
+  if (material) { ex.image = material.data; ex.mediaType = material.type; }
+  const pExplain = api(ex, 120000).then(j => j.explain).catch(() => null);
+  S.stages[1] = stageReq(1).catch(e => e);
   try {
-    const j = await stageReq(1); addStage(1, j.practice);
-    S.stages[2] = stageReq(2).catch(e => e); // מכינים מראש את הרמה הבאה
+    let E = await pExplain, P1 = null;
+    if (!E) { const j = await S.stages[1]; if (j instanceof Error) throw j; P1 = j.practice; }
     loading(false); show("scrLesson"); $("#feed").innerHTML = "";
-    const P = j.practice; S.title = P.title || TOPICS[topic] || "השיעור שלך"; if (!S.topic && P.topic) S.topic = P.topic;
+    S.title = (E && E.title) || (P1 && P1.title) || TOPICS[topic] || "השיעור שלך";
+    if (!S.topic) S.topic = (E && E.topic) || (P1 && P1.topic) || "";
     drawLadder();
-    if (P.overview && (P.overview.goal || P.overview.what)) {
+    if (E) playExplain(E);
+    else if (P1 && P1.overview && (P1.overview.goal || P1.overview.what)) {
       $("#feed").insertAdjacentHTML("beforeend", `<div class="card ov"><h3>🧭 רגע לפני – ${esc(S.title)}</h3>
-        ${P.overview.goal ? `<p><b>המטרה:</b> ${mixed(P.overview.goal)}</p>` : ""}${P.overview.what ? `<p><b>מה עושים:</b> ${mixed(P.overview.what)}</p>` : ""}
-        ${(P.overview.tools||[]).map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}
+        ${P1.overview.goal ? `<p><b>המטרה:</b> ${mixed(P1.overview.goal)}</p>` : ""}${P1.overview.what ? `<p><b>מה עושים:</b> ${mixed(P1.overview.what)}</p>` : ""}
+        ${(P1.overview.tools||[]).map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}
         <button class="btn gold wide" id="ovGo">לתרגיל הראשון ←</button></div>`);
-      say(P.overview.say);
+      say(P1.overview.say);
       $("#ovGo").onclick = e => { e.target.remove(); nextExercise(); };
     } else nextExercise();
   } catch(e) {
@@ -407,6 +467,43 @@ $("#startBtn").onclick = async () => {
     $("#setupMsg").innerHTML = `<div class="note err">😕 ${esc(e.message || "אין חיבור כרגע.")} נסו שוב בעוד רגע.</div>`;
   }
 };
+/* ----- ההסבר על הנושא (לפחות 2 דקות, נכתב על הלוח בזמן הדיבור) ----- */
+let explainTok = 0;
+async function playExplain(E){
+  const tok = ++explainTok;
+  const mins = Math.max(2, Math.round(E.words / 140));
+  const card = document.createElement("div"); card.className = "card expl";
+  card.innerHTML = `<div class="eh"><h2>📖 ${esc(E.title || S.title)}</h2><span class="dur">⏱️ כ־${mins} דקות</span></div>
+    <div class="parts"></div>
+    <div class="ectl"><button class="btn light" data-a="pause">⏸ עצירה</button><button class="btn gold" data-a="go">${S.watch ? "לתרגילים הפתורים ←" : "לתרגילים ←"}</button></div>`;
+  $("#feed").append(card);
+  const box = card.querySelector(".parts");
+  const partHTML = (p, k) => `<div class="part" data-k="${k}"><h4><span class="n">${k+1}</span>${esc(p.title)}</h4>
+    ${p.board.length ? `<div class="pb">${p.board.map(b => b.t === "math" ? `<div class="m">${tex(b.v)}</div>` : `<div class="t">${mixed(b.v)}</div>`).join("")}</div>` : ""}
+    <div class="ps">${mixed(p.say)}</div></div>`;
+  let paused = false, k = 0;
+  const done = () => { explainTok++; if (cancelSay) cancelSay(); NA.pause(); card.querySelector(".ectl").remove(); nextExercise(); };
+  card.querySelector('[data-a="go"]').onclick = () => { E.parts.slice(k + 1).forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, k + 1 + j))); k = E.parts.length; done(); };
+  const pb = card.querySelector('[data-a="pause"]');
+  pb.onclick = () => { paused = !paused; pb.textContent = paused ? "▶ המשך" : "⏸ עצירה";
+    if (paused) { explainTok++; if (cancelSay) cancelSay(); NA.pause(); } else run(k); };
+  if (!voiceOn) { E.parts.forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, j))); pb.remove(); k = E.parts.length; return; }
+  async function run(from){
+    const t = ++explainTok;
+    for (k = from; k < E.parts.length; k++) {
+      if (!box.querySelector(`.part[data-k="${k}"]`)) box.insertAdjacentHTML("beforeend", partHTML(E.parts[k], k));
+      box.querySelectorAll(".part").forEach(el => el.classList.toggle("now", +el.dataset.k === k));
+      const el = box.querySelector(`.part[data-k="${k}"]`); el.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (E.parts[k + 1]) ttsUrl(E.parts[k + 1].say);
+      const ok = await sayWait(E.parts[k].say);
+      if (t !== explainTok || !ok) return;
+    }
+    box.querySelectorAll(".part").forEach(el => el.classList.remove("now"));
+    pb.remove();
+    card.querySelector('[data-a="go"]').classList.add("pulse");
+  }
+  ttsUrl(E.parts[0].say); run(0);
+}
 function addStage(stage, P){ S.keywords = (S.keywords || []).concat(P.keywords || []); if (!S.topic && P.topic) S.topic = P.topic; (P.exercises || []).forEach(e => { e.stage = stage; S.ex.push(e); S.results.push(null); }); }
 function drawLadder(){
   const per = { easy: [], medium: [], hard: [] };
@@ -414,14 +511,14 @@ function drawLadder(){
   // מקומות שמורים לרמות שעוד לא הגיעו
   ["medium","hard"].forEach(l => { while (per[l].length < 2) per[l].push(-1); });
   const curLv = S.ex[S.cur] ? S.ex[S.cur].level : "easy";
-  $("#ladder").innerHTML = ["easy","medium","hard"].map(l => `<span class="lv${l===curLv?" on":""}">${LV_NAME[l]} ${per[l].map(i => `<i class="${i>=0&&S.results[i]==="ok"?"ok":i>=0&&S.results[i]==="help"?"help":i===S.cur?"cur":""}"></i>`).join("")}</span>`).join("")
+  $("#ladder").innerHTML = ["easy","medium","hard"].map(l => `<span class="lv${l===curLv?" on":""}">${LV_NAME[l]} ${per[l].map(i => `<i class="${i>=0&&S.results[i]==="ok"?"ok":i>=0&&S.results[i]==="help"?"help":i>=0&&S.results[i]==="seen"?"seen":i===S.cur?"cur":""}"></i>`).join("")}</span>`).join("")
     + `<span class="tp">${esc(S.title)}</span>`;
 }
 async function ensureNext(){
   if (S.cur + 1 < S.ex.length) return true;
-  const stage = (S.ex[S.ex.length-1] || {}).stage + 1;
+  const stage = S.ex.length ? S.ex[S.ex.length-1].stage + 1 : 1;
   if (stage > 3) return false;
-  let j = S.stages[stage];
+  let j = S.stages[stage] || stageReq(stage);
   const wait = document.createElement("div"); wait.className = "card"; wait.innerHTML = teacher("רגע, מכין את התרגיל הבא… ⏳"); $("#feed").append(wait);
   try { j = await j; if (j instanceof Error || !j) j = await stageReq(stage); }
   catch(e){ try { j = await stageReq(stage); } catch(e2){ wait.innerHTML = `<div class="note err">😕 לא הצלחתי להכין את התרגיל הבא. <button class="btn light" id="retryNext">ניסיון נוסף</button></div>`; $("#retryNext").onclick = () => { wait.remove(); S.stages[stage] = null; nextExercise(); }; return null; } }
@@ -443,11 +540,37 @@ async function nextExercise(){
 function renderExercise(i){
   const e = S.ex[i]; e.state = { step: 0, wrong: 0, helped: false };
   const card = document.createElement("div"); card.className = "card"; card.id = "ex" + i;
-  card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2></div>
-    <div class="exq">${mixed(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", e.intro_say)}<div class="steps"></div>`;
+  card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2>${S.watch ? "" : `<button class="watchbtn">👀 תפתור לי</button>`}</div>
+    <div class="exq">${mixed(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", S.watch ? null : e.intro_say)}<div class="steps"></div>`;
   $("#feed").append(card);
   setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  if (S.watch) return workedFrom(i, 0);
+  card.querySelector(".watchbtn").onclick = ev => { ev.target.remove(); e.watched = true;
+    const open = card.querySelectorAll(".step:not(.solved)"); const k = card.querySelectorAll(".step.solved").length; open.forEach(x => x.remove()); workedFrom(i, k); };
   renderStep(i, 0);
+}
+/* מצב "רק לצפות": המורה פותר את השלבים בקול, אחד אחרי השני */
+async function workedFrom(i, k0){
+  const e = S.ex[i], card = $("#ex" + i); e.state.helped = true;
+  const tok = ++explainTok;
+  for (let k = k0; k < e.steps.length; k++) {
+    const st = e.steps[k];
+    const correct = st.type === "choice" ? st.choices.find(c => c.correct) : null;
+    const ans = correct ? mixed(correct.text) : (st.answer_tex ? `<span class="im" dir="ltr">${tex(st.answer_tex, false)}</span>` : esc(st.answer));
+    const why = st.explain || (correct && correct.why) || st.hint || "";
+    const el = document.createElement("div"); el.className = "step solved";
+    el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}</div>
+      <div class="teacher"><span class="av">🧑‍🏫</span><div class="say">${mixed(st.prompt)}</div></div>
+      <div class="worked"><div class="wt">✏️ ${mixed(why)}</div><div class="wa">${ans}</div></div>`;
+    card.querySelector(".steps").append(el);
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const nxt = e.steps[k + 1]; if (nxt) ttsUrl([nxt.say || nxt.prompt, nxt.explain].filter(Boolean).join(" "));
+    const spoken = [k === 0 && S.watch ? e.intro_say : "", st.say || st.prompt, why].filter(Boolean).join(" ");
+    if (voiceOn) { if (!(await sayWait(spoken)) || tok !== explainTok) return; }
+    else await new Promise(r => setTimeout(r, Math.min(9000, 1500 + spoken.split(/\s+/).length * 220)));
+    if (tok !== explainTok) return;
+  }
+  exerciseDone(i);
 }
 function renderStep(i, k){
   const e = S.ex[i], st = e.steps[k], card = $("#ex" + i);
@@ -573,9 +696,9 @@ function makePad(cv, tip){
 }
 function exerciseDone(i){
   const e = S.ex[i];
-  S.results[i] = e.state.helped ? "help" : "ok"; drawLadder();
+  S.results[i] = (S.watch || e.watched) ? "seen" : e.state.helped ? "help" : "ok"; drawLadder();
   const card = document.createElement("div"); card.className = "card done-card";
-  const praise = e.state.helped ? "כל הכבוד שלא ויתרתם! 💪" : e.state.wrong ? pick(["יפה! טעיתם ותיקנתם לבד – ככה לומדים 👏","כל הכבוד! מצאתם את הטעות בעצמכם 👏"]) : pick(["מהמם! פתרתם לבד בלי אף טעות 👏","אתם גאונים, כל הכבוד!","יפה מאוד – בלי עזרה ובלי טעויות!"]);
+  const praise = (S.watch || e.watched) ? pick(["ככה פותרים את זה! 👌","ראיתם? פשוט להצליח 🙂","זה כל הסוד! ✨"]) : e.state.helped ? "כל הכבוד שלא ויתרתם! 💪" : e.state.wrong ? pick(["יפה! טעיתם ותיקנתם לבד – ככה לומדים 👏","כל הכבוד! מצאתם את הטעות בעצמכם 👏"]) : pick(["מהמם! פתרתם לבד בלי אף טעות 👏","אתם גאונים, כל הכבוד!","יפה מאוד – בלי עזרה ובלי טעויות!"]);
   card.innerHTML = `<h3>🎯 ${praise}</h3>${e.final_tex ? `<div class="ans">${tex(e.final_tex)}</div>` : ""}
     ${e.check_say ? `<p style="margin:6px 0">✅ ${mixed(e.check_say)}</p>` : ""}
     <label class="upl2">📷 רוצים שאבדוק גם את הדרך מהמחברת?<input type="file" accept="image/*"></label>
@@ -631,8 +754,21 @@ function videoBreak(stage, nextLevel){
   card.querySelector(".nx").onclick = ev2 => { ev2.target.remove(); nextExercise(); };
   setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
 }
+function finishWatch(n){
+  const card = document.createElement("div"); card.className = "card sum";
+  const msg = "ראיתם " + n + " תרגילים פתורים, מהקל ועד הקשה. עכשיו תורכם – תנסו לפתור לבד, אני כאן עם רמזים.";
+  const vs = videosFor(S.ex[S.ex.length-1], 3);
+  card.innerHTML = `<div class="big">👀 ${n}</div><p style="text-align:center;margin:0 0 6px">תרגילים פתורים צפיתם בהם</p>${teacher(esc(msg), msg)}
+    ${vs.length ? `<h3 style="font-size:17px;margin-top:10px">🎬 להמשך – סרטונים שלי בנושא</h3><div class="vids">${vs.map(vCard).join("")}</div>` : ""}
+    <div class="row" style="margin-top:12px"><button class="btn gold" id="tryNow">✍️ עכשיו אני פותר לבד</button><button class="btn light" id="other">נושא אחר</button></div>`;
+  $("#feed").append(card);
+  $("#tryNow").onclick = () => { learnMode = "try"; store.set("pl_learn", "try"); drawModes(); $("#startBtn").click(); };
+  $("#other").onclick = () => { show("scrSetup"); };
+  setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+}
 function finishLesson(){
   const ok = S.results.filter(r => r === "ok").length, n = S.results.length;
+  if (S.watch) return finishWatch(n);
   const card = document.createElement("div"); card.className = "card sum";
   const msg = ok === n ? "פתרתם הכל לבד. אתם מוכנים למבחן!" : ok >= n / 2 ? "עבודה מצוינת! עוד קצת תרגול על מה שהיה קשה וזה שלכם." : "כל הכבוד שהגעתם עד הסוף! ככה בונים ביטחון – צעד אחרי צעד.";
   const vs = videosFor(S.ex[S.ex.length-1], 3);
