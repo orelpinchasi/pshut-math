@@ -304,10 +304,11 @@ const errMsg = (e,d)=>ERR[e&&e.code]||d;
 function googleSignIn(){
   busy=true;
   fb().then(f=>{ const pr=new f.auth.GoogleAuthProvider(); pr.setCustomParameters({prompt:"select_account"});
-    const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
-    if(pending) st.set("pshut-pending",JSON.stringify(pending));
-    return standalone ? f.auth().signInWithRedirect(pr) : f.auth().signInWithPopup(pr).catch(err=>{ if(/popup-blocked|operation-not-supported/.test(err.code)) return f.auth().signInWithRedirect(pr); throw err; });
-  }).then(()=>{ busy=false; }).catch(err=>{ busy=false; if(err&&/popup-closed|cancelled-popup/.test(err.code)) return; fail(errMsg(err,"ההתחברות לא הצליחה. נסו שוב.")); });
+    return f.auth().signInWithPopup(pr);
+  }).then(()=>{ busy=false; }).catch(err=>{ busy=false; const c=err&&err.code||"";
+    if(/popup-closed|cancelled-popup/.test(c)) return;
+    if(/popup-blocked|operation-not-supported|web-storage-unsupported/.test(c)) return fail("הדפדפן הזה לא פותח את חלון Google. אפשר להירשם כאן עם מייל וסיסמה, או לפתוח את האתר ב-Chrome / Safari.");
+    fail(errMsg(err,"ההתחברות לא הצליחה. נסו שוב.")); });
 }
 function pwAuth(kind,email,pw){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail("נראה שהמייל לא תקין");
@@ -350,12 +351,10 @@ function boot(){
   if(!CFG||booted) return; booted=true;
   fb().then(f=>{
     const a=f.auth();
-    a.getRedirectResult().catch(()=>{});
     a.onAuthStateChanged(u=>{
       user=u; prof=null;
       if(!u){ st.del("pshut-acct"); paintNav(); if(panel.classList.contains("on")&&["card","profile"].includes(view)) go("card"); return; }
       st.set("pshut-acct","1");
-      if(!pending){ const pp=jget("pshut-pending",null); if(pp) pending=pp; } st.del("pshut-pending");
       docRef().get().then(s=>{
         if(s.exists){ const d=s.data(); prof={name:d.name,grade:d.grade,units:d.units||"",school:d.school||"",phone:d.phone||"",updates:!!d.updates}; merge(d); cloudSave(); }
         paintNav();
