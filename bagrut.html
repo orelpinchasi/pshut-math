@@ -54,6 +54,9 @@ h3{margin:4px 0 12px;font-size:19px}
 .modal.on{display:flex}.modal .box{width:min(960px,100%);aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;position:relative}
 .modal iframe{width:100%;height:100%;border:0}.modal .x{position:absolute;top:-44px;left:0;background:#fff;border:0;border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer}
 @media(max-width:560px){.qhead h2{font-size:20px}.vl{grid-template-columns:1fr}}
+.solin{grid-column:1/-1;background:#fff;border:2px solid var(--g);border-radius:16px;padding:14px}
+.solin:empty{display:none}
+.btn.soon{opacity:.5;cursor:default;border-style:dashed}
 .btn.fs{background:#141b3a;border-color:#141b3a;color:#ffd77a}
 .s.cur{outline:3px solid var(--g)}
 .sol h3{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
@@ -84,7 +87,6 @@ h3{margin:4px 0 12px;font-size:19px}
   <div class="lv" id="lv"></div>
   <div class="qs" id="qs"></div>
 </div>
-<div class="wrap" style="margin-bottom:-30px;z-index:2"><a class="card" href="#35471_2026_8" style="display:flex;gap:12px;align-items:center;text-decoration:none;border:2px solid var(--g)"><span style="font-size:30px">🎬</span><span style="flex:1"><b style="font-size:17px">חדש: סרטוני פתרון לשאלות בגרות</b><br><span class="note">35471 · קיץ מועד ב 2026 · כל 8 השאלות – סרטון פתרון מלא עם קול לכל שאלה</span></span><span class="btn y">צפייה ←</span></a></div>
 <div class="wrap" id="app"></div>
 <div class="modal" id="mdl"><div class="box"><button class="x" id="mx">✕ סגירה</button><iframe id="mf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
 <script>
@@ -113,10 +115,10 @@ function render(){
    <div class="chips"><a class="btn" target="_blank" rel="noopener" href="${D.formula[st.lv]}">📄 דפי נוסחאות</a><a class="btn" target="_blank" rel="noopener" href="${D.repo}">🗂️ מאגר הבחינות המלא</a></div></div></div>`;
   o+=`<div class="card"><h3>📝 טופסי הבחינה לפי מועד</h3><div class="ses">`+q.ss.map(s=>`<div class="s${s.k===st.fs?' cur':''}"><span class="nm">${s.lbl}</span><span class="hy">${s.hy}</span>
     <div class="row">${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:`<a class="btn off" target="_blank" rel="noopener" href="${D.repo}">🔎 טופס הבחינה במאגר</a>`}
-    ${s.fs?`<button class="btn fs" data-fs="${s.k}">🧠 פתרון מלא</button>`:''}
-    ${s.sol?`<a class="btn t" target="_blank" rel="noopener" href="${s.sol}">✔️ תשובות סופיות</a>`:`<a class="btn off" target="_blank" rel="noopener" href="${D.repo}">🔎 תשובות במאגר</a>`}</div>
-    ${s.v.length?`<div class="mine">🎬 <b>פתרון שלי:</b> `+s.v.map(([id,t])=>`<a href="#" data-v="${id}">${esc(t)}</a>`).join(' · ')+`</div>`:''}</div>`).join('')+`</div>
-    <div class="lg"><span>🧠 פתרון מלא שלב אחרי שלב</span><span>📄 / ✔️ קישור ישיר לקובץ באתר משרד החינוך</span></div></div><div id="solbox"></div>`;
+    ${s.sol?`<a class="btn t" target="_blank" rel="noopener" href="${s.sol}">✔️ תשובות סופיות</a>`:`<a class="btn off" target="_blank" rel="noopener" href="${D.repo}">🔎 תשובות במאגר</a>`}
+    ${s.fs?`<button class="btn fs" data-fs="${s.k}">🎬 ${s.k===st.fs?'הסתרת הפתרונות':'צפייה בפתרונות'}</button>`:`<span class="btn soon">🎬 פתרונות בקרוב</span>`}</div>
+    ${s.v.length?`<div class="mine">🎬 <b>פתרון שלי:</b> `+s.v.map(([id,t])=>`<a href="#" data-v="${id}">${esc(t)}</a>`).join(' · ')+`</div>`:''}</div><div class="solin" id="sb-${s.k}"></div>`).join('')+`</div>
+    <div class="lg"><span>📄 / ✔️ קישור ישיר לקובץ באתר משרד החינוך</span><span>🎬 פתרון מלא לכל שאלה: סרטון + פתרון כתוב</span></div></div>`;
   o+=`<div class="card"><h3>🎬 סרטוני פתרון לפי פרקי השאלון</h3>`+q.parts.map((p,pi)=>`<div class="part" id="pp${pi}"><div class="pt"><h4>${p.t}</h4><span class="d">${esc(p.d||'')} · ${p.v.length} סרטונים</span></div>
     <ul class="vl">${p.v.map(([id,t],i)=>`<li data-v="${id}" class="${i>=10?'rest':''}"><span class="pl">▶</span><span>${esc(t)}</span></li>`).join('')}</ul>
     ${p.v.length>10?`<button class="more" data-pp="${pi}">הצגת כל ${p.v.length} הסרטונים ▾</button>`:''}</div>`).join('')+`</div>`;
@@ -127,12 +129,12 @@ function render(){
 function M(t){return String(t).split('$').map((x,i)=>{if(!(i%2))return x;try{return katex.renderToString(x,{throwOnError:false,strict:false})}catch(e){return esc(x)}}).join('')}
 const SC={};
 async function showSol(q,s,scroll){
-  const box=document.getElementById('solbox');
+  document.querySelectorAll('.solin').forEach(x=>x.innerHTML='');const box=document.getElementById('sb-'+s.k);
   box.innerHTML='<div class="card">טוען פתרון…</div>';
   try{
     for(let i=0;i<50&&!window.katex;i++)await new Promise(r=>setTimeout(r,100));
     const S=SC[s.k]||(SC[s.k]=await (await fetch('sol/'+s.k+'.json',{cache:'no-cache'})).json());
-    box.innerHTML=`<div class="card sol"><h3><span>🧠 פתרון מלא · שאלון ${q.id} · ${s.lbl}</span>${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:''}</h3>
+    box.innerHTML=`<div class="sol"><h3><span>🎬 פתרונות · ${s.lbl}</span></h3>
      <p class="note">פותחים את השאלה בטופס המקורי, מנסים לפתור לבד, ורק אז לוחצים "הצגת הפתרון" בכל סעיף.${S.ver?` הפתרון מתאים ל<b>גרסה ${S.ver}</b> של השאלון.`:''}</p>`+
      S.q.map(x=>`<details class="qq"><summary><span class="n">${x.n}</span><span class="tt">${esc(x.t)}</span><span class="ar">▾</span></summary><div class="qb">
        ${x.mp4?`<video controls playsinline preload="none" poster="" src="media/bagrut/${s.k}_${x.n}.mp4" style="width:100%;border-radius:12px;margin:6px 0 10px;background:#000"></video>`:''}${x.vid?`<a class="btn fs" href="solve.html?lesson=${s.k}_${x.n}">🎬 שיעור וידאו עם אוראל</a> `:''}${s.pdf?`<a class="btn" target="_blank" rel="noopener" href="${s.pdf}#page=${x.p}">📄 שאלה ${x.n} בטופס (עמ' ${x.p})</a>`:''}
@@ -144,7 +146,7 @@ async function showSol(q,s,scroll){
 document.addEventListener('click',e=>{
   const r=e.target.closest('.rv');if(r){if(r.dataset.all)r.parentNode.querySelectorAll('.pp').forEach(p=>p.classList.add('show'));else r.parentNode.classList.add('show');return}
   const b=e.target.closest('[data-lv],[data-q],[data-v],[data-pp],[data-fs]');if(!b)return;
-  if(b.dataset.fs){st.fs=b.dataset.fs;const q=D.q.find(x=>x.id===st.q);document.querySelectorAll('.s.cur').forEach(x=>x.classList.remove('cur'));b.closest('.s').classList.add('cur');history.replaceState(null,'','#'+st.fs);showSol(q,q.ss.find(s=>s.k===st.fs),true);try{localStorage.setItem('pshut-bag',JSON.stringify(st))}catch(e){}return}
+  if(b.dataset.fs){if(st.fs===b.dataset.fs){st.fs=null;history.replaceState(null,'',location.pathname+'#'+st.q);render();return}st.fs=b.dataset.fs;const q=D.q.find(x=>x.id===st.q);document.querySelectorAll('.s.cur').forEach(x=>x.classList.remove('cur'));document.querySelectorAll('[data-fs]').forEach(x=>x.textContent='🎬 צפייה בפתרונות');b.textContent='🎬 הסתרת הפתרונות';b.closest('.s').classList.add('cur');history.replaceState(null,'','#'+st.fs);showSol(q,q.ss.find(s=>s.k===st.fs),true);try{localStorage.setItem('pshut-bag',JSON.stringify(st))}catch(e){}return}
   if(b.dataset.lv){st.lv=b.dataset.lv;render()}
   else if(b.dataset.q){st.q=b.dataset.q;history.replaceState(null,'','#'+st.q);render()}
   else if(b.dataset.v){e.preventDefault();play(b.dataset.v)}
