@@ -582,15 +582,43 @@ async function practiceSet(env, body) {
 }
 
 const CHECK_SYSTEM = STYLE_SHORT + `
-תלמיד כתב תשובה באצבע על המסך (תמונה). קרא בדיוק מה כתוב, והשווה לתשובה הנכונה.
-תשובה שקולה מתמטית נחשבת נכונה (למשל 4.5 ו-9/2, או x=9 ו-9).
-החזר JSON: {"read":"מה שכתוב, ב-LaTeX","correct":true/false,"unclear":true/false,"feedback":"משפט קצר אחד לתלמיד, בלי לגלות את התשובה אם טעה"}`;
+תלמיד ענה על שלב בתרגיל – בכתב יד (תמונה), בקול (הקלטה), או בטקסט שתומלל מדיבור (עם שגיאות תמלול אפשריות: "איקס", "שווה", "מינוס", מספרים במילים).
+הבן מה התלמיד התכוון לענות, והשווה לתשובה הנכונה. תשובה שקולה מתמטית נחשבת נכונה (4.5 ו-9/2, x=9 ו-9, "תשע" ו-9).
+אם יש אפשרויות בחירה – קבע איזו אפשרות התלמיד בחר (choice = מספר האפשרות מ-0, או -1 אם לא ברור). התלמיד יכול לומר את התוכן או "הראשונה/השנייה/השלישית".
+החזר JSON: {"read":"מה שהתלמיד ענה, ב-LaTeX (או טקסט קצר)","choice":-1,"correct":true/false,"unclear":true/false,"feedback":"משפט קצר אחד לתלמיד, בלי לגלות את התשובה אם טעה"}`;
 
-async function checkHandwriting(env, body) {
-  const parts = [{ inlineData: { mimeType: "image/png", data: body.image } },
-    { text: `השלב: ${String(body.prompt || "").slice(0, 400)}\nהתשובה הנכונה: ${String(body.answer || "").slice(0, 200)}` }];
+const ASK_SYSTEM = STYLE_SHORT + `
+תלמיד באמצע תרגיל שאל אותך שאלה בקול (או בטקסט). ענה כמו מורה פרטי שיושב לידו: 2–4 משפטים, ברור וחם.
+אל תגלה את התשובה הסופית של השלב, אלא אם התלמיד ביקש במפורש. כוון אותו לצעד הבא. אם שאל משהו כללי (הגדרה, נוסחה) – הסבר עם דוגמה קטנה.
+החזר JSON: {"heard":"מה התלמיד שאל (תמלול מתוקן)","say":"התשובה בקול – רק מילים, בלי סימנים","show":"אותה תשובה לתצוגה, מתמטיקה בתוך \\( \\)"}`;
+
+function answerParts(body) {
+  const parts = [];
+  const okAudio = ["audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg", "audio/wav", "audio/aac", "audio/x-m4a"];
+  if (typeof body.image === "string" && body.image.length > 100) parts.push({ inlineData: { mimeType: "image/png", data: body.image } });
+  if (typeof body.audio === "string" && body.audio.length > 100) parts.push({ inlineData: { mimeType: okAudio.includes(String(body.audioType).split(";")[0]) ? String(body.audioType).split(";")[0] : "audio/webm", data: body.audio } });
+  return parts;
+}
+
+async function checkAnswer(env, body) {
+  const parts = answerParts(body);
+  const ch = Array.isArray(body.choices) ? body.choices.slice(0, 5).map((c, i) => `${i}. ${String(c).slice(0, 200)}`).join("\n") : "";
+  parts.push({ text: [`השלב: ${String(body.prompt || "").slice(0, 400)}`, `התשובה הנכונה: ${String(body.answer || "").slice(0, 200)}`,
+    ch && `אפשרויות הבחירה:\n${ch}`,
+    body.text && `התמלול של מה שהתלמיד אמר: "${String(body.text).slice(0, 300)}"` + (Array.isArray(body.alts) && body.alts.length ? ` (חלופות: ${body.alts.slice(0, 3).map(a => String(a).slice(0, 120)).join(" | ")})` : ""),
+  ].filter(Boolean).join("\n") });
   const r = await geminiHedged(env, CHECK_SYSTEM, parts, j => typeof j.correct === "boolean", { deadline: 60000, hedgeMs: 6000 });
-  return { read: String(r.read || ""), correct: !!r.correct, unclear: !!r.unclear, feedback: String(r.feedback || "").replace(/יאללה/g, "") };
+  return { read: String(r.read || ""), choice: Number.isInteger(r.choice) ? r.choice : -1, correct: !!r.correct, unclear: !!r.unclear, feedback: String(r.feedback || "").replace(/יאללה/g, "") };
+}
+
+async function askTeacher(env, body) {
+  const parts = answerParts(body);
+  parts.push({ text: [`התרגיל: ${String(body.question || "").slice(0, 600)}`, `השלב הנוכחי: ${String(body.prompt || "").slice(0, 400)}`,
+    `התשובה הנכונה לשלב (לא לגלות אם לא ביקש): ${String(body.answer || "").slice(0, 200)}`,
+    body.text && `התלמיד שאל: "${String(body.text).slice(0, 400)}"`].filter(Boolean).join("\n") });
+  const r = await geminiHedged(env, ASK_SYSTEM, parts, j => typeof j.say === "string" && j.say.length > 3, { deadline: 60000, hedgeMs: 6000 });
+  const S = v => String(v ?? "").replace(/יאללה/g, "");
+  return { heard: S(r.heard), say: S(r.say), show: S(r.show || r.say) };
 }
 
 const REVIEW_SYSTEM = STYLE_SHORT + `
@@ -688,9 +716,12 @@ export default {
     }
 
     // בדיקת כתב יד (משטח האצבע) – קל ומהיר, לא נספר במכסה
-    if (body && body.mode === "check") {
-      if (typeof body.image !== "string" || body.image.length < 100 || body.image.length > 2_000_000) return json({ error: "no_image" }, 400);
-      try { return json(await checkHandwriting(env, body)); } catch (e) { return json({ error: "upstream", message: "לא הצלחתי לקרוא כרגע – נסו שוב או השתמשו במקלדת." }, 502); }
+    if (body && (body.mode === "check" || body.mode === "ask")) {
+      const has = k => typeof body[k] === "string" && body[k].length > (k === "text" ? 0 : 100);
+      if (!has("image") && !has("audio") && !has("text")) return json({ error: "no_input" }, 400);
+      if ((body.image && body.image.length > 2_000_000) || (body.audio && body.audio.length > 3_000_000)) return json({ error: "too_big", message: "ההקלטה ארוכה מדי – נסו קצר יותר." }, 413);
+      try { return json(body.mode === "ask" ? await askTeacher(env, body) : await checkAnswer(env, body)); }
+      catch (e) { return json({ error: "upstream", message: "לא הצלחתי לבדוק כרגע – נסו שוב או השתמשו במקלדת." }, 502); }
     }
 
     // מגבלה יומית לכל משתמש (רק אם הוגדר KV בשם LIMITS). נספרות רק שאלות שקיבלו תשובה.
