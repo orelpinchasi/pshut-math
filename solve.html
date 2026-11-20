@@ -299,6 +299,79 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 @media (min-width:900px){
   .player .board{height:auto;max-height:calc(100vh - 200px - 21vh);aspect-ratio:9/11}
 }
+/* ===== הדף: שאלה + פתרון בכתב יד (כמו OneNote בסרטונים) ===== */
+.pg{position:relative;background:#fff;border-radius:18px;box-shadow:0 8px 26px rgba(29,33,64,.1);overflow:clip;
+  background-image:linear-gradient(#e3eaf6 1px,transparent 1px),linear-gradient(90deg,#e3eaf6 1px,transparent 1px);background-size:26px 26px;margin-top:8px}
+.qcol{position:sticky;top:60px;z-index:6;background:#fff;border-bottom:2px solid #c9d6ee;padding:6px 12px 8px}
+.qhead{display:flex;align-items:center;gap:6px}
+.qlbl{font-weight:800;font-size:13px;background:#141b3a;color:#ffd77a;border-radius:999px;padding:2px 10px}
+.qb{border:1px solid #d5dbea;background:#fff;border-radius:999px;font-size:12.5px;padding:3px 10px;color:#1d2140}
+#qFold{margin-inline-start:auto;width:30px;padding:3px 0}
+.qbody{max-height:30vh;overflow:auto;margin-top:6px}
+.qcol.fold .qbody{max-height:3.2em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 40%,transparent)}
+.qtext{font-family:"Times New Roman","David Libre",serif;font-size:16.5px;line-height:1.75;color:#111}
+.qtext .sec{display:block;margin-top:2px}
+.qtext .sec b{font-weight:700}
+.qnotes{font-family:"Gveret Levin",cursive;color:#e0312b;font-size:19px;overflow-x:auto;line-height:1.35;margin-top:4px;display:none}
+.qnotes.on{display:block}
+.qnotes .im .katex{color:#e0312b;font-size:.95em}
+.qtext .katex{font-size:1em}
+.qtext{overflow-x:auto}
+.qnotes b{font-family:Rubik;font-size:12px;color:#b2271f;display:block}
+.qfig{max-width:240px;margin:4px auto 0}
+.qfig svg{width:100%;height:auto;display:block}
+.qfig .glow{filter:drop-shadow(0 0 3px rgba(224,49,43,.7))}
+.work{position:relative;padding:12px 14px 20px;min-height:52vh}
+.work .tap{position:static;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;border:2px dashed #f5b83d;background:#fff8e6;border-radius:16px;padding:14px;margin:4px 0 12px;color:#141b3a}
+.work .tap span{background:#141b3a;color:#fff;font-weight:800;font-size:18px;border-radius:999px;padding:10px 22px;box-shadow:none}
+.work .tap small{font-size:13px;color:#6b6f86}
+.blk{margin:6px 0 16px;border-radius:12px;transition:background .3s;cursor:pointer}
+.blk.off{display:none}
+.blk.now{background:rgba(255,236,170,.35);box-shadow:0 0 0 2px rgba(245,184,61,.6)}
+.blk .hd{display:flex;align-items:center;gap:8px;font-family:"Gveret Levin",cursive;font-size:24px;color:#1d2a6b;line-height:1.2}
+.blk .num{flex:0 0 34px;height:34px;border:2.5px solid #e0312b;border-radius:50% 46% 52% 48%;display:grid;place-items:center;color:#e0312b;font-size:21px;font-family:"Gveret Levin",cursive}
+.blk .why{font-size:13.5px;color:#6b6f86;margin:2px 42px 4px 0;line-height:1.5}
+.blk .ln{opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+.blk .ln:not(.in){max-height:0;overflow:hidden;margin:0;padding-top:0;padding-bottom:0}
+.blk .ln.in{opacity:1;transform:none}
+.blk .ln.math{direction:ltr;text-align:left;font-size:19px;color:#1d2a6b;padding:0 6px;overflow-x:auto;overflow-y:hidden}
+.blk .ln.math .katex-display{margin:.35em 0;text-align:left}
+.blk .ln.math .katex-display>.katex{text-align:left}
+.blk .ln.text{font-family:"Gveret Levin",cursive;font-size:22px;color:#1d2a6b;padding:0 6px}
+.blk .katex{color:#1d2a6b}
+.blk .pen{display:inline-block;clip-path:inset(0 100% 0 0);transition:clip-path var(--d,.9s) ease-out;max-width:100%}
+.blk .ln.text .pen{clip-path:inset(0 0 0 100%)}
+.blk .ln.in .pen{clip-path:inset(0 0 0 0)}
+.blk .redmark{color:#e0312b}
+.postit{background:#fff3a8;border-radius:4px 14px 6px 12px;box-shadow:2px 4px 10px rgba(0,0,0,.08);padding:10px 12px;transform:rotate(-.6deg)}
+.postit h5{margin:0 0 4px;font-size:15px;color:#7a5200}
+.postit p{margin:3px 0;font-size:14.5px}
+.postit .tool{font-size:14px;margin:3px 0}
+.idea-h{font-family:"Gveret Levin",cursive;font-size:23px;color:#1d2a6b}
+.ansbox{display:inline-block;border:3px solid #e0312b;border-radius:14px 20px 12px 18px;padding:2px 14px;margin:6px 0;direction:ltr}
+.ansbox .katex{font-size:1.25em}
+.chk{font-size:14.5px;color:#11643f;margin:4px 0}
+.dock{position:sticky;bottom:0;z-index:15;background:rgba(251,247,239,.97);backdrop-filter:blur(6px);border-top:1px solid #e7e1d3;padding:6px 8px calc(6px + env(safe-area-inset-bottom));margin:0}
+.dock .segs{display:flex;gap:3px;padding:0 4px 5px}
+.dock .segs i{flex:1;height:4px;border-radius:4px;background:#e3e0d6;overflow:hidden;position:relative}
+.dock .segs i::after{content:"";position:absolute;inset:0;background:#f5b83d;transform:scaleX(var(--p,0));transform-origin:right;transition:transform .25s linear}
+.dock .cap{margin:0 0 6px;background:#fff;border:1px solid #e3e6f0;border-radius:12px;color:#1d2a6b;font-size:14px;line-height:1.5;padding:5px 10px;height:calc(3em + 10px);overflow:hidden}
+.dock .cap .w.on{color:#b07d10;font-weight:700}.dock .cap .w.done{color:#1d2a6b}.dock .cap .w.todo{color:rgba(29,42,107,.4)}
+.dock .controls{margin:0 auto;gap:8px}
+.dock .cb{height:40px;min-width:42px}.dock .cb.main{height:46px;min-width:58px}
+@media (min-width:900px){
+  .stage{max-width:1240px}
+  .qfig{max-width:330px}
+  .qnotes{font-size:21px}
+  .pg{display:grid;grid-template-columns:minmax(0,1fr) 400px;direction:ltr;align-items:start;min-height:calc(100vh - 250px)}
+  .pg>*{direction:rtl}
+  .qcol{grid-column:2;grid-row:1;top:70px;border-bottom:0;border-left:2px solid #c9d6ee;background:rgba(255,255,255,.9);max-height:calc(100vh - 90px);overflow:auto;padding:12px 16px}
+  .qbody{max-height:none}
+  #qFold{display:none}
+  .work{grid-column:1;grid-row:1;padding:16px 26px 40px}
+  .blk .ln.math{font-size:21px}
+  .dock{margin:0}
+}
 </style>
 </head>
 <body>
@@ -370,33 +443,33 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
     </div>
 
     <div class="vm strong" id="vmTop" hidden></div>
-    <div class="lesson-grid">
-      <div class="player" id="player">
-      <div class="qcard" id="qCard" hidden><span class="qlbl">📄 השאלה שלך</span><div class="qin" id="qIn"></div><button class="qz" id="qZoom" aria-label="הגדלת השאלה">🔍</button></div>
-      <div class="board" id="board">
-        <div class="segs" id="segs"></div>
-        <div class="scene-top"><span class="num" id="sNum"></span><span class="ttl" id="sTtl"></span><button class="figbtn" id="figBtn" hidden>📋 נתונים</button></div>
-        <div class="figpane" id="figPane" hidden></div>
-        <div class="lines" id="lines"></div>
-        <div class="cap" id="cap"></div>
-        <div class="figov" id="figOv"><button class="x" id="figX" aria-label="סגירה">×</button><div id="figOvIn"></div></div>
-        <button class="tap" id="tapStart"><span>▶ התחילו את השיעור</span></button>
+    <!-- הדף: השאלה בצד, הפתרון נכתב לידה – כמו בסרטונים של אוראל -->
+    <div class="pg" id="pg">
+      <aside class="qcol" id="qcol">
+        <div class="qhead"><span class="qlbl">📄 השאלה</span><button class="qb" id="qPhoto" hidden>📷 הצילום שלי</button><button class="qb" id="qFold" aria-label="הקטנה">▴</button></div>
+        <div class="qbody" id="qbody">
+          <div class="qtext" id="qText"></div>
+          <div class="qnotes" id="qNotes" data-k="givens"></div>
+          <div class="qfig" id="qFig"></div>
+        </div>
+      </aside>
+      <div class="work" id="work">
+        <button class="tap" id="tapStart"><span>▶ התחילו את ההסבר</span><small>אני כותב את הפתרון לידה, שלב אחרי שלב, עם קול</small></button>
+        <div id="blocks"></div>
       </div>
-
+    </div>
+    <div class="dock" id="dock">
+      <div class="segs" id="segs"></div>
+      <div class="cap" id="cap"></div>
       <div class="controls">
         <button class="cb" id="bNext" aria-label="השלב הבא">⏭</button>
-        <button class="cb main" id="bPlay" aria-label="נגן / עצור">⏸</button>
+        <button class="cb main" id="bPlay" aria-label="נגן / עצור">▶</button>
         <button class="cb" id="bPrev" aria-label="השלב הקודם">⏮</button>
         <button class="cb small" id="bRate" aria-label="מהירות">1×</button>
         <button class="cb small" id="bMute" aria-label="קול">🔊</button>
         <button class="cb small" id="bVoice" aria-label="החלפת קול">🗣️</button>
       </div>
-        <div id="voiceToast" class="vtoast" hidden></div>
-        <p class="synchint">👆 לחיצה על שלב בפתרון הכתוב – קופצת אליו בסרטון</p>
-      </div>
-      <div class="written" id="written">
-        <div class="wr" id="wr"></div>
-      </div>
+      <div id="voiceToast" class="vtoast" hidden></div>
     </div>
     <div class="vm" id="vmMore" hidden style="margin-top:22px"></div>
     <div class="after">
@@ -665,13 +738,14 @@ function buildScenes(L){
   return out;
 }
 
+function qHTML(q){
+  // השאלה כמו בדף הבחינה: כל סעיף בשורה משלו
+  const t = String(q || "").replace(/\s+([א-י]\.|\([0-9]\)|[א-י]\))\s/g, "\n$1 ");
+  return t.split("\n").map((line, i) => `<span class="sec">${i && /^([א-י]\.|\([0-9]\)|[א-י]\))/.test(line) ? `<b>${esc(line.split(" ")[0])}</b> ${mixed(line.slice(line.indexOf(" ") + 1))}` : mixed(line)}</span>`).join("");
+}
 function openLesson(L, notes=[], img=null){
   stopAll(); ttsReset();
-  // השאלה של התלמיד – תמיד למעלה, מעל הפתרון
-  const qtxt = L.question ? `<div class="qtxt">${mixed(L.question)}</div>` : "";
-  $("#qIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : qtxt;
-  $("#qBigIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : qtxt;
-  $("#qCard").hidden = !(img || qtxt);
+  window._lesson = L; window._img = img;
   scenes = buildScenes(L); cur = 0;
   $("#lessonNotes").innerHTML = notes.map(n => `<div class="note ${n.cls}">${n.html}</div>`).join("");
   $("#lTitle").textContent = L.title || "השיעור שלך";
@@ -681,18 +755,20 @@ function openLesson(L, notes=[], img=null){
   $("#moreVideos").href = L.topic && L.topic !== "mixed" ? `./?topic=${encodeURIComponent(L.topic)}#videos` : "./#videos";
   $("#segs").innerHTML = scenes.map(()=>"<i></i>").join("");
   $("#bMute").textContent = muted ? "🔇" : "🔊";
-  renderWritten(L);
-  window._lesson = L;
-  const ovFig = figSVG(L.figure, false), ovGiv = giversHTML(L, "bgiv");
-  $("#figOvIn").innerHTML = (ovFig ? `<div class="bfig">${ovFig}</div>` : "") + `<div class="bgiv">${ovGiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`;
-  $("#figBtn").hidden = !(ovFig || ovGiv); $("#figOv").classList.remove("on");
+  // צד השאלה
+  $("#qText").innerHTML = L.question ? qHTML(L.question) : (img ? "" : "");
+  $("#qPhoto").hidden = !img;
+  $("#qBigIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : `<div class="qtxt">${qHTML(L.question)}</div>`;
+  const giv = (L.givens || []), want = (L.wanted || []);
+  $("#qNotes").innerHTML = (giv.length ? `<b>נתונים</b>${giv.map(g => `<div>${mixed(g)}</div>`).join("")}` : "") + (want.length ? `<b style="margin-top:4px">מחפשים</b>${want.map(g => `<div>${mixed(g)}</div>`).join("")}` : "");
+  $("#qFig").innerHTML = figSVG(L.figure, false);
+  $("#qcol").classList.remove("fold");
+  renderPage(L);
   showMatches(L);
-  drawScene(0, false);
-  ttsPrefetch(0);
+  showAll(); ttsPrefetch(0);
   $("#tapStart").hidden = false;
   show("scrLesson");
 }
-
 
 /* =========================================================
    ציור התרגיל (SVG) – גאומטריה או גרף פונקציה
@@ -784,70 +860,68 @@ function giversHTML(L, cls){
   return h;
 }
 
-function renderWritten(L){
-  let h = "";
-  if (L.overview && (L.overview.goal || L.overview.what)) {
-    h += `<div class="ov" data-k="overview"><h5>🧭 רגע לפני – על מה הנושא${L.topic_name ? ": " + esc(L.topic_name) : ""}</h5>`
-      + (L.overview.goal ? `<p><b>המטרה:</b> ${mixed(L.overview.goal)}</p>` : "")
-      + (L.overview.what ? `<p><b>מה עושים:</b> ${mixed(L.overview.what)}</p>` : "")
-      + (L.overview.tools && L.overview.tools.length ? `<div class="tools">${L.overview.tools.map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}</div>` : "")
-      + `</div>`;
+function lineHTML(b, mark){
+  if (b.t === "math") {
+    let v = b.v; if (mark && v.includes(mark)) v = v.split(mark).join(`\\textcolor{#e0312b}{${mark}}`);
+    return `<div class="ln math"><span class="pen">${tex(v)}</span></div>`;
   }
-  h += `<div data-k="intro">`;
-  if (L.question) h += `<div class="q"><b>השאלה כפי שהבנתי</b>${mixed(L.question)}</div>`;
-  if (L.big_idea) h += `<div class="idea"><b>💡 הסיפור בפשטות:</b> ${esc(L.big_idea)}</div>`;
-  h += `</div>`;
-  const giv = giversHTML(L, "giv");
-  if (giv) h += `<div data-k="givens" class="side">${giv}</div>`;
-  L.steps.forEach((s,i) => {
-    h += `<div class="st" data-k="step-${i}"><span class="n">${i+1}</span><div><h4>${esc(s.title)}</h4><p>${esc(s.say)}</p>`;
-    (s.board||[]).forEach(b => h += b.t==="math" ? `<div class="m">${tex(b.v, true, s.mark)}</div>` : `<div class="t">${mixed(b.v)}</div>`);
-    h += `</div></div>`;
-  });
-  if (L.answer || L.check) {
-    h += `<div data-k="answer">`;
-    if (L.answer) h += `<div class="ans"><b>🎯 התשובה</b><div class="m">${tex(L.answer.tex)}</div></div>`;
-    if (L.check) h += `<div class="ok">✅ <b>איך בודקים:</b> ${mixed(L.check)}</div>`;
-    h += `</div>`;
-  }
-  if (L.remember) h += `<div class="rem" data-k="remember">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}</div>`;
-  $("#written").classList.remove("has-side");
-  $("#wr").innerHTML = h;
+  return `<div class="ln text"><span class="pen">${mixed(b.v)}</span></div>`;
 }
-
-/* הסרטון והפתרון הכתוב מסונכרנים: השלב שמתנגן מודגש בטקסט, ולחיצה על שלב בטקסט קופצת אליו בסרטון */
-function syncWritten(sc, scroll){
-  document.querySelectorAll("#wr [data-k].now").forEach(el => el.classList.remove("now"));
-  const el = sc && sc.key && document.querySelector(`#wr [data-k="${sc.key}"]`); if (!el) return;
-  el.classList.add("now");
-  if (!scroll) return;
-  if (innerWidth >= 900) { const box = $("#written"); box.scrollTo({ top: Math.max(0, el.offsetTop - 14), behavior: "smooth" }); return; }
-  const pb = $("#player").getBoundingClientRect().bottom, r = el.getBoundingClientRect();
-  if (r.top < pb + 4 || r.top > innerHeight - 80) scrollTo({ top: scrollY + r.top - pb - 10, behavior: "smooth" });
+function renderPage(L){
+  let h = "";
+  if (L.overview && (L.overview.goal || L.overview.what))
+    h += `<div class="blk" data-k="overview"><div class="ln text in"><div class="postit"><h5>🧭 רגע לפני – על מה הנושא${L.topic_name ? ": " + esc(L.topic_name) : ""}</h5>
+      ${L.overview.goal ? `<p><b>המטרה:</b> ${mixed(L.overview.goal)}</p>` : ""}${L.overview.what ? `<p><b>מה עושים:</b> ${mixed(L.overview.what)}</p>` : ""}
+      ${(L.overview.tools||[]).map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}</div></div></div>`;
+  h += `<div class="blk" data-k="intro">${L.big_idea ? `<div class="ln text"><span class="pen idea-h">💡 ${esc(L.big_idea)}</span></div>` : `<div class="ln text"><span class="pen idea-h">בואו נפתור ביחד ✏️</span></div>`}</div>`;
+  L.steps.forEach((s, i) => {
+    h += `<div class="blk" data-k="step-${i}"><div class="ln text hd"><span class="num">${i+1}</span><span class="pen">${esc(s.title)}</span></div>`
+      + (s.say ? `<div class="why">${esc(s.say)}</div>` : "")
+      + (s.board || []).map(b => lineHTML(b, s.mark)).join("") + `</div>`;
+  });
+  if (L.answer) h += `<div class="blk" data-k="answer"><div class="ln text hd"><span class="num">🎯</span><span class="pen">התשובה</span></div>
+    <div class="ln math"><span class="pen"><span class="ansbox">${tex(L.answer.tex, false)}</span></span></div>
+    ${L.check ? `<div class="ln text"><span class="pen chk">✅ איך בודקים: ${mixed(L.check)}</span></div>` : ""}</div>`;
+  if (L.remember) h += `<div class="blk" data-k="remember"><div class="ln text"><div class="postit">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}<br><small>כל אחד יכול להצליח. רק צריך תנאים נכונים.</small></div></div></div>`;
+  $("#blocks").innerHTML = h;
+}
+const blockOf = sc => sc && sc.key && (sc.key === "givens" ? $("#qNotes") : document.querySelector(`#blocks [data-k="${sc.key}"]`));
+function showAll(){
+  document.querySelectorAll("#blocks .blk").forEach(b => { b.classList.remove("off","now"); b.querySelectorAll(".ln").forEach(l => l.classList.add("in")); });
+  $("#qNotes").classList.add("on"); $("#qNotes").classList.remove("now");
+}
+/* בזמן ההסבר: מה שכבר הוסבר כתוב, השלב הנוכחי נכתב עכשיו, ומה שאחריו עוד לא מופיע */
+function setUpTo(i){
+  const keys = scenes.map(sc => sc.key);
+  document.querySelectorAll("#blocks .blk").forEach(b => {
+    const k = keys.indexOf(b.dataset.k);
+    b.classList.toggle("off", k > i); b.classList.toggle("now", k === i);
+    if (k < i) b.querySelectorAll(".ln").forEach(l => l.classList.add("in"));
+    if (k === i) b.querySelectorAll(".ln").forEach(l => l.classList.remove("in"));
+  });
+  const gi = keys.indexOf("givens");
+  $("#qNotes").classList.toggle("on", gi >= 0 && gi <= i);
+}
+function follow(el){
+  if (!el || el.id === "qNotes") return;
+  const top = $("#qcol").getBoundingClientRect().bottom, dock = $("#dock").getBoundingClientRect().top, r = el.getBoundingClientRect();
+  const minTop = innerWidth >= 900 ? 80 : top + 6;
+  if (r.bottom > dock - 10 || r.top < minTop) scrollTo({ top: scrollY + r.top - minTop - 4, behavior: "smooth" });
 }
 document.addEventListener("click", e => {
-  const blk = e.target.closest("#wr [data-k]"); if (!blk || $("#scrLesson").hidden) return;
+  const blk = e.target.closest("#blocks .blk, #qNotes"); if (!blk || $("#scrLesson").hidden) return;
   const idx = scenes.findIndex(sc => sc.key === blk.dataset.k); if (idx < 0) return;
   $("#tapStart").hidden = true; stopAll(); runFrom(idx);
 });
-
 function setSegs(){
   [...$("#segs").children].forEach((el,i) => el.style.setProperty("--p", i<cur ? 1 : 0));
 }
 function drawScene(i, animate=true){
   const sc = scenes[i]; cur = i; setSegs();
-  $("#sNum").textContent = sc.num; $("#sTtl").textContent = sc.ttl;
   updateFigPane(sc);
-  syncWritten(sc, playing);
-  if (sc.lines) {
-    $("#lines").innerHTML = sc.lines.map(b => b.t === "math"
-      ? `<div class="ln math"><span class="pen">${tex(b.v, true, sc.mark)}</span></div>`
-      : `<div class="ln text"><span class="pen">${mixed(b.v)}</span></div>`).join("");
-  } else $("#lines").innerHTML = sc.html;
+  if (animate) { setUpTo(i); follow(blockOf(sc)); }
   const words = sc.say.trim().split(/\s+/).filter(Boolean);
   $("#cap").innerHTML = words.map(w => `<span class="w todo">${esc(w)}</span>`).join(" ");
-  $("#lines").scrollTop = 0;
-  if (!animate) $("#lines").querySelectorAll(".ln").forEach(el => el.classList.add("in"));
 }
 
 /* הציור נשאר קבוע על הלוח לאורך כל הפתרון, וכל שלב מדגיש בזהב את מה שהוא מדבר עליו */
@@ -862,12 +936,10 @@ function hlSet(F, text){
   return set;
 }
 function updateFigPane(sc){
-  const L = window._lesson, pane = $("#figPane");
-  if (!L || !L.figure || sc.overview) { pane.hidden = true; return; }
+  const L = window._lesson; if (!L || !L.figure) return;
   let hl = new Set();
-  if (sc.hl === "all") hl = new Set();
-  else if (sc.hl) hl = hlSet(L.figure, sc.hl);
-  pane.innerHTML = figSVG(L.figure, false, hl); pane.hidden = false;
+  if (sc.hl && sc.hl !== "all") hl = hlSet(L.figure, sc.hl);
+  $("#qFig").innerHTML = figSVG(L.figure, false, hl);
 }
 const sleep = (ms, id) => new Promise(r => setTimeout(() => r(id === runId), ms));
 
@@ -951,38 +1023,38 @@ async function runFrom(i){
   for (let k = i; k < scenes.length; k++) {
     drawScene(k);
     for (const c of (scenes[k].pre || [])) if (!(await playClip(c, id))) return;
-    const lns = [...$("#lines").querySelectorAll(".ln")];
+    const blk = blockOf(scenes[k]);
+    const lns = blk && blk.id !== "qNotes" ? [...blk.querySelectorAll(".ln")] : [];
     const capW = [...$("#cap").querySelectorAll(".w")];
     const mark = n => { capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo")); const w = capW[Math.min(n, capW.length-1)], c = $("#cap"); if (w) c.scrollTop = Math.max(0, w.offsetTop - 5); };
-    // מילים מופיעות על הלוח במקביל לקריינות
+    // הפתרון נכתב על הדף במקביל לקריינות
     const speech = speak(scenes[k].say, id, mark, k);
     for (const el of lns) {
-      if (!(await sleep(el === lns[0] ? 250 : 1300 / rate, id))) return;
+      if (!(await sleep(el === lns[0] ? 200 : 1200 / rate, id))) return;
       const len = el.textContent.length; el.style.setProperty("--d", Math.min(1.4, .35 + len*.02)/rate + "s");
-      el.classList.add("in");
-      const box = $("#lines"); if (el.offsetTop + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTop = el.offsetTop + el.offsetHeight - box.clientHeight + 10;
+      el.classList.add("in"); follow(el);
     }
     if (!(await speech)) return;
     for (const c of (scenes[k].post || [])) if (!(await playClip(c, id))) return;
-    if (!(await sleep(900 / rate, id))) return;
+    if (!(await sleep(700 / rate, id))) return;
     if (k < scenes.length-1) $("#segs").children[k].style.setProperty("--p", 1);
   }
   $("#segs").lastElementChild.style.setProperty("--p", 1);
-  playing = false; $("#bPlay").textContent = "↻";
+  playing = false; $("#bPlay").textContent = "↻"; showAll();
 }
 function stopAll(){ runId++; playing = false; try { VA.pause(); NA.pause(); } catch(e){} if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
 
-$("#qZoom").onclick = () => { $("#qBig").hidden = false; };
-$("#qIn").onclick = () => { $("#qBig").hidden = false; };
+$("#qPhoto").onclick = () => { $("#qBig").hidden = false; };
 $("#qBigX").onclick = () => { $("#qBig").hidden = true; };
-const focusBoard = () => scrollTo({top: $("#board").getBoundingClientRect().top + scrollY - 70, behavior:"smooth"});
+$("#qFold").onclick = () => { const f = $("#qcol").classList.toggle("fold"); $("#qFold").textContent = f ? "▾" : "▴"; };
+const focusBoard = () => scrollTo({top: $("#pg").getBoundingClientRect().top + scrollY - 64, behavior:"smooth"});
 $("#tapStart").onclick = () => { $("#tapStart").hidden = true; focusBoard();
   if (!heVoice && !muted && !ttsWanted()) $("#lessonNotes").insertAdjacentHTML("beforeend", `<div class="note info">🔈 לא נמצא קול בעברית במכשיר הזה, אז השיעור מוצג עם כתוביות.</div>`);
   try { if ("speechSynthesis" in window) speechSynthesis.speak(new SpeechSynthesisUtterance(" ")); } catch(e){} // פתיחת הקול באייפון
   try { NA.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="; const p = NA.play(); p && p.catch && p.catch(()=>{}); } catch(e){}
   runFrom(0); };
 $("#bPlay").onclick = () => { $("#tapStart").hidden = true;
-  if (playing) { stopAll(); drawScene(cur, false); }
+  if (playing) { stopAll(); }
   else runFrom(cur >= scenes.length-1 && $("#bPlay").textContent === "↻" ? 0 : cur); };
 $("#bNext").onclick = () => { $("#tapStart").hidden = true; if (cur < scenes.length-1) { stopAll(); runFrom(cur+1); } };
 $("#bPrev").onclick = () => { $("#tapStart").hidden = true; stopAll(); runFrom(Math.max(0, cur-1)); };
@@ -996,7 +1068,7 @@ $("#bVoice").onclick = () => {
   if (playing) runFrom(cur); else ttsPrefetch(cur);
 };
 $("#bMute").onclick = () => { muted = !muted; store.set("muted", muted?"1":"0"); $("#bMute").textContent = muted ? "🔇" : "🔊"; if (playing) runFrom(cur); };
-document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); drawScene(cur,false); } });
+document.addEventListener("visibilitychange", () => { if (document.hidden && playing) { stopAll(); } });
 
 $("#shareBtn").onclick = async () => {
   const L = window._lesson; if (!L) return;
@@ -1071,8 +1143,7 @@ document.addEventListener("click", e => {
   $("#ytt").textContent = b.dataset.t; $("#ytl").href = `https://www.youtube.com/watch?v=${b.dataset.id}`;
   $("#ytm").classList.add("on");
 });
-$("#figBtn").onclick = () => { $("#figOv").classList.add("on"); };
-$("#figX").onclick = () => { $("#figOv").classList.remove("on"); };
+
 $("#ytx").onclick = () => { $("#ytm").classList.remove("on"); $("#ytf").src = ""; };
 $("#ytm").onclick = e => { if (e.target.id === "ytm") $("#ytx").click(); };
 
