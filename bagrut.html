@@ -84,11 +84,12 @@ h3{margin:4px 0 12px;font-size:19px}
   <div class="lv" id="lv"></div>
   <div class="qs" id="qs"></div>
 </div>
+<div class="wrap" style="margin-bottom:-30px;z-index:2"><a class="card" href="solve.html?lesson=35471_2026_8_1" style="display:flex;gap:12px;align-items:center;text-decoration:none;border:2px solid var(--g)"><span style="font-size:30px">🎬</span><span style="flex:1"><b style="font-size:17px">חדש: שיעור וידאו לשאלות בגרות</b><br><span class="note">35471 · קיץ מועד ב 2026 · שאלה 1 – פתרון מלא עם אוראל, שלב אחרי שלב</span></span><span class="btn y">צפייה ←</span></a></div>
 <div class="wrap" id="app"></div>
 <div class="modal" id="mdl"><div class="box"><button class="x" id="mx">✕ סגירה</button><iframe id="mf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
 <script>
 (async function(){
-const D=await (await fetch('bagrut-data.json')).json();
+const D=await (await fetch('bagrut-data.json',{cache:'no-cache'})).json();
 const LV=[['3','3 יח"ל'],['4','4 יח"ל'],['5','5 יח"ל']];
 let st={lv:'4',q:'35471'};
 try{const s=JSON.parse(localStorage.getItem('pshut-bag')||'null');if(s)st=s}catch(e){}
@@ -130,7 +131,7 @@ async function showSol(q,s,scroll){
   box.innerHTML='<div class="card">טוען פתרון…</div>';
   try{
     for(let i=0;i<50&&!window.katex;i++)await new Promise(r=>setTimeout(r,100));
-    const S=SC[s.k]||(SC[s.k]=await (await fetch('sol/'+s.k+'.json')).json());
+    const S=SC[s.k]||(SC[s.k]=await (await fetch('sol/'+s.k+'.json',{cache:'no-cache'})).json());
     box.innerHTML=`<div class="card sol"><h3><span>🧠 פתרון מלא · שאלון ${q.id} · ${s.lbl}</span>${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:''}</h3>
      <p class="note">פותחים את השאלה בטופס המקורי, מנסים לפתור לבד, ורק אז לוחצים "הצגת הפתרון" בכל סעיף.${S.ver?` הפתרון מתאים ל<b>גרסה ${S.ver}</b> של השאלון.`:''}</p>`+
      S.q.map(x=>`<details class="qq"><summary><span class="n">${x.n}</span><span class="tt">${esc(x.t)}</span><span class="ar">▾</span></summary><div class="qb">

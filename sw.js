@@ -1,5 +1,5 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v30";
+const CACHE = "pshut-v31";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html", "lesson.html", "bagrut.html", "worksheets.html"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
@@ -17,6 +17,12 @@ self.addEventListener("fetch", e => {
     const page = (url.pathname.match(/([\w-]+\.html)$/) || [, "index.html"])[1];
     e.respondWith(fetch(req).then(r => { const c = r.clone(); if (r.ok) caches.open(CACHE).then(x => x.put(page, c)); return r; })
       .catch(() => caches.match(page)));
+    return;
+  }
+  // קובצי נתונים (שאלונים, פתרונות, שיעורים): קודם רשת, כדי שתוכן חדש יופיע מיד; בלי אינטרנט – מהמטמון
+  if (url.origin === location.origin && /\.json$/i.test(url.pathname)) {
+    e.respondWith(fetch(req).then(r => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); } return r; })
+      .catch(() => caches.match(req)));
     return;
   }
   // תמונות ממוזערות, גופנים וקבצי האפליקציה: מהמטמון, ומתעדכן ברקע
