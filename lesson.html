@@ -98,7 +98,8 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .asktxt input{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-size:15px}
 .asktxt .btn{padding:8px 14px}
 .heardq{font-size:13.5px;color:var(--muted);margin-top:6px}
-.watchbtn{margin-inline-start:auto;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700;color:var(--ink)}
+.watchbtn{margin-inline-start:auto;border:0;background:var(--gold);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:800;color:var(--night)}
+.solveme{display:block;margin:10px auto 0;border:1.5px dashed #c9cfe0;background:#fff;border-radius:999px;padding:7px 16px;font-size:14px;font-weight:700;color:#283a7a}
 .worked{background:#eef6ff;border-radius:14px;padding:10px 12px;margin:8px 0;animation:pin .5s ease}
 .worked .wa{direction:ltr;text-align:center;font-size:20px;margin:4px 0}
 .worked .wt{font-size:15px;line-height:1.6}
@@ -235,13 +236,8 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 3
     <label class="upl" id="upl"><span class="ic">📄</span><span>העלו את החומר שאתם לומדים<small>דף עבודה, עמוד מהספר או שאלה מהמבחן – והתרגילים יהיו בדיוק בסגנון שלו</small></span><img id="uplImg" hidden alt=""><input type="file" accept="image/*" id="uplIn"></label>
     <span class="lbl" style="margin-top:14px">משהו שחשוב לכם? <small>(לא חובה)</small></span>
     <textarea id="note" maxlength="300" placeholder="למשל: יש לי מבחן ביום ראשון / קשה לי עם שברים"></textarea>
-    <span class="lbl" style="margin-top:14px">איך תרצו ללמוד?</span>
-    <div class="modes2" id="modeChips">
-      <button data-m="try"><b>🎤 אני פותר</b><small>עונים בקול, במקלדת או באצבע – ומקבלים רמזים כשנתקעים</small></button>
-      <button data-m="watch"><b>👀 רק לצפות</b><small>אוראל פותר את התרגילים ומסביר – בלי לכתוב כלום</small></button>
-    </div>
     <button class="go" id="startBtn" disabled>✨ <b>מתחילים</b> שיעור</button>
-    <p class="smallnote">הסבר של כ־2–3 דקות על הנושא · ואז 6 תרגילים: 2 קלים, 2 בינוניים, 2 קשים</p>
+    <p class="smallnote">הסבר של כ־2–3 דקות על הנושא · ואז 6 תרגילים מקל ועד קשה · נתקעתם? לוחצים "👀 פתור אתה"</p>
     <div class="msg" id="setupMsg"></div>
   </div></div>
 </section>
@@ -301,7 +297,7 @@ function drawTopics(){
     return `<button class="topic${topic===k?" on":""}" data-k="${k}">${TOPICS[k]}${n ? `<small>🎬 ${n} סרטונים שלי</small>` : ""}</button>`; }).join("");
 }
 let learnMode = store.get("pl_learn") || "try";
-function drawModes(){ $$("#modeChips button").forEach(b => b.classList.toggle("on", b.dataset.m === learnMode)); }
+function drawModes(){}
 function canStart(){ $("#startBtn").disabled = !(lvl && (topic || material)); }
 $("#lvChips").onclick = e => { const b = e.target.closest(".chip"); if (!b) return; lvl = LEVELS.find(l => l.k === b.dataset.k); store.set("pl_lvl", lvl.k); topic = null; drawLevels(); drawTopics(); canStart(); };
 $("#topics").onclick = e => { const b = e.target.closest(".topic"); if (!b) return; topic = topic === b.dataset.k ? null : b.dataset.k; drawTopics(); canStart(); };
@@ -309,8 +305,7 @@ $("#topics").onclick = e => { const b = e.target.closest(".topic"); if (!b) retu
   if (l && LEVELS.find(x => x.k === l)) lvl = LEVELS.find(x => x.k === l);
   if (t && TOPICS[t]) { topic = t; if (!lvl || !lvl.t.includes(t)) lvl = lvl && lvl.t.includes(t) ? lvl : (LEVELS.find(x => x.t.includes(t)) || lvl); }
   canStart(); })();
-drawLevels(); drawTopics(); drawModes();
-$("#modeChips").onclick = e => { const b = e.target.closest("button"); if (!b) return; learnMode = b.dataset.m; store.set("pl_learn", learnMode); drawModes(); };
+drawLevels(); drawTopics();
 async function compress(file, max = 1600){
   const url = URL.createObjectURL(file);
   const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
@@ -453,7 +448,7 @@ function stageReq(stage){
 }
 $("#startBtn").onclick = async () => {
   unlockAudio();
-  S = { ex: [], cur: -1, results: [], stages: {}, topic, title: "", watch: learnMode === "watch" };
+  S = { ex: [], cur: -1, results: [], stages: {}, topic, title: "", watch: false };
   loading(true);
   const ex = { mode: "explain", topic: topic || "", level: lvl ? lvl.n : "", note: $("#note").value.trim() };
   if (material) { ex.image = material.data; ex.mediaType = material.type; }
@@ -553,13 +548,15 @@ async function nextExercise(){
 function renderExercise(i){
   const e = S.ex[i]; e.state = { step: 0, wrong: 0, helped: false };
   const card = document.createElement("div"); card.className = "card"; card.id = "ex" + i;
-  card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2>${S.watch ? "" : `<button class="watchbtn">👀 תפתור לי</button>`}</div>
+  card.innerHTML = `<div class="exhead"><span class="badge ${e.level}">${e.level==="easy"?"🟢":e.level==="medium"?"🟡":"🔴"} ${LV_NAME[e.level]}</span><h2>תרגיל ${i+1}</h2>${S.watch ? "" : `<button class="watchbtn">👀 פתור אתה</button>`}</div>
     <div class="exq">${mixed(e.question)}</div>${teacher(e.intro_say ? esc(e.intro_say) : "בואו נתחיל. קודם קוראים את הנתונים.", S.watch ? null : e.intro_say)}<div class="steps"></div>`;
   $("#feed").append(card);
   setTimeout(() => card.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
   if (S.watch) return workedFrom(i, 0);
-  card.querySelector(".watchbtn").onclick = ev => { ev.target.remove(); e.watched = true;
+  e.solveForMe = () => { if (e.watched) return; e.watched = true; const wb = card.querySelector(".watchbtn"); if (wb) wb.remove();
+    if (activeRec) { try { activeRec.stop(); } catch(_){} }
     const open = card.querySelectorAll(".step:not(.solved)"); const k = card.querySelectorAll(".step.solved").length; open.forEach(x => x.remove()); workedFrom(i, k); };
+  card.querySelector(".watchbtn").onclick = () => e.solveForMe();
   renderStep(i, 0);
 }
 /* מצב "רק לצפות": המורה פותר את השלבים בקול, אחד אחרי השני */
@@ -599,9 +596,10 @@ function renderStep(i, k){
         <div class="row" style="margin-top:8px"><button class="btn light" data-a="clr">ניקוי</button><button class="btn" data-a="read">בדיקה ✓</button></div></div>`;
   }
   el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}<button class="askbtn">🙋 שאלה למורה</button></div>${teacher(mixed(st.prompt), st.say || st.prompt)}
-    <div class="inp">${inp}<div class="fbx"></div><div class="helprow"></div></div><div class="solvedline"></div>`;
+    <div class="inp">${inp}<div class="fbx"></div><div class="helprow"></div><button class="solveme">👀 פתור אתה – תראה לי איך</button></div><div class="solvedline"></div>`;
   card.querySelector(".steps").append(el);
   setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+  el.querySelector(".solveme").onclick = () => e.solveForMe && e.solveForMe();
   wireStep(i, k, el);
 }
 function keyboard(st){
@@ -629,7 +627,6 @@ function wireStep(i, k, el){
   const helpButtons = () => {
     let h = "";
     if (st.hint && e.state.wrong >= 1) h += `<button data-h="hint">💡 רמז</button>`;
-    if (e.state.wrong >= 2) h += `<button data-h="show">👀 הראו לי את הדרך</button>`;
     if (e.state.wrong >= 2) h += `<button data-h="video">🎬 סרטון שלי על זה</button>`;
     help.innerHTML = h;
   };
