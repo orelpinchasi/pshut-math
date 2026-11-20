@@ -90,8 +90,9 @@ sc(SDK+"firebase-app-compat.js").then(()=>Promise.all([sc(SDK+"firebase-auth-com
 
 function login(){
   app.innerHTML=`<div class="box center"><h1>כניסת מורה</h1><p class="muted">רק המיילים שהוגדרו כמורים יכולים לראות את רשימת התלמידים.</p><br><button class="google" id="g">כניסה עם Google</button></div>`;
-  document.getElementById("g").onclick=()=>{const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});firebase.auth().signInWithPopup(p).catch(()=>firebase.auth().signInWithRedirect(p));};
+  document.getElementById("g").onclick=()=>{const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});firebase.auth().signInWithPopup(p).catch(e=>{if(!/popup-closed|cancelled/.test(e.code||""))alertBox("לא נפתח חלון של Google ("+(e.code||"")+"). אפשרו חלונות קופצים לאתר הזה ונסו שוב.");});};
 }
+function alertBox(t){const p=document.createElement("p");p.className="err";p.textContent=t;app.querySelector(".box").appendChild(p);}
 function denied(u){app.innerHTML=`<div class="box center"><h1>אין הרשאה</h1><p class="muted">נכנסת בתור <span dir="ltr">${esc(u.email)}</span>, והמייל הזה לא מוגדר כמורה.</p><br><button class="btn ghost" id="o">יציאה</button></div>`;document.getElementById("o").onclick=()=>firebase.auth().signOut();}
 
 function bind(){
