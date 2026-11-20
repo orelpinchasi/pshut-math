@@ -54,14 +54,33 @@ h3{margin:4px 0 12px;font-size:19px}
 .modal.on{display:flex}.modal .box{width:min(960px,100%);aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;position:relative}
 .modal iframe{width:100%;height:100%;border:0}.modal .x{position:absolute;top:-44px;left:0;background:#fff;border:0;border-radius:99px;padding:6px 14px;font:inherit;cursor:pointer}
 @media(max-width:560px){.qhead h2{font-size:20px}.vl{grid-template-columns:1fr}}
+.btn.fs{background:#141b3a;border-color:#141b3a;color:#ffd77a}
+.s.cur{outline:3px solid var(--g)}
+.sol h3{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.qq{border:1px solid var(--l);border-radius:14px;margin:10px 0;background:#fffdf8;overflow:hidden}
+.qq>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:center;font-weight:800}
+.qq>summary::-webkit-details-marker{display:none}
+.qq>summary .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--g);color:var(--n);display:grid;place-items:center}
+.qq>summary .tt{flex:1}.qq>summary .ar{color:var(--m);transition:.2s}.qq[open]>summary .ar{transform:rotate(180deg)}
+.qb{padding:0 14px 14px}
+.pp{border-top:1px dashed var(--l);padding:10px 0}
+.pp .pl2{font-weight:800;color:#13756f;margin-bottom:4px}
+.pp li{overflow-x:auto;overflow-y:hidden;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #f1ece0}
+.pp ol{margin:4px 0;padding-inline-start:22px;line-height:1.9}
+.pp .ans{display:inline-block;margin-top:6px;background:#e6f6f5;border:1px solid #bfe8e5;border-radius:10px;padding:6px 12px;font-weight:700}
+.pp .hid{display:none}.pp.show .hid{display:block}.pp.show .rv{display:none}
+.rv{font:inherit;font-size:14px;border:1px solid var(--l);background:#fff;border-radius:10px;padding:6px 12px;cursor:pointer;color:#13756f;font-weight:700}
+.katex{font-size:1.05em;direction:ltr;unicode-bidi:isolate}
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="hd">
   <div class="top"><a href="index.html">← חזרה לאתר</a><span><a href="worksheets.html">📄 דפי עבודה</a> &nbsp;·&nbsp; <a href="index.html#path">🗺️ מסלול למידה</a></span></div>
   <span class="kick">תוכנית הלימודים החדשה · שאלוני משרד החינוך</span>
   <h1>שאלוני בגרות + סרטוני פתרון</h1>
-  <p>בוחרים רמה ושאלון ← פותחים את טופס הבחינה המקורי של משרד החינוך ← ומתרגלים כל פרק עם סרטוני הפתרון שלי.</p>
+  <p>כל מועדי הבגרות בתוכנית החדשה: טופס הבחינה המקורי, תשובות סופיות, <b style="color:#ffd77a">פתרונות מלאים שלב אחרי שלב</b> וסרטוני פתרון.</p>
   <div class="lv" id="lv"></div>
   <div class="qs" id="qs"></div>
 </div>
@@ -73,7 +92,7 @@ const D=await (await fetch('bagrut-data.json')).json();
 const LV=[['3','3 יח"ל'],['4','4 יח"ל'],['5','5 יח"ל']];
 let st={lv:'4',q:'35471'};
 try{const s=JSON.parse(localStorage.getItem('pshut-bag')||'null');if(s)st=s}catch(e){}
-const h=location.hash.slice(1);if(/^35[345]7[12]$/.test(h)){st.q=h;st.lv=h[2]}
+const h=location.hash.slice(1);if(/^35[345]7[12]/.test(h)){st.q=h.slice(0,5);st.lv=h[2];st.fs=h.length>5?h:null}
 const EMBED=/github\.io$|pshut/.test(location.hostname);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function play(id){
@@ -91,19 +110,40 @@ function render(){
   let o=`<div class="card"><div class="qhead"><div><h2>שאלון ${q.id} — ${q.lv}, ${q.nm}</h2>
    <div class="chips" style="margin-top:8px"><span class="chip">כיתה ${q.gr}</span><span class="chip">${q.w} מהציון</span><span class="chip">${q.parts.length} פרקים</span></div></div>
    <div class="chips"><a class="btn" target="_blank" rel="noopener" href="${D.formula[st.lv]}">📄 דפי נוסחאות</a><a class="btn" target="_blank" rel="noopener" href="${D.repo}">🗂️ מאגר הבחינות המלא</a></div></div></div>`;
-  o+=`<div class="card"><h3>📝 טופסי הבחינה לפי מועד</h3><div class="ses">`+q.ss.map(s=>`<div class="s"><span class="nm">${s.lbl}</span><span class="hy">${s.hy}</span>
+  o+=`<div class="card"><h3>📝 טופסי הבחינה לפי מועד</h3><div class="ses">`+q.ss.map(s=>`<div class="s${s.k===st.fs?' cur':''}"><span class="nm">${s.lbl}</span><span class="hy">${s.hy}</span>
     <div class="row">${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:`<a class="btn off" target="_blank" rel="noopener" href="${D.repo}">🔎 טופס הבחינה במאגר</a>`}
+    ${s.fs?`<button class="btn fs" data-fs="${s.k}">🧠 פתרון מלא</button>`:''}
     ${s.sol?`<a class="btn t" target="_blank" rel="noopener" href="${s.sol}">✔️ תשובות סופיות</a>`:`<a class="btn off" target="_blank" rel="noopener" href="${D.repo}">🔎 תשובות במאגר</a>`}</div>
     ${s.v.length?`<div class="mine">🎬 <b>פתרון שלי:</b> `+s.v.map(([id,t])=>`<a href="#" data-v="${id}">${esc(t)}</a>`).join(' · ')+`</div>`:''}</div>`).join('')+`</div>
-    <div class="lg"><span>📄 / ✔️ קישור ישיר לקובץ באתר משרד החינוך</span><span>🔎 המועד קיים, חפשו אותו במאגר לפי מספר השאלון</span></div></div>`;
+    <div class="lg"><span>🧠 פתרון מלא שלב אחרי שלב</span><span>📄 / ✔️ קישור ישיר לקובץ באתר משרד החינוך</span></div></div><div id="solbox"></div>`;
   o+=`<div class="card"><h3>🎬 סרטוני פתרון לפי פרקי השאלון</h3>`+q.parts.map((p,pi)=>`<div class="part" id="pp${pi}"><div class="pt"><h4>${p.t}</h4><span class="d">${esc(p.d||'')} · ${p.v.length} סרטונים</span></div>
     <ul class="vl">${p.v.map(([id,t],i)=>`<li data-v="${id}" class="${i>=10?'rest':''}"><span class="pl">▶</span><span>${esc(t)}</span></li>`).join('')}</ul>
     ${p.v.length>10?`<button class="more" data-pp="${pi}">הצגת כל ${p.v.length} הסרטונים ▾</button>`:''}</div>`).join('')+`</div>`;
   o+=`<p class="note">טופסי הבחינה והתשובות הסופיות שייכים למשרד החינוך ומקושרים לאתר המשרד, ולא מאוחסנים כאן. © זכות היוצרים שמורה למדינת ישראל.</p>`;
   document.getElementById('app').innerHTML=o;
+  const cur=q.ss.find(s=>s.k===st.fs&&s.fs);if(cur)showSol(q,cur,false);
+}
+function M(t){return String(t).split('$').map((x,i)=>{if(!(i%2))return x;try{return katex.renderToString(x,{throwOnError:false,strict:false})}catch(e){return esc(x)}}).join('')}
+const SC={};
+async function showSol(q,s,scroll){
+  const box=document.getElementById('solbox');
+  box.innerHTML='<div class="card">טוען פתרון…</div>';
+  try{
+    for(let i=0;i<50&&!window.katex;i++)await new Promise(r=>setTimeout(r,100));
+    const S=SC[s.k]||(SC[s.k]=await (await fetch('sol/'+s.k+'.json')).json());
+    box.innerHTML=`<div class="card sol"><h3><span>🧠 פתרון מלא · שאלון ${q.id} · ${s.lbl}</span>${s.pdf?`<a class="btn y" target="_blank" rel="noopener" href="${s.pdf}">📄 טופס הבחינה</a>`:''}</h3>
+     <p class="note">פותחים את השאלה בטופס המקורי, מנסים לפתור לבד, ורק אז לוחצים "הצגת הפתרון" בכל סעיף.${S.ver?` הפתרון מתאים ל<b>גרסה ${S.ver}</b> של השאלון.`:''}</p>`+
+     S.q.map(x=>`<details class="qq"><summary><span class="n">${x.n}</span><span class="tt">${esc(x.t)}</span><span class="ar">▾</span></summary><div class="qb">
+       ${s.pdf?`<a class="btn" target="_blank" rel="noopener" href="${s.pdf}#page=${x.p}">📄 שאלה ${x.n} בטופס (עמ' ${x.p})</a>`:''}
+       ${x.s.map(p=>`<div class="pp"><div class="pl2">סעיף ${p.l}</div><button class="rv">👀 הצגת הפתרון</button><div class="hid"><ol>${p.b.map(b=>`<li>${M(b)}</li>`).join('')}</ol><div class="ans">✔️ ${p.a.split('||').map(M).join('<br>')}</div></div></div>`).join('')}
+       <button class="rv" data-all="1" style="margin-top:6px">הצגת כל הסעיפים</button></div></details>`).join('')+`</div>`;
+    if(scroll)box.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){box.innerHTML='<div class="card">לא הצלחנו לטעון את הפתרון. נסו לרענן.</div>'}
 }
 document.addEventListener('click',e=>{
-  const b=e.target.closest('[data-lv],[data-q],[data-v],[data-pp]');if(!b)return;
+  const r=e.target.closest('.rv');if(r){if(r.dataset.all)r.parentNode.querySelectorAll('.pp').forEach(p=>p.classList.add('show'));else r.parentNode.classList.add('show');return}
+  const b=e.target.closest('[data-lv],[data-q],[data-v],[data-pp],[data-fs]');if(!b)return;
+  if(b.dataset.fs){st.fs=b.dataset.fs;const q=D.q.find(x=>x.id===st.q);document.querySelectorAll('.s.cur').forEach(x=>x.classList.remove('cur'));b.closest('.s').classList.add('cur');history.replaceState(null,'','#'+st.fs);showSol(q,q.ss.find(s=>s.k===st.fs),true);try{localStorage.setItem('pshut-bag',JSON.stringify(st))}catch(e){}return}
   if(b.dataset.lv){st.lv=b.dataset.lv;render()}
   else if(b.dataset.q){st.q=b.dataset.q;history.replaceState(null,'','#'+st.q);render()}
   else if(b.dataset.v){e.preventDefault();play(b.dataset.v)}
