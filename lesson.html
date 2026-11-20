@@ -319,6 +319,12 @@ $("#uplIn").onchange = async e => { const f = e.target.files[0]; if (!f) return;
   if (!lvl) $("#setupMsg").innerHTML = `<div class="note info">בחרו גם כיתה / רמה למעלה 👆</div>`; canStart(); };
 
 /* ---------- תקשורת עם השרת ---------- */
+function logIssue(where, msg, tech, extra){
+  try { fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, keepalive:true,
+    body: JSON.stringify({ mode:"log", where, msg: String(msg||""), tech: String(tech||""), extra: String(extra||""), ua: navigator.userAgent }) }).catch(()=>{}); } catch(e){}
+}
+addEventListener("error", e => logIssue("lesson:js", e.message, (e.filename||"") + ":" + (e.lineno||"")));
+addEventListener("unhandledrejection", e => logIssue("lesson:promise", e.reason && (e.reason.message || e.reason)));
 async function api(body, ms = 150000){
   const ctrl = ("AbortController" in window) ? new AbortController() : null; const t = setTimeout(() => ctrl && ctrl.abort(), ms);
   let lastErr;
@@ -330,7 +336,7 @@ async function api(body, ms = 150000){
       return j;
     } catch(e) { lastErr = e; if (e.code || (e.name === "AbortError")) break; await new Promise(r => setTimeout(r, 2000)); }
   }
-  clearTimeout(t); throw lastErr;
+  clearTimeout(t); if (body.mode !== "log") logIssue("lesson:api:" + body.mode, lastErr && lastErr.message, lastErr && (lastErr.code || lastErr.name)); throw lastErr;
 }
 
 /* ---------- קול (הקול הטבעי של האתר) ---------- */

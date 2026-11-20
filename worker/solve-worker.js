@@ -18,7 +18,8 @@ const DEFAULT_ORIGINS = [
   "http://localhost:8000",
   "http://127.0.0.1:8000",
 ];
-const MAX_IMAGE_BYTES = 4_500_000; // base64 של תמונה דחוסה – הדף שולח בערך 200–600KB
+const IMG_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const MAX_IMAGE_BYTES = 6_000_000; // base64 של תמונה דחוסה – הדף שולח בערך 200–600KB
 
 const TOPIC_KEYS = {
   signed: "מספרים מכוונים", powers: "חזקות", algebra: "אלגברה ופירוק לגורמים", equations: "משוואות",
@@ -572,7 +573,7 @@ async function practiceSet(env, body) {
   ].filter(Boolean).join("\n");
   const parts = [];
   if (body.image && typeof body.image === "string" && body.image.length > 100 && body.image.length < MAX_IMAGE_BYTES)
-    parts.push({ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
+    parts.push({ inlineData: { mimeType: IMG_TYPES.includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
   parts.push({ text: txt });
   const raw = await geminiHedged(env, PRACTICE_SYSTEM, parts, P => !!normPractice(JSON.parse(JSON.stringify(P)), stage));
   const out = normPractice(raw, stage);
@@ -630,7 +631,7 @@ const REVIEW_SYSTEM = STYLE_SHORT + `
 החזר JSON: {"lines":[{"tex":"...","status":"ok","note":""}],"verdict":"...","say":"...","fix_tip":"טיפ קצר לפעם הבאה"}`;
 
 async function reviewNotebook(env, body) {
-  const parts = [{ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } },
+  const parts = [{ inlineData: { mimeType: IMG_TYPES.includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } },
     { text: `התרגיל: ${String(body.question || "").slice(0, 600)}\nהתשובה הנכונה: ${String(body.answer || "").slice(0, 300)}` }];
   const r = await geminiHedged(env, REVIEW_SYSTEM, parts, j => Array.isArray(j.lines) && !!j.verdict, { deadline: 90000 });
   const S = v => String(v ?? "").replace(/יאללה/g, "");
@@ -672,7 +673,7 @@ async function explainTopic(env, body) {
     body.image ? "מצורף צילום של החומר שהתלמיד לומד – ההסבר צריך להתאים בדיוק לחומר הזה." : ""].filter(Boolean).join("\n");
   const parts = [];
   if (body.image && typeof body.image === "string" && body.image.length > 100 && body.image.length < MAX_IMAGE_BYTES)
-    parts.push({ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
+    parts.push({ inlineData: { mimeType: IMG_TYPES.includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
   parts.push({ text: txt || "הסבר על הנושא." });
   const raw = await geminiHedged(env, EXPLAIN_SYSTEM, parts, E => !!normExplain(JSON.parse(JSON.stringify(E))));
   const out = normExplain(raw); out.provider = raw._model; if (!out.topic && TOPIC_KEYS[body.topic]) out.topic = body.topic;
@@ -713,6 +714,21 @@ export default {
         } catch (e) { console.log("tts failed", model, e.message); }
       }
       return json({ error: "tts" }, 502);
+    }
+
+    // יומן תקלות מהדפדפן של התלמיד – כדי לדעת מה קרה כשמשהו לא עובד (נשמר 14 יום)
+    if (body && body.mode === "log") {
+      try {
+        const ip = request.headers.get("CF-Connecting-IP") || "?", day = new Date().toISOString().slice(0, 10);
+        const ck = `lc:${day}:${ip}`, n = Number(await env.LIMITS.get(ck) || 0);
+        if (n < 40) {
+          await env.LIMITS.put(ck, String(n + 1), { expirationTtl: 60 * 60 * 26 });
+          const rec = { t: new Date().toISOString(), ip: ip.replace(/\.\d+$/, ".x"), where: String(body.where || "").slice(0, 40), msg: String(body.msg || "").slice(0, 400),
+            tech: String(body.tech || "").slice(0, 600), ua: String(body.ua || "").slice(0, 200), extra: String(body.extra || "").slice(0, 300) };
+          await env.LIMITS.put(`log:${rec.t}:${Math.random().toString(36).slice(2, 7)}`, JSON.stringify(rec), { expirationTtl: 60 * 60 * 24 * 14 });
+        }
+      } catch {}
+      return json({ ok: true });
     }
 
     // בדיקת כתב יד (משטח האצבע) – קל ומהיר, לא נספר במכסה
@@ -759,7 +775,7 @@ export default {
     const { image, mediaType = "image/jpeg", note = "", level = "" } = body || {};
     if (typeof image !== "string" || image.length < 100) return json({ error: "no_image", message: "לא התקבלה תמונה." }, 400);
     if (image.length > MAX_IMAGE_BYTES) return json({ error: "too_big", message: "התמונה גדולה מדי." }, 413);
-    if (!["image/jpeg", "image/png", "image/webp"].includes(mediaType)) return json({ error: "type" }, 400);
+    if (!IMG_TYPES.includes(mediaType)) return json({ error: "type", message: "סוג התמונה לא נתמך – נסו לצלם שוב." }, 400);
 
     const userText = [
       "הנה השאלה שצילמתי.",
