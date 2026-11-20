@@ -85,6 +85,19 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .ectl{display:flex;gap:8px;margin-top:12px;position:sticky;bottom:8px}
 .ectl .btn{flex:1}
 .ladder .lv i.seen{background:#9fb4ea}
+.micbox{display:flex;flex-direction:column;align-items:center;gap:6px;margin:8px 0}
+.mic{display:flex;align-items:center;gap:10px;border:0;border-radius:999px;background:var(--night);color:#fff;font-weight:800;font-size:16px;padding:12px 22px;box-shadow:0 6px 16px rgba(20,27,58,.25)}
+.mic .mi{font-size:22px}
+.mic.rec{background:#e0312b;animation:recp 1.2s ease-in-out infinite}
+@keyframes recp{50%{box-shadow:0 0 0 12px rgba(224,49,43,.18)}}
+.mh{font-size:12.5px;color:var(--muted);text-align:center}
+.heard{font-size:14.5px;color:#283a7a;text-align:center;min-height:1em}
+.askbtn{float:left;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:700;color:var(--ink);margin-top:-3px}
+.askbox{background:#f7f3ff;border-radius:14px;padding:6px 10px 10px;margin:8px 0}
+.asktxt{display:flex;gap:6px;margin-top:4px}
+.asktxt input{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-size:15px}
+.asktxt .btn{padding:8px 14px}
+.heardq{font-size:13.5px;color:var(--muted);margin-top:6px}
 .watchbtn{margin-inline-start:auto;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700;color:var(--ink)}
 .worked{background:#eef6ff;border-radius:14px;padding:10px 12px;margin:8px 0;animation:pin .5s ease}
 .worked .wa{direction:ltr;text-align:center;font-size:20px;margin:4px 0}
@@ -224,7 +237,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 3
     <textarea id="note" maxlength="300" placeholder="למשל: יש לי מבחן ביום ראשון / קשה לי עם שברים"></textarea>
     <span class="lbl" style="margin-top:14px">איך תרצו ללמוד?</span>
     <div class="modes2" id="modeChips">
-      <button data-m="try"><b>✍️ אני פותר</b><small>אני מנסה בעצמי, ומקבל רמזים כשנתקעים</small></button>
+      <button data-m="try"><b>🎤 אני פותר</b><small>עונים בקול, במקלדת או באצבע – ומקבלים רמזים כשנתקעים</small></button>
       <button data-m="watch"><b>👀 רק לצפות</b><small>אוראל פותר את התרגילים ומסביר – בלי לכתוב כלום</small></button>
     </div>
     <button class="go" id="startBtn" disabled>✨ <b>מתחילים</b> שיעור</button>
@@ -576,15 +589,16 @@ function renderStep(i, k){
   const e = S.ex[i], st = e.steps[k], card = $("#ex" + i);
   const el = document.createElement("div"); el.className = "step"; el.id = `st${i}_${k}`;
   let inp = "";
-  if (st.type === "choice") inp = `<div class="opts">${st.choices.map((c, j) => `<button data-j="${j}">${mixed(c.text)}</button>`).join("")}</div>`;
+  if (st.type === "choice") inp = `<div class="opts">${st.choices.map((c, j) => `<button data-j="${j}">${mixed(c.text)}</button>`).join("")}</div>${micUI("או אמרו בקול איזו אפשרות – למשל: השנייה")}`;
   else {
-    const mode = store.get("pl_mode") || "kb";
-    inp = `<div class="modes"><button data-m="kb" class="${mode==="kb"?"on":""}">🔢 מקלדת</button><button data-m="pad" class="${mode==="pad"?"on":""}">✍️ כתיבה באצבע</button></div>
+    const mode = store.get("pl_mode") || (SR ? "mic" : "kb");
+    inp = `<div class="modes"><button data-m="mic" class="${mode==="mic"?"on":""}">🎤 בקול</button><button data-m="kb" class="${mode==="kb"?"on":""}">🔢 מקלדת</button><button data-m="pad" class="${mode==="pad"?"on":""}">✍️ באצבע</button></div>
+      <div class="m-mic" ${mode==="mic"?"":"hidden"}>${micUI("אמרו את התשובה – למשל: איקס שווה תשע")}</div>
       <div class="m-kb" ${mode==="kb"?"":"hidden"}><div class="disp"></div>${keyboard(st)}</div>
       <div class="m-pad" ${mode==="pad"?"":"hidden"}><div class="padwrap"><canvas></canvas><span class="tip">כתבו כאן את התשובה באצבע ✍️</span></div>
         <div class="row" style="margin-top:8px"><button class="btn light" data-a="clr">ניקוי</button><button class="btn" data-a="read">בדיקה ✓</button></div></div>`;
   }
-  el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}</div>${teacher(mixed(st.prompt), st.say || st.prompt)}
+  el.innerHTML = `<div class="sh">שלב ${k+1} מתוך ${e.steps.length}<button class="askbtn">🙋 שאלה למורה</button></div>${teacher(mixed(st.prompt), st.say || st.prompt)}
     <div class="inp">${inp}<div class="fbx"></div><div class="helprow"></div></div><div class="solvedline"></div>`;
   card.querySelector(".steps").append(el);
   setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
@@ -635,6 +649,13 @@ function wireStep(i, k, el){
       if (c.correct) { b.classList.add("right"); say2("ok", "✅ " + mixed(c.why || "בדיוק!"), c.why || "בדיוק!"); setTimeout(() => solved(c.text), 1400); }
       else { b.classList.add("wrong"); wrong(c.why || "לא בדיוק. תחשבו שוב – התשובות נמצאות בנתונים."); }
     };
+    wireMic(el.querySelector(".mic"), async heard => {
+      say2("wait", "👂 בודק מה אמרתם…");
+      const r = await api({ mode: "check", ...heard, prompt: st.prompt, answer: st.choices.find(c => c.correct).text, choices: st.choices.map(c => c.text) }, 70000);
+      if (r.choice >= 0 && el.querySelector(`.opts button[data-j="${r.choice}"]`)) { fbx.innerHTML = ""; el.querySelector(`.opts button[data-j="${r.choice}"]`).click(); }
+      else say2("hint", "🙉 לא הבנתי איזו אפשרות. נסו שוב – למשל \"הראשונה\" או \"השנייה\".");
+    }, () => say2("hint", "🎤 לא הצלחתי לשמוע. נסו שוב, או לחצו על התשובה."));
+    wireAsk(el, e, st, say2);
     return;
   }
   // מקלדת
@@ -662,7 +683,21 @@ function wireStep(i, k, el){
   // מעבר בין מקלדת לכתיבה
   el.querySelector(".modes").onclick = ev2 => { const b = ev2.target.closest("button"); if (!b) return; store.set("pl_mode", b.dataset.m);
     el.querySelectorAll(".modes button").forEach(x => x.classList.toggle("on", x === b));
-    el.querySelector(".m-kb").hidden = b.dataset.m !== "kb"; el.querySelector(".m-pad").hidden = b.dataset.m !== "pad"; if (b.dataset.m === "pad") pad.size(); };
+    el.querySelector(".m-kb").hidden = b.dataset.m !== "kb"; el.querySelector(".m-pad").hidden = b.dataset.m !== "pad"; el.querySelector(".m-mic").hidden = b.dataset.m !== "mic"; if (b.dataset.m === "pad") pad.size(); };
+  // תשובה בקול: קודם בודקים במכשיר (מהיר), ואם צריך – Gemini מבין את מה שנאמר
+  wireMic(el.querySelector(".m-mic .mic"), async heard => {
+    if (heard.text) { const local = [heard.text, ...(heard.alts || [])].map(t => judge(st, spokenToMath(t, st.var))).find(r => r.ok);
+      if (local) { say2("ok", `🎤 שמעתי: <b>${esc(heard.text)}</b><br>✅ ${pick(["נכון!","בדיוק!","מהמם!"])}`); setTimeout(() => solved(heard.text), 1100); return; } }
+    say2("wait", "👂 בודק מה אמרתם…");
+    try {
+      const r = await api({ mode: "check", ...heard, prompt: st.prompt.replace(/\\[()]/g, ""), answer: st.answer_tex || st.answer }, 70000);
+      r.read = String(r.read || "").trim().replace(/^\\\(|\\\)$/g, "").replace(/^\$+|\$+$/g, "").trim();
+      if (r.unclear) return say2("hint", "🙉 לא הבנתי עד הסוף. נסו שוב, לאט וברור.");
+      if (r.correct) { say2("ok", `🎤 שמעתי: <span class="im" dir="ltr">${tex(r.read || "", false)}</span><br>✅ ${esc(r.feedback || "נכון!")}`); setTimeout(() => solved(r.read), 1500); }
+      else { fbx.innerHTML = ""; wrong(`שמעתי: \\(${r.read || "?"}\\). ${r.feedback || "עוד לא…"}`); }
+    } catch(er) { say2("hint", "😕 לא הצלחתי לבדוק כרגע. נסו שוב או עברו למקלדת."); }
+  }, () => say2("hint", "🎤 לא הצלחתי לשמוע. נסו שוב, או השתמשו במקלדת."));
+  wireAsk(el, e, st, say2);
   // כתיבה באצבע
   const pad = makePad(el.querySelector(".padwrap canvas"), el.querySelector(".padwrap .tip"));
   el.querySelector('[data-a="clr"]').onclick = () => pad.clear();
@@ -682,6 +717,96 @@ function wireStep(i, k, el){
   };
 }
 const pick = a => a[Math.floor(Math.random() * a.length)];
+/* ===== דיבור: התלמיד עונה / שואל בקול ===== */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function micUI(hint){ return `<div class="micbox"><button class="mic" type="button"><span class="mi">🎤</span><span class="ml">לחצו ודברו</span></button><div class="mh">${esc(hint)}</div><div class="heard"></div></div>`; }
+function blobToB64(b){ return new Promise(r => { const f = new FileReader(); f.onload = () => r(String(f.result).split(",")[1]); f.readAsDataURL(b); }); }
+let activeRec = null;
+function listen(btn){
+  // מחזיר {text, alts} (זיהוי דיבור של הדפדפן) או {audio, audioType} (הקלטה שנשלחת ל-Gemini)
+  return new Promise(async (resolve, reject) => {
+    if (activeRec) { try { activeRec.stop(); } catch(e){} }
+    NA.pause(); vid++; vqueue = []; vplaying = false;
+    const setRec = on => { btn.classList.toggle("rec", on); btn.querySelector(".ml").textContent = on ? "מקשיב… (לחצו לסיום)" : "לחצו ודברו"; };
+    if (SR) {
+      const rec = new SR(); rec.lang = "he-IL"; rec.interimResults = true; rec.maxAlternatives = 3; rec.continuous = false;
+      let finalT = "", alts = [], got = false; activeRec = rec; setRec(true);
+      rec.onresult = ev => { let t = ""; for (const r of ev.results) { t += r[0].transcript; if (r.isFinal) alts = [...r].slice(1).map(a => a.transcript); }
+        finalT = t; btn.parentElement.querySelector(".heard").textContent = "🎤 " + t; };
+      rec.onerror = ev => { setRec(false); activeRec = null; if (!got) { got = true; ev.error === "not-allowed" ? reject(new Error("mic")) : (finalT ? resolve({ text: finalT, alts }) : reject(new Error(ev.error))); } };
+      rec.onend = () => { setRec(false); activeRec = null; if (!got) { got = true; finalT.trim() ? resolve({ text: finalT.trim(), alts }) : reject(new Error("empty")); } };
+      btn._stop = () => rec.stop();
+      try { rec.start(); } catch(e) { setRec(false); reject(e); }
+      return;
+    }
+    // דפדפן בלי זיהוי דיבור: מקליטים ושולחים את הקול עצמו
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const type = ["audio/webm", "audio/mp4", "audio/ogg"].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
+      const mr = new MediaRecorder(stream, type ? { mimeType: type } : undefined), chunks = [];
+      activeRec = mr; setRec(true);
+      mr.ondataavailable = ev => ev.data.size && chunks.push(ev.data);
+      mr.onstop = async () => { setRec(false); activeRec = null; stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(chunks, { type: mr.mimeType || type || "audio/webm" });
+        if (blob.size < 800) return reject(new Error("empty"));
+        resolve({ audio: await blobToB64(blob), audioType: blob.type }); };
+      btn._stop = () => mr.state !== "inactive" && mr.stop();
+      mr.start(); setTimeout(() => btn._stop && btn._stop(), 12000);
+    } catch(e) { setRec(false); reject(new Error("mic")); }
+  });
+}
+function wireMic(btn, onHeard, onFail){
+  if (!btn) return;
+  btn.onclick = async () => {
+    if (btn.classList.contains("rec")) { btn._stop && btn._stop(); return; }
+    try { const h = await listen(btn); await onHeard(h); }
+    catch(e) { if (e && e.message === "mic") btn.parentElement.querySelector(".heard").textContent = "🔒 צריך לאשר גישה למיקרופון (בהגדרות הדפדפן), או לענות במקלדת."; else onFail && onFail(); }
+  };
+}
+// "איקס שווה תשע" → x=9 (מספיק לרוב התשובות הקצרות; את השאר Gemini מבין)
+const HNUM = {"אפס":0,"אחת":1,"אחד":1,"שתיים":2,"שניים":2,"שתי":2,"שני":2,"שלוש":3,"שלושה":3,"ארבע":4,"ארבעה":4,"חמש":5,"חמישה":5,"שש":6,"שישה":6,"שבע":7,"שבעה":7,"שמונה":8,"תשע":9,"תשעה":9,"עשר":10,"עשרה":10,"עשרים":20,"שלושים":30,"ארבעים":40,"חמישים":50,"שישים":60,"שבעים":70,"שמונים":80,"תשעים":90,"מאה":100};
+function spokenToMath(t, v){
+  // עובדים מילה-מילה (בלי \b, שלא עובד עם עברית)
+  v = v || "x";
+  const W = {"איקס":"x","אקס":"x","וואי":"y","ווי":"y","שווה":"=","שווים":"=","ושווה":"=","מינוס":"-","פחות":"-","פלוס":"+","ועוד":"+","כפול":"*","חלקי":"/","בריבוע":"^2","בחזקת":"^","שורש":"√","או":",","וחצי":"+0.5","פסיק":".","נקודה":"."};
+  const out = [];
+  for (let w of String(t).replace(/[?!״"']/g, " ").split(/\s+/).filter(Boolean)) {
+    if (W[w] != null) { out.push(W[w]); continue; }
+    const vav = w.startsWith("ו") && HNUM[w.slice(1)] != null;
+    if (HNUM[w] != null || vav) {
+      const n = HNUM[vav ? w.slice(1) : w];
+      if (vav && out.length && /^\d+$/.test(out[out.length - 1])) out[out.length - 1] = String(+out[out.length - 1] + n);
+      else if (out.length && /^\d+0$/.test(out[out.length - 1]) && n < 10) out[out.length - 1] = String(+out[out.length - 1] + n);
+      else out.push(String(n));
+      continue;
+    }
+    if (w === "של" || w === "זה" || w === "התשובה" || w === "יוצא" || w === "לדעתי") continue;
+    out.push(w);
+  }
+  let s2 = out.join("").replace(/^\+/, "");
+  s2 = s2.replace(new RegExp("^" + v + "="), "");
+  return s2;
+}
+function wireAsk(el, e, st, say2){
+  const b = el.querySelector(".askbtn"); if (!b) return;
+  b.onclick = async () => {
+    const box = document.createElement("div"); box.className = "askbox";
+    box.innerHTML = `<div class="teacher"><span class="av">🧑‍🏫</span><div class="say">כן? מה רצית לשאול? 🙂</div></div>${micUI("שאלו בקול – למשל: למה מחלקים בשלוש?")}
+      <div class="asktxt"><input placeholder="או כתבו את השאלה כאן…"><button class="btn">שלחו</button></div><div class="ans"></div>`;
+    el.querySelector(".inp").before(box); b.remove();
+    const send = async heard => {
+      const ans = box.querySelector(".ans"); ans.innerHTML = `<div class="fb wait">🤔 חושב…</div>`;
+      try {
+        const r = await api({ mode: "ask", ...heard, question: e.question, prompt: st.prompt, answer: st.answer_tex || st.answer || (st.choices && st.choices.find(c => c.correct).text) }, 70000);
+        ans.innerHTML = (r.heard ? `<div class="heardq">🎤 ${esc(r.heard)}</div>` : "") + teacher(mixed(r.show || r.say), r.say);
+        e.state.helped = true;
+      } catch(er) { ans.innerHTML = `<div class="fb bad">😕 לא הצלחתי לענות כרגע. נסו שוב.</div>`; }
+    };
+    wireMic(box.querySelector(".mic"), send, () => box.querySelector(".heard").textContent = "🎤 לא שמעתי. נסו שוב.");
+    box.querySelector(".asktxt button").onclick = () => { const v = box.querySelector(".asktxt input").value.trim(); if (v) send({ text: v }); };
+    box.querySelector(".asktxt input").onkeydown = ev => { if (ev.key === "Enter") box.querySelector(".asktxt button").click(); };
+  };
+}
 function makePad(cv, tip){
   const ctx = cv.getContext("2d"); let drawing = false; const o = { inked: false };
   o.size = () => { const r = cv.getBoundingClientRect(); if (!r.width) return; const d = devicePixelRatio || 1; cv.width = r.width * d; cv.height = r.height * d; ctx.setTransform(d,0,0,d,0,0); ctx.lineWidth = 3.4; ctx.lineCap = ctx.lineJoin = "round"; ctx.strokeStyle = "#1d2a6b"; o.inked = false; tip.style.display = ""; };
