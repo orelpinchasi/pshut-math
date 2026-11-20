@@ -80,3 +80,5 @@ nav.links a.me{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255
 .acct-lesson div{flex:1}
 .acct-lesson small{display:block;color:#7a5a12;font-size:12.5px}
 .acct-lesson i{font-style:normal;font-weight:700}
+/* התפריט מלא: בכפתור "הכרטיס שלי" מציגים רק אייקון, חוץ ממסכים רחבים מאוד */
+@media (max-width:1400px){nav.links a.me .t{display:none}nav.links a.me{padding:7px 11px}}
