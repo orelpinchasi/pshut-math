@@ -517,11 +517,12 @@ mistakes: 1–3 טעויות נפוצות אמיתיות – answer באותו �
 hint: רמז שמקרב בלי לתת את התשובה.
 prompt: מה התלמיד צריך לעשות בשלב (טקסט קצר, מתמטיקה בתוך \\( \\)).
 say: מה המורה אומר בקול בשלב הזה (1–2 משפטים, שיחה).
+explain: איך פותרים את השלב – המורה פותר בקול בשביל תלמיד שרק צופה (1–3 משפטים, מגיע לתשובה ומסביר למה).
 question: נוסח התרגיל המלא, כמו בדף עבודה.
 התרגילים חייבים להיות נכונים מתמטית – פתור כל אחד בעצמך לפני שאתה כותב (בשדה work).
 החזר JSON אחד בלבד:
 {"work":"טיוטה","title":"...","topic":"מפתח נושא","overview":{"goal":"...","what":"...","tools":["..."],"say":"60–90 מילים"},
- "exercises":[{"level":"easy|medium|hard","question":"...","intro_say":"...","steps":[{"prompt":"...","say":"...","type":"value|values|expr|choice","var":"x","answer":"...","answer_tex":"...","choices":[{"text":"...","correct":true,"why":"..."}],"hint":"...","mistakes":[{"answer":"...","feedback":"..."}]}],"final_tex":"...","check_say":"..."}],
+ "exercises":[{"level":"easy|medium|hard","question":"...","intro_say":"...","steps":[{"prompt":"...","say":"...","explain":"...","type":"value|values|expr|choice","var":"x","answer":"...","answer_tex":"...","choices":[{"text":"...","correct":true,"why":"..."}],"hint":"...","mistakes":[{"answer":"...","feedback":"..."}]}],"final_tex":"...","check_say":"..."}],
  "keywords":["מילות מפתח בעברית לחיפוש סרטון"]}
 overview רק כשמבקשים (שלב 1). בתוך מחרוזות JSON כל לוכסן של LaTeX כפול (\\\\frac).`;
 
@@ -537,7 +538,7 @@ function normPractice(P, stage) {
     question: clean(e.question), intro_say: clean(e.intro_say), final_tex: S(e.final_tex), check_say: clean(e.check_say),
     steps: e.steps.slice(0, 5).map(st => {
       const type = ["value", "values", "expr", "choice"].includes(st.type) ? st.type : "choice";
-      const o = { prompt: clean(st.prompt), say: clean(st.say), type, var: /^[a-zA-Z]$/.test(st.var) ? st.var : "x",
+      const o = { prompt: clean(st.prompt), say: clean(st.say), explain: clean(st.explain), type, var: /^[a-zA-Z]$/.test(st.var) ? st.var : "x",
         answer: S(st.answer).replace(/\s+/g, ""), answer_tex: S(st.answer_tex), hint: clean(st.hint),
         mistakes: (Array.isArray(st.mistakes) ? st.mistakes : []).slice(0, 4).map(m => ({ answer: S(m && m.answer).replace(/\s+/g, ""), feedback: clean(m && m.feedback) })).filter(m => m.answer && m.feedback) };
       if (type === "choice") {
@@ -609,6 +610,47 @@ async function reviewNotebook(env, body) {
     lines: r.lines.slice(0, 20).map(l => ({ tex: S(l && l.tex), status: ["ok", "error", "unclear"].includes(l && l.status) ? l.status : "unclear", note: S(l && l.note) })) };
 }
 
+const EXPLAIN_SYSTEM = STYLE_SHORT + `
+
+המשימה: הסבר מוקלט של המורה על הנושא – לפחות 2 דקות דיבור (300–380 מילים בסך כל שדות say), לפני שמתחילים לתרגל.
+מבנה (5–7 חלקים, לפי הסדר):
+1. "על מה מדובר" – המטרה של הנושא ולמה הוא חשוב, בשפה של תלמיד.
+2. "הכלים" – ההגדרות / הנוסחאות / הכללים שצריך, אחד-אחד, עם דוגמה קטנה לכל אחד.
+3. "השיטה" – דרך הפתרון שלב אחרי שלב (כמו מתכון), בסגנון "פשוט להצליח": קודם מוציאים הכל מהנתונים.
+4. "דוגמה פתורה" – תרגיל אחד קצר, פתור במלואו על הלוח, עם הסבר לכל שורה.
+5. "טעויות נפוצות" – 2–3 טעויות שתלמידים עושים ואיך להימנע.
+6. (לא חובה) "טיפ לבחינה".
+7. "סיכום" – 2–3 משפטים, וחיזוק ("אתם יכולים").
+לכל חלק: title קצר, say (40–70 מילים, שיחה טבעית, גוף שני), board – 1–5 שורות שנכתבות על הלוח בזמן ההסבר:
+{"t":"math","v":"LaTeX בלי \\( \\)"} או {"t":"text","v":"טקסט קצר, מתמטיקה בתוך \\( \\)"}.
+החזר JSON אחד: {"title":"...","topic":"מפתח","parts":[{"title":"...","say":"...","board":[...]}]}
+בתוך מחרוזות JSON כל לוכסן של LaTeX כפול.`;
+
+function normExplain(E) {
+  if (!E || !Array.isArray(E.parts)) return null;
+  const clean = t => String(t ?? "").replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
+  const parts = E.parts.slice(0, 8).map(p => ({ title: clean(p && p.title), say: clean(p && p.say),
+    board: (Array.isArray(p && p.board) ? p.board : []).slice(0, 6).map(b => ({ t: b && b.t === "math" ? "math" : "text", v: String(b && b.v || "") })).filter(b => b.v) }))
+    .filter(p => p.say);
+  const words = parts.reduce((n, p) => n + p.say.split(/\s+/).length, 0);
+  if (parts.length < 4 || words < 200) return null;
+  return { title: clean(E.title), topic: TOPIC_KEYS[E.topic] ? E.topic : "", parts, words };
+}
+
+async function explainTopic(env, body) {
+  const topicName = TOPIC_KEYS[body.topic] || "";
+  const txt = [topicName && `הנושא: ${topicName}.`, body.level && `הרמה: ${String(body.level).slice(0, 40)}.`,
+    body.note && `התלמיד ביקש: ${String(body.note).slice(0, 300)}`,
+    body.image ? "מצורף צילום של החומר שהתלמיד לומד – ההסבר צריך להתאים בדיוק לחומר הזה." : ""].filter(Boolean).join("\n");
+  const parts = [];
+  if (body.image && typeof body.image === "string" && body.image.length > 100 && body.image.length < MAX_IMAGE_BYTES)
+    parts.push({ inlineData: { mimeType: ["image/jpeg", "image/png", "image/webp"].includes(body.mediaType) ? body.mediaType : "image/jpeg", data: body.image } });
+  parts.push({ text: txt || "הסבר על הנושא." });
+  const raw = await geminiHedged(env, EXPLAIN_SYSTEM, parts, E => !!normExplain(JSON.parse(JSON.stringify(E))));
+  const out = normExplain(raw); out.provider = raw._model; if (!out.topic && TOPIC_KEYS[body.topic]) out.topic = body.topic;
+  return out;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -662,7 +704,7 @@ export default {
     }
 
     // שיעור פרטי: סט תרגילים / בדיקת מחברת – בזרם עם "דופק" כמו שאלה רגילה
-    if (body && (body.mode === "practice" || body.mode === "review")) {
+    if (body && (body.mode === "practice" || body.mode === "review" || body.mode === "explain")) {
       if (body.mode === "review" && (typeof body.image !== "string" || body.image.length < 100)) return json({ error: "no_image", message: "לא התקבלה תמונה." }, 400);
       if (body.image && body.image.length > MAX_IMAGE_BYTES) return json({ error: "too_big", message: "התמונה גדולה מדי." }, 413);
       const { readable, writable } = new TransformStream();
@@ -671,9 +713,9 @@ export default {
       const finish = async obj => { clearInterval(beat); try { await writer.write(enc.encode(JSON.stringify(obj))); await writer.close(); } catch {} };
       const work = (async () => {
         try {
-          const out = body.mode === "practice" ? await practiceSet(env, body) : await reviewNotebook(env, body);
-          if (quotaKey && (body.mode === "review" || +body.stage === 1 || !body.stage)) { try { await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 }); } catch {} }
-          return finish(body.mode === "practice" ? { practice: out } : { review: out });
+          const out = body.mode === "practice" ? await practiceSet(env, body) : body.mode === "explain" ? await explainTopic(env, body) : await reviewNotebook(env, body);
+          if (quotaKey && (body.mode === "review" || (body.mode === "practice" && (+body.stage === 1 || !body.stage)))) { try { await env.LIMITS.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 26 }); } catch {} }
+          return finish(body.mode === "practice" ? { practice: out } : body.mode === "explain" ? { explain: out } : { review: out });
         } catch (e) {
           console.log(body.mode, "failed", e.status, e.message);
           return finish({ error: e.status === 429 ? "quota" : "upstream", message: "המורה הדיגיטלי עמוס כרגע 🙂 נסו שוב בעוד רגע.", detail: [String(e.message || e).slice(0, 200)] });
