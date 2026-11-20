@@ -1,5 +1,5 @@
 // פשוט להצליח במתמטיקה – service worker
-const CACHE = "pshut-v35";
+const CACHE = "pshut-v36";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "solve.html", "learn.html", "lesson.html", "bagrut.html", "worksheets.html", "yesodi.html"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
@@ -19,6 +19,8 @@ self.addEventListener("fetch", e => {
       .catch(() => caches.match(page)));
     return;
   }
+  // וידאו: ישר מהרשת (בקשות טווח של נגן הווידאו לא עוברות דרך המטמון)
+  if (/\.mp4$/i.test(url.pathname)) return;
   // קובצי נתונים (שאלונים, פתרונות, שיעורים): קודם רשת, כדי שתוכן חדש יופיע מיד; בלי אינטרנט – מהמטמון
   if (url.origin === location.origin && /(\.json|^\/[^?]*yesodi-[\w-]+\.js)$/i.test(url.pathname)) {
     e.respondWith(fetch(req).then(r => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); } return r; })

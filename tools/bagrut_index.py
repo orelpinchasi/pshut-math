@@ -15,7 +15,8 @@ les={f[:-5] for f in os.listdir(os.path.join(root,"sol","lessons")) if f.endswit
 for k in have:
   sp=os.path.join(root,"sol",k+".json");S=json.load(open(sp,encoding="utf-8"))
   for x in S["q"]:
-    x.pop("vid",None)
+    x.pop("vid",None);x.pop("mp4",None)
+    if os.path.exists(os.path.join(root,"media","bagrut",f'{k}_{x["n"]}.mp4')): x["mp4"]=1
     if f'{k}_{x["n"]}' in les: x["vid"]=1
   json.dump(S,open(sp,"w",encoding="utf-8"),ensure_ascii=False,separators=(",",":"))
 print(len(les),"video lessons")
