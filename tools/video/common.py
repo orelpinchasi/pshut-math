@@ -15,3 +15,8 @@ def lv(): return {"3":"3 יח״ל","4":"4 יח״ל","5":"5 יח״ל"}[CUR["id"][
 def QH(n): return f"שאלון {CUR['id']} · {sess()} · שאלה {n}"
 def intro(n,topic,sub,say): return {"cover":[f"{lv()} · שאלון {CUR['id']} · {sess()} · שאלה {n}",topic,sub],"say":say}
 OUT={"cover":["","נתראה בשאלה הבאה!","פשוט להצליח במתמטיקה · אוראל פנחסי"],"say":"פשוט להצליח במתמטיקה. נתראה בשאלה הבאה!"}
+# ---- סגנון 2 ----
+FR=lambda a,b:f'<span class="fr"><span>{a}</span><span>{b}</span></span>'   # שבר: מונה מעל מכנה
+SQ=lambda a:f'<span class="sq"><i>√</i><span>{a}</span></span>'             # שורש שמכסה את כל הביטוי
+HM=lambda s,c="hm":f'<span class="{c}">{s}</span>'                         # מרקר על חלק מהשורה (hm צהוב, ho כתום, hg ירוק)
+def intro2(n,topic,sub,say): return {"cover":[f"{lv()} · שאלון {CUR['id']} · {sess()} · שאלה {n}",topic,sub],"say":say}
