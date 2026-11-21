@@ -5,8 +5,8 @@ HERE=os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0,HERE); sys.pa
 key=sys.argv[1]; ver=sys.argv[2] if len(sys.argv)>2 else "א"
 ROOT=os.path.dirname(os.path.dirname(HERE))
 import html
-TEX={"·":r"\cdot ","−":"-","≥":r"\ge ","≤":r"\le ","⇒":r"\Rightarrow ","≈":r"\approx ","′":"'","√":r"\sqrt ","μ":r"\mu ","σ":r"\sigma ","Φ":r"\Phi ","∠":r"\angle ","⊥":r"\perp ","°":r"^\\circ ","²":"^2","³":"^3","π":r"\pi ","α":r"\alpha ","∞":r"\infty ","ˣ":"^x","⁴":"^4","⁰":"^0","ⁿ":"^n","₁":"_1","₂":"_2","₀":"_0","″":"''","≠":r"\ne ","←":r"\leftarrow ","→":r"\to ","∫":r"\int ","ℓ":r"\ell "}
-SUP={"²":"2","³":"3","⁴":"4","⁰":"0","¹":"1","ⁿ":"n","ˣ":"x","⁻":"-"}
+TEX={"·":r"\cdot ","−":"-","≥":r"\ge ","≤":r"\le ","⇒":r"\Rightarrow ","≈":r"\approx ","′":"'","√":r"\sqrt ","μ":r"\mu ","σ":r"\sigma ","Φ":r"\Phi ","∠":r"\angle ","⊥":r"\perp ","°":r"^\circ ","²":"^2","³":"^3","π":r"\pi ","α":r"\alpha ","∞":r"\infty ","ˣ":"^x","⁴":"^4","⁰":"^0","ⁿ":"^n","₁":"_1","₂":"_2","₀":"_0","″":"''","≠":r"\ne ","←":r"\leftarrow ","→":r"\to ","∫":r"\int ","ℓ":r"\ell "}
+SUP={"ˡ":"l","²":"2","³":"3","⁴":"4","⁰":"0","¹":"1","ⁿ":"n","ˣ":"x","⁻":"-"}
 def tex(x):
   x=re.sub("["+"".join(SUP)+"]+",lambda m:"^{"+"".join(SUP[c] for c in m.group(0))+"}",x)   # e²ˣ → e^{2x}
   return "".join(TEX.get(ch,ch) for ch in x)
@@ -20,7 +20,9 @@ def strip(h):
     h=re.sub(r'<span class="m">([^<]*)</span>',lambda m:"$"+tex(m.group(1))+"$",h)
     if h==h0: break
   h=re.sub(r"</?span[^>]*>"," ",h)
-  return html.escape(re.sub(r"\s+"," ",h).strip(),quote=False)
+  h=re.sub(r"\s+"," ",h).strip()
+  # טקסט רגיל עובר escape; נוסחאות בין $...$ נשארות כמו שהן (KaTeX מקבל אותן כטקסט)
+  return "$".join(x if i%2 else html.escape(html.unescape(x),quote=False) for i,x in enumerate(h.split("$")))
 Q=[]
 for fn in sorted(glob.glob("q[0-9]*.py"),key=lambda f:int(f[1:-3])):
   m=importlib.import_module(fn[:-3]); n=int(fn[1:-3])
