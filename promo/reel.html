@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<div style="display:none">
+<img id="logo" src="assets/logo.png"><img id="sig" src="assets/sig_w.png"><img id="k1" src="assets/kid_stuck.jpg"><img id="k2" src="assets/kid_phone.jpg"><img id="k3" src="assets/kid_happy.jpg"><img id="k4" src="assets/kid_snap.jpg">
+<img id="p0" src="assets/player0.jpg"><img id="s0" src="work/site0.jpg"><img id="wall" src="work/wall.jpg">
+<img id="ipath" src="work/path.jpg"><img id="ilesson" src="work/lesson.jpg"><img id="ibag" src="work/bagrut.jpg"><img id="iyes" src="work/yesodi.jpg"><img id="iws" src="work/worksheets.jpg"><img id="isolve" src="work/solve.jpg">
+</div>
+<script>
+const c = document.getElementById('c'), x = c.getContext('2d');
+const W = 1080, H = 1920, HEB = '"Liberation Sans","DejaVu Sans","Noto Color Emoji",sans-serif';
+const GOLD = '#f5b83d', GOLD2 = '#ffd57a', NIGHT = '#121a3d', TEAL = '#3fd0c9', CORAL = '#ff7a6b', RED = '#e3262b', PINK = '#ff5fa2', PURP='#9b7bff';
+const $ = id => document.getElementById(id);
+const LOGO=$('logo'),SIG=$('sig'),K1=$('k1'),K2=$('k2'),K3=$('k3'),K4=$('k4'),P0=$('p0'),S0=$('s0'),WALL=$('wall');
+const IPATH=$('ipath'),ILES=$('ilesson'),IBAG=$('ibag'),IYES=$('iyes'),IWS=$('iws'),ISOLVE=$('isolve');
+const BPM = 120, BEAT = 60 / BPM;
+// timeline (seconds)
+const [FEAT, VAR] = (location.hash.slice(1) || 'full/0').split('/').concat('0');
+const SEQS = {
+  full: [['hook',3],['title',2],['path',5],['vids',3],['snap',5],['lesson',3],['bag',4],['yes',3],['ws',2],['happy',2.5],['how',4],['share',3],['out',4.5]],
+};
+for (const f of ['path','vids','snap','lesson','bag','yes','ws']) SEQS[f] = [['hook',3],['title',2]].concat(f==='vids'?[['vids',3.5],['path',5]]:f==='ws'?[['ws',3],['yes',3]]:[[f, f==='snap'?5:f==='path'?5:4]]).concat([['happy',2.5],['how',4],['share',3],['out',4.5]]);
+const SEQ = SEQS[FEAT] || SEQS.full;
+const T = {}; let END = 0; for (const [n, d] of SEQ) { T[n] = END; END += d; }
+const DUR = Object.fromEntries(SEQ); const nxt = n => T[n] + DUR[n];
+T.snapsite = T.snap + 1.5; T.snapvid = T.snap + 3;
+window.END = END; window.SEQ = SEQ;
+const HOOKS = {
+  full:   [['מתמטיקה?','לא מבינים כלום? 😩','יש לנו בשבילכם משהו 👇'],['שונאים מתמטיקה?','זה עומד להשתנות 😎','תראו את זה 👇']],
+  snap:   [['נתקעתם','בשיעורי בית? 😩','יש פתרון בצילום אחד 👇'],['השאלה הזאת','שוברת לכם את הראש? 🤯','תצלמו אותה 👇']],
+  path:   [['לא יודעים','מאיפה להתחיל? 🤷','יש לכם מסלול 👇'],['החומר','מבולגן לכם? 😵','בואו נסדר את זה 👇']],
+  vids:   [['המורה הסבירה','מהר מדי? 😩','יש סרטון על כל נושא 👇'],['פספסתם','שיעור? 😬','לא נורא 👇']],
+  lesson: [['אין כסף','למורה פרטי? 💸','יש שיעור פרטי בחינם 👇'],['רוצים','לתרגל לבד? 🧠','עם בדיקה בכל שלב 👇']],
+  bag:    [['בגרות','מתקרבת? 😰','כל השאלונים + פתרונות 👇'],['3, 4 או 5','יחידות? 📝','יש לכם את כל המבחנים 👇']],
+  yes:    [['הילד מתקשה','בחשבון? 🎒','יש משחקים ותרגול 👇'],['כיתות א׳–ו׳?','גם בשבילכם! 🎈','מתמטיקה בכיף 👇']],
+  ws:     [['צריכים','עוד תרגול? ✏️','דפי עבודה להדפסה 👇'],['מבחן','בשבוע הבא? 📄','תתרגלו על דף 👇']],
+};
+const HK = (HOOKS[FEAT] || HOOKS.full)[(+VAR || 0) % 2];
+const PW = 560, PH = 1212, PX = (1080-560)/2, PY = 470;
+const cl = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const P = (t, a, d) => cl((t - a) / d);
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const back = p => { const s = 2.2; p = p - 1; return 1 + (s + 1) * p * p * p + s * p * p; };
+const pop = (t, a, d = .38) => { const p = P(t, a, d); return p <= 0 ? 0 : back(p); };
+const beat = t => { const ph = (t / BEAT) % 1; return Math.exp(-ph * 7); }; // 1 on the beat, decays
+function rr(X, Y, w, h, r) { x.beginPath(); x.roundRect(X, Y, w, h, r); }
+function txt(s, cx, cy, size, col, o = {}) {
+  x.save(); x.font = `${o.w || 'bold'} ${size}px ${HEB}`; x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.direction = o.ltr ? 'ltr' : 'rtl';
+  if (o.stroke) { x.lineJoin = 'round'; x.strokeStyle = o.stroke; x.lineWidth = o.sw || 16; x.strokeText(s, cx, cy); }
+  if (o.shadow) { x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = o.shadow; x.shadowOffsetY = 6; }
+  x.fillText(s, cx, cy); x.restore();
+}
+function tw(s, size) { x.save(); x.font = `bold ${size}px ${HEB}`; const m = x.measureText(s).width; x.restore(); return m; }
+function img(im, X, Y, w, h) { if (im.complete && im.naturalWidth) x.drawImage(im, X, Y, w, h); }
+function scaleAt(cx, cy, s, fn) { x.save(); x.translate(cx, cy); x.scale(s, s); x.translate(-cx, -cy); fn(); x.restore(); }
+function photo(im, t, a, z0, z1, dur, fx = .5, fy = .4) { // Ken Burns cover
+  const z = z0 + (z1 - z0) * eOut(P(t, a, dur)); const w = W * z, h = w * im.naturalHeight / (im.naturalWidth || 1);
+  img(im, (W - w) * fx, (H - h) * fy, w, h);
+}
+function burst(t, a, cx, cy, col = GOLD2, R = 260, n = 16) {
+  const p = P(t, a, .55); if (p <= 0 || p >= 1) return;
+  for (let i = 0; i < n; i++) {
+    const an = i / n * Math.PI * 2, r1 = 60 + R * eOut(p), r0 = 40 + R * .7 * eOut(p);
+    x.strokeStyle = col; x.globalAlpha = 1 - p; x.lineWidth = 10 * (1 - p) + 1;
+    x.beginPath(); x.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); x.lineTo(cx + Math.cos(an) * r1, cy + Math.sin(an) * r1); x.stroke();
+  }
+  x.globalAlpha = 1;
+}
+function confetti(t, a, n = 110, cy = 900) {
+  const u = t - a; if (u < 0 || u > 2.8) return;
+  let s = 11; const R = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+  const cols = [GOLD, TEAL, CORAL, '#fff', '#8fa8ff', PINK];
+  for (let i = 0; i < n; i++) {
+    const ang = -Math.PI / 2 + (R() - .5) * 2.6, sp = 900 + R() * 1000, X = W / 2 + Math.cos(ang) * sp * u, Y = cy + Math.sin(ang) * sp * u + 1200 * u * u;
+    x.save(); x.globalAlpha = cl(1.7 - u * .7); x.translate(X, Y); x.rotate(u * 9 + i); x.fillStyle = cols[i % 6]; x.fillRect(-10, -6, 20, 12); x.restore();
+  }
+}
+// bouncy caption: pops in, then pulses to the beat
+function cap(t, a, s, size, y, col = '#fff', o = {}) {
+  let p = pop(t, a, .35); if (p <= 0) return;
+  if (o.until) { const f = P(t, o.until, .18); if (f >= 1) return; p *= 1 - f; }
+  const b = 1 + .045 * beat(t - a) * (t > a + .35 ? 1 : 0);
+  const rot = (o.tilt || 0) * Math.sin(t * 4);
+  x.save(); x.translate(W / 2, y); x.scale(p * b, p * b); x.rotate(rot);
+  if (o.pill) {
+    const w = tw(s, size) + 80, h = size * 1.6;
+    x.save(); x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 24; rr(-w / 2, -h / 2, w, h, h / 2); x.fillStyle = o.pill; x.fill(); x.restore();
+    txt(s, 0, 4, size, col);
+  } else txt(s, 0, 0, size, col, { stroke: NIGHT, sw: 18, shadow: 20 });
+  x.restore();
+}
+function bgNight(t) {
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0d1433'); g.addColorStop(1, '#22306a'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // beat-pulsing glow
+  const gl = x.createRadialGradient(540, 960, 50, 540, 960, 900); gl.addColorStop(0, `rgba(245,184,61,${.14 + .12 * beat(t)})`); gl.addColorStop(1, 'rgba(245,184,61,0)'); x.fillStyle = gl; x.fillRect(0, 0, W, H);
+  const sy = ['x²', '√', 'π', '÷', '=', '∫', '%', 'Δ', '½', '★'];
+  for (let i = 0; i < 20; i++) {
+    const X = (i * 263.7) % W, Y = ((i * 419.3) % (H + 200) - t * (40 + i % 5 * 10) + H * 3) % (H + 200) - 100;
+    txt(sy[i % sy.length], X, Y, 44 + (i % 4) * 14, 'rgba(255,255,255,.07)', { ltr: 1 });
+  }
+}
+function vignette(a = .55) { const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, `rgba(8,12,35,${a})`); g.addColorStop(.3, 'rgba(8,12,35,0)'); g.addColorStop(.7, 'rgba(8,12,35,0)'); g.addColorStop(1, `rgba(8,12,35,${a + .2})`); x.fillStyle = g; x.fillRect(0, 0, W, H); }
+function flash(t, a, d = .3, k = 1) { const f = P(t, a, d); if (f > 0 && f < 1) { x.fillStyle = `rgba(255,255,255,${Math.sin(Math.PI * f) * k})`; x.fillRect(0, 0, W, H); } }
+
+function bulb(t, a, cx, cy) {
+  const p = pop(t, a, .45); if (p <= 0) return;
+  const fl = .75 + .25 * Math.sin(t * 18);
+  scaleAt(cx, cy, p, () => {
+    const g = x.createRadialGradient(cx, cy, 10, cx, cy, 260); g.addColorStop(0, `rgba(255,230,120,${.75 * fl})`); g.addColorStop(1, 'rgba(255,230,120,0)'); x.fillStyle = g; x.fillRect(cx - 260, cy - 260, 520, 520);
+    x.fillStyle = '#ffe680'; x.beginPath(); x.arc(cx, cy, 95, 0, 7); x.fill();
+    x.fillStyle = '#c9cfdc'; rr(cx - 45, cy + 82, 90, 70, 14); x.fill(); x.fillStyle = '#9aa3b8'; rr(cx - 45, cy + 100, 90, 10, 4); x.fill(); rr(cx - 45, cy + 122, 90, 10, 4); x.fill();
+    x.strokeStyle = '#f5b83d'; x.lineWidth = 7; x.beginPath(); x.moveTo(cx - 30, cy + 30); x.lineTo(cx - 12, cy - 15); x.lineTo(cx + 12, cy + 15); x.lineTo(cx + 30, cy - 30); x.stroke();
+  });
+  burst(t, a, cx, cy, '#ffe680', 300, 18);
+}
+
+// ===== helpers for this reel =====
+function phone(im, t, a, dur, y0, y1, o={}) { // phone with page screenshot scrolling from y0 to y1 (in screenshot px)
+  const k = pop(t, a, .35), sc = (o.s||1)*(.55 + .45 * k);
+  const cx = 540 + (o.dx||0), cy = PY + PH/2;
+  scaleAt(cx, cy, sc, () => {
+    const X = cx - PW/2;
+    x.save(); x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 60; x.shadowOffsetY = 24;
+    rr(X - 20, PY - 20, PW + 40, PH + 40, 66); x.fillStyle = '#0a0e1f'; x.fill(); x.restore();
+    rr(X - 20, PY - 20, PW + 40, PH + 40, 66); x.strokeStyle = o.col||GOLD; x.lineWidth = 6; x.stroke();
+    x.save(); rr(X, PY, PW, PH, 46); x.clip();
+    const f = PW / (im.naturalWidth || 1080);
+    const pr = o.steps ? o.steps(t-a) : eInOut(P(t, a + (o.d0||.6), dur));
+    const yy = y0 + (y1 - y0) * pr;
+    img(im, X, PY - yy * f, PW, (im.naturalHeight||2000) * f);
+    x.restore();
+  });
+}
+const eInOut = p => p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3)/2;
+function tap(t, a, X, Y) { const r = P(t, a, .55); if (r <= 0 || r >= 1) return;
+  x.fillStyle = `rgba(255,255,255,${.5*(1-r)})`; x.beginPath(); x.arc(X, Y, 34, 0, 7); x.fill();
+  x.strokeStyle = `rgba(245,184,61,${1 - r})`; x.lineWidth = 10; x.beginPath(); x.arc(X, Y, 26 + 90 * r, 0, 7); x.stroke(); }
+function badge(t, a, X, Y, emo, col, R=88) { const p = pop(t, a, .4); if (p <= 0) return;
+  const bob = Math.sin(t*3 + X) * 10;
+  scaleAt(X, Y+bob, p, () => { x.save(); x.shadowColor='rgba(0,0,0,.45)'; x.shadowBlur=30; x.fillStyle = col; x.beginPath(); x.arc(X, Y+bob, R, 0, 7); x.fill(); x.restore();
+    txt(emo, X, Y+bob+6, R*1.05, '#fff', {ltr:1}); }); }
+function num(t, a, d, to, X, Y, size, col, suf='') { const p = eOut(P(t, a, d)); if (P(t,a,.01)<=0) return; const v = Math.round(to * p);
+  txt(v.toLocaleString('en-US') + suf, X, Y, size, col, {ltr:1, stroke: NIGHT, sw: 18, shadow: 20}); }
+function chips(t, a, list, y, size=46) { // row of pills popping one by one
+  let w = list.map(s => tw(s, size) + 60), tot = w.reduce((p, q) => p + q, 0) + 18 * (list.length - 1), X = 540 + tot/2;
+  list.forEach((s, i) => { const p = pop(t, a + i * .12, .3); X -= w[i]; if (p > 0) { const cx = X + w[i]/2; scaleAt(cx, y, p, () => { rr(X, y - size*.8, w[i], size*1.6, size*.8); x.fillStyle = '#fff'; x.fill(); txt(s, cx, y + 3, size, NIGHT); }); } X -= 18; });
+}
+
+// ===== scenes =====
+function sHook(t) {
+  const shake = t > 1.0 ? Math.sin(t * 40) * 6 * Math.max(0, 1 - (t - 1.0) * 1.2) : 0;
+  x.save(); x.translate(shake, 0); photo(K1, t, 0, 1.05, 1.2, 3, .5, .35); x.restore();
+  vignette(.6);
+  const sy=['x²','√','?','÷','?','π'];
+  for (let i = 0; i < 6; i++) { const p = pop(t, .6 + i * .22, .35); if (p <= 0) continue;
+    const X = [170, 910, 130, 950, 230, 860][i], Y = [700, 660, 980, 940, 1250, 1220][i] + Math.sin(t * 4 + i) * 14;
+    scaleAt(X, Y, p, () => { x.fillStyle = i%2? '#fff':CORAL; x.beginPath(); x.arc(X, Y, 62, 0, 7); x.fill(); txt(sy[i], X, Y + 4, 70, i%2?CORAL:'#fff', { ltr: 1 }); }); }
+  cap(t, .1, HK[0], HK[0].length > 9 ? 120 : 150, 220, '#fff');
+  cap(t, .5, HK[1], 100, 380, GOLD2);
+  cap(t, 1.5, HK[2], 62, 1720, NIGHT, { pill: GOLD });
+}
+function sTitle(t) {
+  bgNight(t); const u = t - T.title;
+  burst(t, T.title, 540, 620, GOLD2, 520, 26); flash(t, T.title, .25, .9);
+  const h = pop(u, .0, .45); if (h > 0) scaleAt(540, 620, h * (1 + .05 * beat(t)), () => img(LOGO, 400, 480, 280, 280 * LOGO.naturalHeight / (LOGO.naturalWidth || 1)));
+  cap(t, T.title + .25, 'פשוט להצליח', 140, 1000, '#fff');
+  cap(t, T.title + .45, 'במתמטיקה', 140, 1160, GOLD2);
+  cap(t, T.title + .9, 'כל אחד יכול להצליח ✨', 62, 1420, NIGHT, { pill: GOLD });
+}
+function sPath(t) {
+  bgNight(t); const a = T.path;
+  phone(IPATH, t, a, 3.6, 0, 2700, {d0: .9});
+  tap(t, a + .6, 540 + 0, PY + 150);
+  badge(t, a + .5, 150, 760, '🗺️', TEAL);
+  badge(t, a + .8, 930, 1180, '▶', CORAL, 72);
+  cap(t, a + .05, 'מסלול למידה', 110, 190, '#fff', {until: nxt('path') - .05});
+  cap(t, a + .35, 'ז׳ – י״ב · לפי תוכנית הלימודים', 50, 340, NIGHT, {pill: GOLD, until: nxt('path') - .05});
+  cap(t, a + 1.6, 'בוחרים כיתה ← יודעים בדיוק מה לראות', 46, 1800, '#fff', {pill: NIGHT, until: nxt('path') - .05});
+  flash(t, a, .25, .7);
+}
+function sVids(t) {
+  const a = T.vids, u = t - a;
+  x.fillStyle = NIGHT; x.fillRect(0, 0, W, H);
+  x.save(); x.translate(540, 960); x.rotate(-.18); x.scale(1.25, 1.25);
+  const sh = (WALL.naturalHeight || 5208) - 1700;
+  img(WALL, -935, -900 - sh * eOut(P(t, a, 3.2)) * .55, 1870, WALL.naturalHeight || 5208);
+  x.restore();
+  x.fillStyle = 'rgba(13,20,51,.45)'; x.fillRect(0, 0, W, H);
+  const g = x.createRadialGradient(540, 900, 50, 540, 900, 700); g.addColorStop(0, 'rgba(13,20,51,.85)'); g.addColorStop(1, 'rgba(13,20,51,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const p = pop(t, a + .1, .45); if (p > 0) scaleAt(540, 820, p * (1 + .04 * beat(t)), () => num(t, a + .1, 1.4, 1198, 540, 820, 250, GOLD2, '+'));
+  cap(t, a + .35, 'סרטוני הסבר', 120, 1040, '#fff');
+  cap(t, a + .9, 'על כל נושא 🎬', 70, 1210, NIGHT, {pill: GOLD});
+  flash(t, a, .25, .8);
+}
+function sSnap(t) {
+  const a = T.snap;
+  if (t < T.snapsite) {
+    photo(K4, t, a, 1.0, 1.12, 1.5, .5, .4); vignette(.5);
+    const f = eOut(P(t, a + .3, .35));
+    if (f > 0) { const cx = 540, cy = 1330, bw = 330 + 120 * (1 - f), bh = 230 + 90 * (1 - f);
+      x.strokeStyle = t > a + .8 ? '#7CFF8A' : GOLD; x.lineWidth = 10; x.globalAlpha = f;
+      for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { x.beginPath(); x.moveTo(cx + sx * bw, cy + sy * (bh - 60)); x.lineTo(cx + sx * bw, cy + sy * bh); x.lineTo(cx + sx * (bw - 60), cy + sy * bh); x.stroke(); }
+      x.globalAlpha = 1; }
+    flash(t, a + 1.05, .3, .95);
+    cap(t, a + .05, 'נתקעתם בשאלה?', 100, 210, '#fff');
+    cap(t, a + .35, '📸 צלמו אותה', 100, 360, NIGHT, {pill: GOLD});
+  } else if (t < T.snapvid) {
+    bgNight(t); phone(ISOLVE, t, T.snapsite, 1, 0, 0);
+    tap(t, T.snapsite + .7, 540 + 120, PY + 820);
+    cap(t, T.snapsite + .05, 'האתר קורא את השאלה 🤔', 76, 210, '#fff');
+    for (let i = 0; i < 8; i++) { const an = t * 3 + i * .785; txt('✦', 540 + Math.cos(an) * 360, 1076 + Math.sin(an) * 660, 30 + (i % 3) * 10, GOLD2, { ltr: 1 }); }
+  } else {
+    bgNight(t); const b = T.snapvid; const VX = 60, VY = 560, VW = 960, VH = 1000;
+    const p = pop(t, b, .45);
+    scaleAt(540, VY + VH / 2, p * (1 + .012 * beat(t)), () => {
+      x.save(); x.shadowColor = 'rgba(245,184,61,.7)'; x.shadowBlur = 70; rr(VX - 14, VY - 14, VW + 28, VH + 28, 40); x.fillStyle = GOLD; x.fill(); x.restore();
+      x.save(); rr(VX, VY, VW, VH, 30); x.clip(); img(P0, VX, VY, VW, VH); x.restore(); });
+    burst(t, b, 540, 1060, GOLD2, 640, 24); confetti(t, b); flash(t, b, .25, .8);
+    cap(t, b + .05, 'ומקבלים...', 110, 200, '#fff');
+    cap(t, b + .35, 'סרטון עם הפתרון! 🎬', 92, 380, NIGHT, {pill: GOLD});
+    cap(t, b + .8, 'שלב אחרי שלב', 56, 1700, '#fff', {pill: CORAL});
+  }
+}
+function sLesson(t) {
+  bgNight(t); const a = T.lesson;
+  phone(ILES, t, a, 1.8, 0, 900, {d0: .7});
+  badge(t, a + .5, 150, 820, '🎓', PURP); badge(t, a + .75, 930, 1300, '✔', '#33c27a', 72);
+  cap(t, a + .05, 'שיעור פרטי', 120, 190, '#fff');
+  cap(t, a + .3, 'בחינם! 🎁', 90, 350, NIGHT, {pill: GOLD});
+  cap(t, a + 1.2, 'תרגול מקל לקשה · בדיקה בכל שלב', 44, 1800, '#fff', {pill: NIGHT});
+  flash(t, a, .25, .7);
+}
+function sBag(t) {
+  bgNight(t); const a = T.bag;
+  phone(IBAG, t, a, 3.0, 0, 3000, {d0: .8});
+  tap(t, a + .7, 540 + 130, PY + 330);
+  badge(t, a + .5, 150, 800, '📝', CORAL); badge(t, a + .8, 930, 1250, '💯', TEAL, 76);
+  cap(t, a + .05, 'שאלוני בגרות', 115, 190, '#fff');
+  cap(t, a + .3, 'עם פתרונות מלאים בסרטון', 54, 345, NIGHT, {pill: GOLD});
+  chips(t, a + 1.4, ['3 יח״ל', '4 יח״ל', '5 יח״ל'], 1800, 50);
+  flash(t, a, .25, .7);
+}
+function sYes(t) {
+  bgNight(t); const a = T.yes;
+  phone(IYES, t, a, 2.0, 0, 1500, {d0: .8});
+  badge(t, a + .45, 150, 820, '🎒', PINK); badge(t, a + .7, 930, 1260, '🎮', PURP, 76);
+  cap(t, a + .05, 'גם ליסודי!', 120, 190, '#fff');
+  cap(t, a + .3, 'א׳–ו׳ · משחקים ותרגול 🎈', 54, 345, NIGHT, {pill: GOLD});
+  flash(t, a, .25, .7);
+}
+function sWs(t) {
+  bgNight(t); const a = T.ws;
+  phone(IWS, t, a, 1.4, 0, 700, {d0: .5});
+  badge(t, a + .4, 150, 820, '🖨️', TEAL);
+  cap(t, a + .05, 'דפי עבודה', 120, 190, '#fff');
+  cap(t, a + .3, 'להדפסה · לכל כיתה 📄', 56, 345, NIGHT, {pill: GOLD});
+  flash(t, a, .25, .7);
+}
+function sHappy(t) {
+  const a = T.happy, jump = Math.abs(Math.sin((t - a) * Math.PI / BEAT)) * 18;
+  x.save(); x.translate(0, -jump); photo(K3, t, a, 1.12, 1.02, .5, .5, .35); x.restore();
+  vignette(.4); confetti(t, a, 140, 700); flash(t, a, .25, .9);
+  cap(t, a + .05, 'הכל במקום אחד', 110, 230, '#fff', {tilt: .04});
+  cap(t, a + .35, 'ובחינם! 🤩', 120, 1650, NIGHT, {pill: GOLD});
+}
+
+function sHow(t) {
+  bgNight(t); const a = T.how, u = t - a;
+  cap(t, a + .05, 'איך נכנסים?', 120, 210, '#fff');
+  cap(t, a + .3, 'שלושה צעדים, ואתם בפנים 👇', 52, 370, NIGHT, {pill: GOLD});
+  const st = [['1','נכנסים לאתר','orelpinchasi.github.io/pshut-math',TEAL],['2','נרשמים בחינם','עם Google או מייל · לוקח דקה',CORAL],['3','בוחרים כיתה','ומתחילים להצליח! 🚀',PURP]];
+  st.forEach(([n, h, sub, col], i) => { const p = pop(t, a + .7 + i * .75, .4); if (p <= 0) return; const Y = 640 + i * 330;
+    scaleAt(540, Y, p, () => {
+      x.save(); x.shadowColor = 'rgba(0,0,0,.4)'; x.shadowBlur = 30; rr(90, Y - 130, 900, 260, 50); x.fillStyle = '#fff'; x.fill(); x.restore();
+      x.fillStyle = col; x.beginPath(); x.arc(870, Y, 82, 0, 7); x.fill(); txt(n, 870, Y + 6, 100, '#fff', {ltr: 1});
+      txt(h, 470, Y - 42, 76, NIGHT);
+      txt(sub, 470, Y + 52, n === '1' ? 38 : 44, n === '1' ? '#13756f' : '#555b78', n === '1' ? {ltr: 1} : {});
+    });
+    tap(t, a + 1.05 + i * .75, 870, Y);
+  });
+  const g = eOut(P(t, a + 3.0, .4)); x.globalAlpha = g; txt('או מחפשים בגוגל: פשוט להצליח במתמטיקה 🔎', 540, 1660, 42, GOLD2); x.globalAlpha = 1;
+  flash(t, a, .25, .7);
+}
+function sShare(t) {
+  bgNight(t); const a = T.share;
+  // phone sending to friends: paper planes flying out to friend bubbles
+  const fr = [[190, 820, '🧑‍🎓'], [890, 820, '👧'], [170, 1180, '👦'], [910, 1180, '👩‍🎓'], [540, 1420, '👨‍🎓']];
+  const hp = pop(t, a + .2, .4);
+  if (hp > 0) scaleAt(540, 1000, hp * (1 + .05 * beat(t)), () => { x.save(); x.shadowColor = GOLD; x.shadowBlur = 50; x.fillStyle = GOLD; x.beginPath(); x.arc(540, 1000, 130, 0, 7); x.fill(); x.restore(); txt('📲', 540, 1010, 140, '#fff', {ltr: 1}); });
+  fr.forEach(([X, Y, e], i) => { const ta = a + .8 + i * .22, q = P(t, ta, .5);
+    if (q > 0 && q < 1) { const px = 540 + (X - 540) * eOut(q), py = 1000 + (Y - 1000) * eOut(q) - Math.sin(Math.PI * q) * 120; txt('✈️', px, py, 60, '#fff', {ltr: 1}); }
+    const p = pop(t, ta + .45, .35); if (p > 0) scaleAt(X, Y, p, () => { x.fillStyle = '#fff'; x.beginPath(); x.arc(X, Y, 78, 0, 7); x.fill(); txt(e, X, Y + 6, 84, '#000', {ltr: 1}); x.fillStyle = '#33c27a'; x.beginPath(); x.arc(X + 56, Y - 56, 24, 0, 7); x.fill(); txt('✔', X + 56, Y - 53, 30, '#fff', {ltr: 1}); }); });
+  cap(t, a + .05, 'מכירים מישהו', 110, 220, '#fff');
+  cap(t, a + .3, 'שמתקשה במתמטיקה?', 96, 370, GOLD2);
+  cap(t, a + .7, 'שלחו לו את הסרטון! 📲', 66, 560, NIGHT, {pill: GOLD});
+  cap(t, a + 2.0, 'כי כל אחד יכול להצליח 💛', 58, 1660, '#fff', {pill: NIGHT});
+  flash(t, a, .25, .7);
+}
+function sOut(t) {
+  bgNight(t); const u = t - T.out;
+  const h = pop(u, .05); if (h > 0) scaleAt(540, 330, h * (1 + .05 * beat(t)), () => img(LOGO, 430, 220, 220, 220 * LOGO.naturalHeight / (LOGO.naturalWidth || 1)));
+  const a = eOut(P(u, .25, .4)); txt('פשוט להצליח במתמטיקה', 540, 540 + 30 * (1 - a), 74, `rgba(255,255,255,${a})`);
+  const items = [['🗺️','מסלול למידה ז׳–י״ב'],['🎬','1,198 סרטוני הסבר'],['📸','צלמו שאלה ← סרטון פתרון'],['🎓','שיעור פרטי בחינם'],['📝','שאלוני בגרות + פתרונות'],['🎒','יסודי · משחקים · דפי עבודה']];
+  items.forEach(([e, s], i) => { const p = pop(u, .5 + i * .16, .3); if (p <= 0) return; const Y = 700 + i * 104;
+    scaleAt(540, Y, p, () => { rr(150, Y - 44, 780, 88, 44); x.fillStyle = 'rgba(255,255,255,.1)'; x.fill(); txt(e, 870, Y + 4, 50, '#fff', {ltr:1}); txt(s, 500, Y + 3, 50, '#fff'); }); });
+  const b = pop(u, 1.6, .4);
+  if (b > 0) scaleAt(540, 1400, b * (1 + .04 * beat(t)), () => {
+    const s = 'orelpinchasi.github.io/pshut-math', w = tw(s, 44) + 90;
+    x.save(); x.shadowColor = GOLD; x.shadowBlur = 50; rr(540 - w / 2, 1350, w, 100, 50); x.fillStyle = GOLD; x.fill(); x.restore(); txt(s, 540, 1403, 44, NIGHT, { ltr: 1 }); });
+  burst(u, 1.6, 540, 1400, GOLD2, 480, 24);
+  const d = eOut(P(u, 2.0, .35)); x.globalAlpha = d; txt('שתפו חבר שצריך את זה 💛', 540, 1530, 54, GOLD2); x.globalAlpha = 1;
+  const e = eOut(P(u, 2.3, .4)); x.globalAlpha = e; if (SIG.naturalWidth) x.drawImage(SIG, 540 - 170, 1590, 340, 340 * SIG.naturalHeight / SIG.naturalWidth); x.globalAlpha = 1;
+  flash(t, T.out, .3, .8);
+}
+const FN = {hook: sHook, title: sTitle, path: sPath, vids: sVids, snap: sSnap, lesson: sLesson, bag: sBag, yes: sYes, ws: sWs, happy: sHappy, how: sHow, share: sShare, out: sOut};
+function render(t) {
+  x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 1; x.fillStyle = '#000'; x.fillRect(0, 0, W, H);
+  let cur = SEQ[0][0]; for (const [n] of SEQ) if (t >= T[n]) cur = n; FN[cur](t);
+}
+window.render = render;
+</script></body></html>
