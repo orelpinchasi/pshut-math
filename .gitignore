@@ -5,3 +5,4 @@ tools/video/exams/*/w/
 tools/video/exams/*/__pycache__/
 tools/video/__pycache__/
 tools/video/exams/*/*.log
+tools/video/exams/*/sheet*.jpg
