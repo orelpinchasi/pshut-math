@@ -20,7 +20,7 @@ changed=set()
 for r0,i,t,p in fix:
   best=(dur(p),None)
   for k in range(3):
-    q=f"/tmp/fx{k}.wav"
+    q=f"/tmp/fx{os.getpid()}_{k}.wav"
     subprocess.run(["curl","-sS","-m","90","-X","POST",W,"-H","Content-Type: application/json","-H","Origin: https://orelpinchasi.github.io","--data-binary",json.dumps({"tts":t}),"-o",q])
     d=dur(q)
     if d<best[0] and d>len(t)/(med*1.6): best=(d,q)

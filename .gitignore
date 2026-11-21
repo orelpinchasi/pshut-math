@@ -1,1 +1,7 @@
 promo/work/
+tools/video/exams/*/out/
+tools/video/exams/*/sh/
+tools/video/exams/*/w/
+tools/video/exams/*/__pycache__/
+tools/video/__pycache__/
+tools/video/exams/*/*.log
