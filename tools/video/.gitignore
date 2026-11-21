@@ -1,0 +1,5 @@
+exams/*/out/
+exams/*/w/
+exams/*/sh/
+exams/*/x.mp4
+__pycache__/
