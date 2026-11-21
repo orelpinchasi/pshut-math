@@ -82,3 +82,11 @@ nav.links a.me{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255
 .acct-lesson i{font-style:normal;font-weight:700}
 /* התפריט מלא: בכפתור "הכרטיס שלי" מציגים רק אייקון, חוץ ממסכים רחבים מאוד */
 @media (max-width:1400px){nav.links a.me .t{display:none}nav.links a.me{padding:7px 11px}}
+
+/* קישורים קבועים לדפי הנושאים (בשביל גוגל ובשביל גולשים) – נוצר ע"י tools/seo_build.py */
+.seo-links{margin-top:18px;text-align:start}
+.seo-links .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:760px){.seo-links .wrap{grid-template-columns:1fr}}
+.seo-links b{display:block;margin-bottom:6px;color:inherit;opacity:.9}
+.seo-links a{display:inline-block;margin:0 0 4px 12px;font-size:13px;color:inherit;opacity:.75;text-decoration:none}
+.seo-links a:hover{opacity:1;text-decoration:underline}

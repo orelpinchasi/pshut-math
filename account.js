@@ -367,6 +367,9 @@ function boot(){
 }
 
 if(CFG && st.get("pshut-acct")) boot();
+/* קישור ישיר לסרטון מדפי הנושאים: index.html?v=ID */
+(function(){ const v=new URLSearchParams(location.search).get("v"); if(!v||!/^[\w-]{11}$/.test(v)||typeof window.openModal!=="function") return;
+  const r=(typeof VIDEOS!=="undefined"&&VIDEOS.find(x=>x.id===v))||{}; setTimeout(()=>window.openModal(v,r.title||""),300); })();
 paintNav();
 if(location.hash==="#me") openPanel();
 else if(location.hash==="#join") openPanel(hasAcct()?"card":"signup");
