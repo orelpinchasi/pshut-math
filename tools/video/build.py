@@ -4,6 +4,7 @@ sys.path.insert(0,os.getcwd()); mod=importlib.import_module(sys.argv[1]); OUT=sy
 TTS=os.environ.get("TTS_CACHE","/tmp/pshut-tts"); os.makedirs(TTS,exist_ok=True);os.makedirs("w",exist_ok=True)
 W="https://pshut-solve.pshut-math.workers.dev/"
 V2=hasattr(mod,"IMG")   # סגנון 2: השאלה המקורית כתמונה, מרקרים, כתיבה הדרגתית, עצירות "הבנת?"
+YT=bool(os.environ.get("YT"))   # YT=1: גרסה ליוטיוב, בלי שאלות "הבנת?"
 def tts(t):
   p=TTS+"/"+hashlib.md5(t.encode()).hexdigest()+".wav"
   for k in range(6):
@@ -23,7 +24,9 @@ for s in mod.SC:
       ST.append(({"qh":mod.QH,"q":mod.Q,"h":s["h"],"hl":s.get("hl",[]),"done":s.get("done",[]),"fig":s.get("fig"),"lines":lines},s["L"][j][2],0.9 if j==len(s["L"])-1 else 0.45,False,None))
     continue
   img=s.get("img",mod.IMG); mk=list(s.get("mk",[])); fig=s.get("fig"); lines=[]
-  for j,l in enumerate(s["L"]):
+  LL=[l for l in s["L"] if not (YT and l[0]=="ask")]   # ליוטיוב: בלי "הבנת?" (אין שם עצירות)
+  if not LL: continue
+  for j,l in enumerate(LL):
     c,t,say,o=tup(l)
     img=o.get("img",img); fig=o.get("fig",fig)
     newmk=o.get("mk",[]); mk=(o["mkset"] if "mkset" in o else mk)+newmk
@@ -31,7 +34,7 @@ for s in mod.SC:
     anim=bool(t) or bool(newmk)
     R={"qh":mod.QH,"img":img,"mk":list(mk),"mkNew":bool(newmk),"h":s["h"],"fig":fig,"lines":list(lines),"keep":s.get("keep",5)}
     if not t and lines: R["lineDone"]=1
-    ST.append((R,say,0.9 if j==len(s["L"])-1 else 0.55,anim,s.get("sec")))
+    ST.append((R,say,0.9 if j==len(LL)-1 else 0.55,anim,s.get("sec")))
 from concurrent.futures import ThreadPoolExecutor
 with ThreadPoolExecutor(2) as ex: wavs=list(ex.map(tts,[x[1] for x in ST]))
 PROG=[0.2,0.4,0.6,0.8]
@@ -75,6 +78,6 @@ subprocess.run(["ffmpeg","-v","error","-y","-f","concat","-safe","0","-i","w/v.t
 subprocess.run(["ffmpeg","-v","error","-y","-f","concat","-safe","0","-i","w/a.txt","-c","copy","w/aud.wav"],check=True)
 subprocess.run(["ffmpeg","-v","error","-y","-i","w/vid.mp4","-i","w/aud.wav","-map","0:v","-map","1:a","-c:v","copy","-c:a","aac","-b:a","32k","-shortest","-movflags","+faststart",OUT+".tmp.mp4"],check=True)
 os.replace(OUT+".tmp.mp4",OUT)
-if V2:  # עצירות "הבנת?" בסוף כל סעיף (באתר: "הבנתי" או "לראות שוב")
+if V2 and not YT:  # עצירות "הבנת?" בסוף כל סעיף (באתר: "הבנתי" או "לראות שוב")
   json.dump(CH,open(OUT[:-4]+".ch.json","w",encoding="utf-8"),ensure_ascii=False)
 print("done",OUT,dur(OUT),"s,",len(ST),"states")
