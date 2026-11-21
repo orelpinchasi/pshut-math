@@ -7,8 +7,8 @@ def dur(p):
   except: return 99
 says=[]
 import glob
-for fn in sorted(glob.glob("q[0-9]*.py")):
-  i=int(fn[1:-3]); m=importlib.import_module(fn[:-3])
+for fn in sorted(glob.glob(os.environ.get("FIX_GLOB","q[0-9]*.py"))):
+  i=fn[:-3]; m=importlib.import_module(fn[:-3])
   says+=[(i,s["say"]) for s in m.SC if "cover" in s]+[(i,l[2]) for s in m.SC if "L" in s for l in s["L"]]
 R=[]
 for i,t in says:
