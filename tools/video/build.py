@@ -75,10 +75,6 @@ subprocess.run(["ffmpeg","-v","error","-y","-f","concat","-safe","0","-i","w/v.t
 subprocess.run(["ffmpeg","-v","error","-y","-f","concat","-safe","0","-i","w/a.txt","-c","copy","w/aud.wav"],check=True)
 subprocess.run(["ffmpeg","-v","error","-y","-i","w/vid.mp4","-i","w/aud.wav","-map","0:v","-map","1:a","-c:v","copy","-c:a","aac","-b:a","32k","-shortest","-movflags","+faststart",OUT+".tmp.mp4"],check=True)
 os.replace(OUT+".tmp.mp4",OUT)
-if V2:  # עצירות "הבנת?" בסוף כל סעיף, עם הסבר חלופי
-  alt={}
-  for s in mod.SC:
-    if s.get("sec") and s.get("alt"): alt[s["sec"]]=s["alt"]
-  for c in CH: c["alt"]=alt.get(c["l"],"")
+if V2:  # עצירות "הבנת?" בסוף כל סעיף (באתר: "הבנתי" או "לראות שוב")
   json.dump(CH,open(OUT[:-4]+".ch.json","w",encoding="utf-8"),ensure_ascii=False)
 print("done",OUT,dur(OUT),"s,",len(ST),"states")

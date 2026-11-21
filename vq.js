@@ -1,5 +1,5 @@
 // "הבנת?" — עוצר את סרטון הפתרון בסוף כל סעיף ושואל את התלמיד אם הבין.
-// לא הבנתי → הסבר בדרך אחרת + אפשרות לראות שוב את הסעיף.
+// "הבנתי" ממשיך; "לראות שוב" חוזר לתחילת הסעיף.
 // שימוש: vqAttach(videoElement, [{l:'א', t0:12.3, t1:80.1, alt:'...'}], renderMath)
 (function(){
   const css=`.vqw{position:relative}.vqo{position:absolute;inset:0;background:#141b3aee;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;border-radius:12px;text-align:center;z-index:5;overflow:auto}
@@ -15,13 +15,9 @@
     function ask(i){const c=CH[i];v.pause();
       if(document.fullscreenElement)document.exitFullscreen().catch(()=>0);
       if(v.webkitDisplayingFullscreen&&v.webkitExitFullscreen)v.webkitExitFullscreen();
-      o.innerHTML=`<h4>הבנת את סעיף ${c.l}?</h4><div class="bt"><button class="y">✅ הבנתי, ממשיכים</button><button class="n">🤔 לא הבנתי</button></div>`;o.hidden=false;
+      o.innerHTML=`<h4>הבנת את סעיף ${c.l}?</h4><div class="bt"><button class="y">✅ הבנתי, ממשיכים</button><button class="r">🔁 לראות שוב את הסעיף</button></div>`;o.hidden=false;
       o.querySelector('.y').onclick=()=>{o.hidden=true;v.play()};
-      o.querySelector('.n').onclick=()=>{
-        o.innerHTML=`<h4>בוא ננסה בדרך אחרת · סעיף ${c.l}</h4>${c.alt?`<div class="alt">${MM(c.alt)}</div>`:''}<div class="bt"><button class="r">🔁 לראות שוב את הסעיף</button><button class="y">✅ עכשיו הבנתי, ממשיכים</button></div>`;
-        o.querySelector('.r').onclick=()=>{o.hidden=true;asked.delete(i);v.currentTime=c.t0;v.play()};
-        o.querySelector('.y').onclick=()=>{o.hidden=true;v.play()};
-      };
+      o.querySelector('.r').onclick=()=>{o.hidden=true;asked.delete(i);v.currentTime=c.t0;v.play()};
     }
     v.addEventListener('timeupdate',()=>{const t=v.currentTime;
       CH.forEach((c,i)=>{if(t<c.t0-0.5)asked.delete(i);
