@@ -68,7 +68,7 @@ python3 ../../fixtts.py       # מקליט מחדש משפטים חשודים (�
 
 ## 5. העלאה
 ```bash
-bash ../../publish.sh K א        # הגרסה שזוהתה בשלב 1
+bash ../../publish.sh K א        # הגרסה שזוהתה בשלב 1   (מריץ גם את tools/seo_build.py: דף לגוגל bagrut/K.html + sitemap)
 cd ~/pshut-math && git add -A && git commit -m "Bagrut videos: K" && git push
 ```
 אחרי כמה דקות בודקים שקובץ וידאו אחד ו-`sol/K.json` עונים 200 באתר החי.
