@@ -11,6 +11,7 @@ font=base64.b64encode(open(os.path.join(HERE,"SecularOne.ttf"),"rb").read()).dec
 logo=open(os.path.join(HERE,"logo.svg"),encoding="utf-8").read()
 def topic(n):
   t=open(os.path.join(HERE,"exams",K,f"q{n}.py"),encoding="utf-8").read()
+  if "intro2(" not in t and os.path.exists(os.path.join(HERE,"exams",K,f"s{n}.py")): t=open(os.path.join(HERE,"exams",K,f"s{n}.py"),encoding="utf-8").read()
   mm=re.search(r'intro2\(\s*\d+\s*,\s*"([^"]*)"',t); return mm.group(1) if mm else ""
 def html(n):
   return f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>

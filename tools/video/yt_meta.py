@@ -7,6 +7,7 @@ SEAS={8:"קיץ מועד ב",6:"קיץ מועד א",1:"חורף"}[m]
 HY={2022:'תשפ"ב',2023:'תשפ"ג',2024:'תשפ"ד',2025:'תשפ"ה',2026:'תשפ"ו',2027:'תשפ"ז'}.get(y,"")
 LV=qid[2]+' יח"ל'
 src=open(os.path.join(HERE,"exams",K,f"q{n}.py"),encoding="utf-8").read()
+if "intro2(" not in src and os.path.exists(os.path.join(HERE,"exams",K,f"s{n}.py")): src=open(os.path.join(HERE,"exams",K,f"s{n}.py"),encoding="utf-8").read()   # דוגמת סגנון 2
 mm=re.search(r'intro2\(\s*\d+\s*,\s*"([^"]*)"\s*,\s*"([^"]*)"',src)
 topic,sub=(mm.group(1),mm.group(2)) if mm else ("","")
 title=f"בגרות {qid} {SEAS} {y} שאלה {n} – {topic} | פתרון מלא"
@@ -23,6 +24,6 @@ if len(ch)>=3: D+=["פרקים:"]+[f"{ts(c['t'])} {c['l']}" for c in ch]+[""]
 D+=["פשוט להצליח במתמטיקה · אוראל פנחסי",f"#בגרות #מתמטיקה #{qid} #בגרות_במתמטיקה"]
 tags=[f"בגרות {qid}",f"{qid} {SEAS} {y}",f"{qid} {y}",f"פתרון בגרות {qid}",f"בגרות במתמטיקה {LV}",f"בגרות {SEAS} {y}",
       f"בגרות {HY}",topic,"בגרות במתמטיקה","פתרון בגרות","פשוט להצליח במתמטיקה","אוראל פנחסי"]
-out={"title":title,"description":"\n".join(D),"tags":[t.replace('"',"״") for t in tags if t],
+out={"title":title,"description":"\n".join(D),"tags":[t.replace('"',"״").replace(",","") for t in tags if t],
      "video":f"{BASE}media/yt/yt_{K}_{n}.mp4","thumbnail":f"{BASE}media/thumbs/{K}_{n}.jpg"}
 print(json.dumps(out,ensure_ascii=False,indent=1))

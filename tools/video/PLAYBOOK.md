@@ -75,13 +75,14 @@ cd ~/pshut-math && git add -A && git commit -m "Bagrut videos: K" && git push
 אחרי כמה דקות בודקים שקובץ וידאו אחד ו-`sol/K.json` עונים 200 באתר החי.
 מעדכנים את הרשומה ב-`queue.json` ל-`"status":"done"` ועושים commit ו-push.
 
-## 5ב. יוטיוב (אם יש בהרצה כלים של Zapier ליוטיוב)
-- מרנדרים גרסת יוטיוב לכל שאלה: `YT=1 python3 ../../build.py qN out/yt_K_N.mp4` (בלי "הבנת?").
-- מארחים את הקבצים בכתובת ציבורית: מעתיקים ל-`media/yt/` (לא נכנס לאתר עצמו), דוחפים, ומחכים שהכתובת תענה 200.
-- מעלים עם Zapier: `YouTubeV4CLIAPI` → `upload_video` (title, description, video=כתובת הקובץ, privacy_status public, category_id 27 = חינוך, made_for_kids false, default_language he, tags). הערוץ: "פשוט להצליח במתמטיקה" (UCZ4zlk-QN7rHPXG8Hc8gJ-Q).
-- כותרת: `בגרות <שאלון> <עונה> <שנה> שאלה N – <נושא> | פתרון מלא צעד אחרי צעד`. בתיאור: מה בשאלה, וקישור ל-https://orelpinchasi.github.io/pshut-math/bagrut.html#K
-- לא דרך Metricool (20 פוסטים בחודש, והם לסרטון השיווק). Zapier חוסם ("throttled") אחרי כמה העלאות רצופות — מעלים עד 4 בבת אחת, ואת השאר בהרצה הבאה. אם יוטיוב עונה שעברו את מכסת ההעלאות היומית — עוצרים וממשיכים מחר.
-- רושמים את מזהה הסרטון ב-`tools/video/youtube.json` (`{"K_N": "videoId"}`).
+## 5ב. יוטיוב (העלאה + שיפור החיפוש) — אוראל: "שהסרטונים יופיעו ראשונים בחיפוש ביוטיוב ובגוגל"
+- מרנדרים גרסת יוטיוב לכל שאלה: `YT=1 python3 ../../build.py qN out/yt_K_N.mp4` (בלי "הבנת?"). הרינדור כותב גם את הפרקים ל-`yt_chapters.json` בתיקיית הבחינה (מעלים אותו ל-git). אם הסרטון כבר רונדר: `YT=1 CH_ONLY=1 python3 ../../build.py qN x.mp4` (רק פרקים, משתמש בקריינות השמורה).
+- תמונה ממוזערת לכל שאלה: מהשורש `python3 tools/video/thumb.py K 1 2 3 ...` ← `media/thumbs/K_N.jpg` (משמשת גם את גוגל בדפי הפתרון).
+- מארחים: מעתיקים את `out/yt_*.mp4` ל-`media/yt/`, מוסיפים את `media/thumbs/` ו-`yt_chapters.json`, דוחפים, ומחכים שהכתובות יענו 200.
+- כותרת/תיאור/תגיות: `python3 tools/video/yt_meta.py K N` (מדפיס JSON: title, description עם פרקים וקישורים לדף הפתרון, tags, video, thumbnail). לא כותבים ידנית.
+- מעלים עם Zapier: `YouTubeV4CLIAPI` → `upload_video` עם הערכים מ-yt_meta (video=כתובת הקובץ, privacy_status public, category_id 27, made_for_kids false, default_language he, default_audio_language he). אחר כך: `upload_video_thumbnail` (video_id, thumbnail=כתובת התמונה), ו-`add_video_to_playlist` לפלייליסט של השאלון מ-`tools/video/yt_playlists.json`. אם אין פלייליסט לשאלון — יוצרים עם `_zap_raw_request` (POST https://www.googleapis.com/youtube/v3/playlists?part=snippet,status, כותרת "בגרות <שאלון> (<n> יח״ל) – פתרונות מלאים לכל המועדים", public) ורושמים את המזהה ב-yt_playlists.json.
+- הערוץ: "פשוט להצליח במתמטיקה" (UCZ4zlk-QN7rHPXG8Hc8gJ-Q). לא דרך Metricool. Zapier חוסם ("throttled") אחרי כמה העלאות רצופות — עד 4 העלאות בהרצה, והשאר בהרצה הבאה (יש גם משימה יומית נפרדת ב-13:17 שמעלה את מה שמחכה). אם יוטיוב עונה שעברו את מכסת ההעלאות היומית — עוצרים.
+- רושמים את מזהה הסרטון ב-`tools/video/youtube.json` (`{"K_N": "videoId"}`) ומריצים `python3 tools/seo_build.py`, כדי שדף הפתרון בגוגל יקשר לסרטון ביוטיוב (embedUrl). commit + push.
 
 ## 6. מגבלות
 - נפח: `du -sh media/bagrut` חייב להישאר מתחת ל-900MB. אם עוברים את זה, עוצרים ומדווחים.
