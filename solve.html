@@ -1161,7 +1161,7 @@ async function runFrom(i){
     const blk = blockOf(scenes[k]);
     const lns = blk ? [...blk.querySelectorAll(".ln")] : [];
     const penD = el => { const len = el.textContent.length; el.style.setProperty("--d", Math.min(3.2, .8 + len * .045) / rate + "s"); };
-    const capSet = t => { $("#cap").innerHTML = String(t || "").trim().split(/\s+/).filter(Boolean).map(w => `<span class="w todo">${esc(w)}</span>`).join(" "); return [...$("#cap").querySelectorAll(".w")]; };
+    const capSet = t => { $("#cap").innerHTML = String(t || "").replace(/\\[()]/g, "").replace(/\\(cdot|times)/g, "·").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "").trim().split(/\s+/).filter(Boolean).map(w => `<span class="w todo">${esc(w)}</span>`).join(" "); return [...$("#cap").querySelectorAll(".w")]; };
     const markOn = capW => n => { capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo")); const w = capW[Math.min(n, capW.length-1)], c = $("#cap"); if (w) c.scrollTop = Math.max(0, w.offsetTop - 5); };
     if (scenes[k].parts) {
       // כמו בסרטונים: כל שורה נכתבת לאט בזמן שמסבירים אותה
