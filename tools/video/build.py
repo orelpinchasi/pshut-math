@@ -37,6 +37,22 @@ for s in mod.SC:
     ST.append((R,say,0.9 if j==len(LL)-1 else 0.55,anim,s.get("sec")))
 from concurrent.futures import ThreadPoolExecutor
 with ThreadPoolExecutor(2) as ex: wavs=list(ex.map(tts,[x[1] for x in ST]))
+if V2 and YT:  # פרקים ליוטיוב (chapters): זמן ההתחלה של כל סצנה, לפי אורכי הקריינות (כמו ברינדור למטה)
+  import re as _re
+  _ch=[];_t=0.0;_i=0;_lastsec=None
+  for s in mod.SC:
+    if "cover" in s: lab="פתיחה" if _i==0 else "סיום"
+    else:
+      if not [l for l in s["L"] if not l[0]=="ask"]: continue
+      lab=_re.sub(r"<[^>]+>","",s["h"]).replace("·","–").replace(" (1)","").strip()
+    n=1 if "cover" in s else len([l for l in s["L"] if l[0]!="ask"])
+    sec=s.get("sec")
+    if not (sec and sec==_lastsec) and lab not in ("לפני שמתחילים","סיימנו!","סיום"): _ch.append({"t":round(_t,2),"l":lab})
+    _lastsec=sec
+    for k in range(n): _t+=round(dur(wavs[_i])+ST[_i][2],3); _i+=1
+  _f="yt_chapters.json"; _all=json.load(open(_f,encoding="utf-8")) if os.path.exists(_f) else {}
+  _all[sys.argv[1]]=_ch; json.dump(_all,open(_f,"w",encoding="utf-8"),ensure_ascii=False,indent=0)
+  if os.environ.get("CH_ONLY"): print("chapters",sys.argv[1],_ch); sys.exit()
 PROG=[0.2,0.4,0.6,0.8]
 from playwright.async_api import async_playwright
 async def shots():
