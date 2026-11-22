@@ -204,8 +204,8 @@ for q in BAG["q"]:
                  f'<td><a href="{E(s["pdf"])}" target="_blank" rel="noopener">השאלון</a></td>'
                  f'<td><a href="{E(s["sol"])}" target="_blank" rel="noopener">פתרון רשמי</a></td><td>{sol_link}</td></tr>')
     years = sorted({s["k"].split("_")[1] for s in q["ss"]})
-    title = f"בגרות במתמטיקה {qid} ({lv} {nm}) – כל המועדים {years[0]}–{years[-1]} עם פתרונות | {SITE}"
-    desc = f"שאלון {qid} – {lv}, {nm} (כיתה {gr}): כל בחינות הבגרות {years[0]}–{years[-1]}, חורף וקיץ, עם השאלון והפתרון, וסרטוני הסבר לכל נושא בשאלון."
+    title = f"בגרות {qid[2:]} ({qid}) במתמטיקה {lv} – כל המועדים {years[0]}–{years[-1]} עם פתרונות | {SITE}"
+    desc = f"פתרון בגרות {qid[2:]} – שאלון {qid}, {lv}, {nm} (כיתה {gr}): כל בחינות הבגרות {years[0]}–{years[-1]}, חורף וקיץ, עם השאלון והפתרון, וסרטוני הסבר לכל נושא בשאלון."
     page(f"bagrut/{qid}.html", title, desc, f"שאלון {qid} – {lv}, {nm}",
          f'<p class="lead">שאלון <b>{qid}</b> הוא {E(nm)} של מתמטיקה ב<b>{E(lv)}</b> (כיתה {E(gr)}, {E(q.get("w",""))} מהציון). '
          f'כאן כל הבחינות מהשנים {years[0]}–{years[-1]} – השאלון והפתרון הרשמי של משרד החינוך לכל מועד – וסרטוני הסבר על כל נושא שמופיע בבחינה.</p>'
@@ -261,7 +261,7 @@ for q in BAG["q"]:
                 vk = f"{s['k']}_{x['n']}"; th = f"media/thumbs/{vk}.jpg"; yid = YTIDS.get(vk)
                 if os.path.exists(th): vid = vid.replace('<video ', f'<video poster="../{th}" ', 1)
                 if yid: vid += f'<p class="note">▶️ <a href="https://www.youtube.com/watch?v={yid}" target="_blank" rel="noopener">לצפייה בסרטון ביוטיוב</a></p>'
-                vo = {"@type": "VideoObject", "name": f"פתרון בגרות {qid} {nm_s} – שאלה {x['n']}: {x.get('t','')}",
+                vo = {"@type": "VideoObject", "name": f"פתרון בגרות {qid[2:]} ({qid}) {nm_s} – שאלה {x['n']}: {x.get('t','')}",
                       "description": f"פתרון מלא בווידאו לשאלה {x['n']} ({x.get('t','')}) בבחינת הבגרות במתמטיקה {qid}, {nm_s}: כל סעיף צעד אחרי צעד.",
                       "thumbnailUrl": BASE + (th if os.path.exists(th) else "og-image.jpg"), "uploadDate": (subprocess.run(["git","log","-1","--format=%cs","--",mp4],capture_output=True,text=True).stdout.strip() or TODAY),
                       "contentUrl": BASE + mp4, "inLanguage": "he", "url": f"{BASE}bagrut/{s['k']}.html#q{x['n']}"}
@@ -276,8 +276,8 @@ for q in BAG["q"]:
                 vids.append(vo)
             qs += f'<section class="q" id="q{x["n"]}"><h2>שאלה {x["n"]} – {E(x.get("t",""))}</h2>{vid}{steps}</section>'
         toc = '<ul class="toc">' + "".join(f'<li><a href="#q{x["n"]}">שאלה {x["n"]} – {E(x.get("t",""))}</a></li>' for x in d["q"]) + "</ul>"
-        title = f"פתרון בגרות {qid} {nm_s} – פתרון מלא בווידאו לכל השאלות | {SITE}"
-        desc = f"פתרון מלא לבחינת הבגרות במתמטיקה {qid} ({lv}) {nm_s}: סרטון הסבר לכל שאלה, פתרון כתוב לכל סעיף ותשובות סופיות."
+        title = f"פתרון בגרות {qid[2:]} ({qid}) {nm_s} – פתרון מלא בווידאו לכל השאלות | {SITE}"
+        desc = f"פתרון בגרות {qid[2:]} {nm_s}: פתרון מלא לבחינת הבגרות במתמטיקה {qid} ({lv}) – סרטון הסבר לכל שאלה, פתרון כתוב לכל סעיף ותשובות סופיות."
         page(f"bagrut/{s['k']}.html", title, desc, f"פתרון בגרות {qid} – {nm_s}",
              f'<p class="lead">פתרון מלא לבחינת הבגרות <b>{qid}</b> ({E(lv)}, {E(nm)}) – <b>{E(nm_s)}</b>. לכל שאלה: סרטון הסבר, הדרך בכל סעיף והתשובה הסופית.</p>'
              f'<p class="note"><a href="{E(s["pdf"])}" target="_blank" rel="noopener">השאלון המקורי</a> · <a href="{E(s["sol"])}" target="_blank" rel="noopener">הפתרון הרשמי של משרד החינוך</a> · <a href="{qid}.html">כל המועדים של שאלון {qid}</a></p>'
