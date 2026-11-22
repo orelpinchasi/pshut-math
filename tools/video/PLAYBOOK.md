@@ -80,7 +80,7 @@ cd ~/pshut-math && git add -A && git commit -m "Bagrut videos: K" && git push
 - מארחים את הקבצים בכתובת ציבורית: מעתיקים ל-`media/yt/` (לא נכנס לאתר עצמו), דוחפים, ומחכים שהכתובת תענה 200.
 - מעלים עם Zapier: `YouTubeV4CLIAPI` → `upload_video` (title, description, video=כתובת הקובץ, privacy_status public, category_id 27 = חינוך, made_for_kids false, default_language he, tags). הערוץ: "פשוט להצליח במתמטיקה" (UCZ4zlk-QN7rHPXG8Hc8gJ-Q).
 - כותרת: `בגרות <שאלון> <עונה> <שנה> שאלה N – <נושא> | פתרון מלא צעד אחרי צעד`. בתיאור: מה בשאלה, וקישור ל-https://orelpinchasi.github.io/pshut-math/bagrut.html#K
-- לא דרך Metricool (20 פוסטים בחודש, והם לסרטון השיווק). אם יוטיוב עונה שעברו את מכסת ההעלאות היומית — עוצרים וממשיכים מחר.
+- לא דרך Metricool (20 פוסטים בחודש, והם לסרטון השיווק). Zapier חוסם ("throttled") אחרי כמה העלאות רצופות — מעלים עד 4 בבת אחת, ואת השאר בהרצה הבאה. אם יוטיוב עונה שעברו את מכסת ההעלאות היומית — עוצרים וממשיכים מחר.
 - רושמים את מזהה הסרטון ב-`tools/video/youtube.json` (`{"K_N": "videoId"}`).
 
 ## 6. מגבלות
