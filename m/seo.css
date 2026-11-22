@@ -1,4 +1,4 @@
-:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--paper:#fbf7ef;--ink:#1d2140;--muted:#6b6f86;--line:#e7e1d3}
+:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--paper:#fbf7ef;--ink:#1d2140;--muted:#5a5e75;--line:#e7e1d3}
 *{box-sizing:border-box}
 body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6}
 .wrap{max-width:1100px;margin:0 auto;padding:0 18px}

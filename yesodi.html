@@ -16,7 +16,7 @@
    PICTURE: הלוח עם השאלה המוצמדת וההמחשה המונפשת
    COLOUR/TYPE: כחול לילה + זהב של האתר, טורקיז ואלמוג לשמחה; Gveret Levin לכתב יד
    LAYOUT: עמודה אחת, השאלה דבוקה למעלה, שליטה דבוקה למטה */
-:root{--c:#fff;--g:#f5b83d;--g2:#ffd77a;--i:#1d2140;--l:#e7e1d3;--m:#6b6f86;--n:#141b3a;--n2:#1f2a57;--p:#fbf7ef;--t:#2bb3ab;--r:#e2675b;--ink:#1d2a6b;--red:#e0312b;--pur:#7c6be0}
+:root{--c:#fff;--g:#f5b83d;--g2:#ffd77a;--i:#1d2140;--l:#e7e1d3;--m:#5a5e75;--n:#141b3a;--n2:#1f2a57;--p:#fbf7ef;--t:#2bb3ab;--r:#e2675b;--ink:#1d2a6b;--red:#e0312b;--pur:#7c6be0}
 *{box-sizing:border-box;min-width:0}
 html{scroll-padding-top:90px}
 body{margin:0;font-family:"Rubik","Assistant","Segoe UI",Arial,sans-serif;background-color:#fdf6ff;background-image:radial-gradient(circle at 20px 20px,rgba(245,184,61,.18) 0 4px,transparent 5px),radial-gradient(circle at 70px 60px,rgba(43,179,171,.16) 0 5px,transparent 6px),radial-gradient(circle at 110px 25px,rgba(226,103,91,.14) 0 3px,transparent 4px),radial-gradient(circle at 40px 100px,rgba(124,107,224,.15) 0 4px,transparent 5px);background-size:140px 130px;color:var(--i);overflow-x:clip;--gc:#7c6be0}
@@ -273,6 +273,7 @@ svg.v{height:62cqh;width:auto;max-width:100%;direction:ltr;flex:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
 </style>
+<link rel="stylesheet" href="a11y.css">
 </head>
 <body>
 <div class="hd" id="hd"></div>
@@ -301,7 +302,7 @@ const fmt=s=>autoM(String(s)).replace(/(\d+)\/(\d+)/g,'<span class="fr"><b>$1</b
 const hasHe=s=>/[֐-׿]/.test(s);
 const ls={get(k,d){try{return JSON.parse(localStorage.getItem('pshut-y-'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('pshut-y-'+k,JSON.stringify(v))}catch(e){}}};
 const byId={};D.forEach(g=>g.T.forEach((t,i)=>{t.gid=g.id;t.i=i;byId[g.id+'-'+t.id]=t}));
-const GCOL={a:'#e2675b',b:'#f0a030',g:'#2bb3ab',d:'#4f8de0',e:'#7c6be0',v:'#d65aa0'};
+const GCOL={a:'#bf4136',b:'#a65a06',g:'#12756f',d:'#2b66b8',e:'#6553cf',v:'#b83f84'};
 const stars=k=>ls.get('st',{})[k]||0;const starStr=n=>'★'.repeat(n)+'☆'.repeat(3-n);
 const dl=(i,b=0)=>`style="animation-delay:${(b+i*0.12).toFixed(2)}s"`;
 const V={
@@ -616,5 +617,6 @@ window.__T={D,LES,VAUD,V,spokenNums,matchSpoken,optVals,options,getLP:()=>LP};
 parse();render();
 }
 </script>
+<footer style="text-align:center;padding:24px 12px 40px;color:#5a5e75;font-size:14px">© פשוט להצליח במתמטיקה · אוראל פנחסי<nav class="legal-links" aria-label="מידע משפטי"><a href="privacy.html">מדיניות פרטיות</a> <a href="terms.html">תנאי שימוש</a> <a href="accessibility.html">הצהרת נגישות</a></nav></footer>
 </body>
 </html>

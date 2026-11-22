@@ -224,7 +224,7 @@ function renderPanel(){
       <label><span>בית ספר <em>רשות</em></span><input name="school" value="${esc(p.school)}" maxlength="60"></label>
       <label><span>טלפון <em>רשות</em></span><input name="phone" type="tel" value="${esc(p.phone)}" maxlength="20" dir="ltr" autocomplete="tel"></label>
       <label class="chk"><input type="checkbox" name="updates" ${p.updates?"checked":""}><span>אשמח לקבל במייל עדכונים על סרטונים וחומרים חדשים. אפשר להסיר את עצמי בכל רגע.</span></label>
-      ${prof?"":`<label class="chk"><input type="checkbox" name="terms" required><span>קראתי את <a href="privacy.html" target="_blank">מדיניות הפרטיות</a>. אם אני מתחת לגיל 18 – ההורים שלי יודעים שנרשמתי.</span></label>`}
+      ${prof?"":`<label class="chk"><input type="checkbox" name="terms" required><span>קראתי את <a href="privacy.html" target="_blank">מדיניות הפרטיות</a> ואת <a href="terms.html" target="_blank">תנאי השימוש</a>. אם אני מתחת לגיל 18 – ההורים שלי יודעים שנרשמתי.</span></label>`}
       <p class="acct-err">${esc(msg)}</p>
       <button class="acct-btn gold wide" type="submit" ${busy?"disabled":""}>${prof?"שמירה":pending?"סיום – ולהמשיך לצפות ▶":"סיום ההרשמה"}</button>
     </form>${prof?`<button type="button" class="acct-back" data-act="card">→ חזרה</button>`:`<button type="button" class="acct-back" data-act="logout">ביטול ויציאה</button>`}`;

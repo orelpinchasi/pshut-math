@@ -1,0 +1,11 @@
+body{margin:0;font-family:Rubik,system-ui,sans-serif;background:#fbf7ef;color:#1d2140;line-height:1.7;font-size:17px}
+header{background:#141b3a;color:#fff;padding:14px 18px}
+header a{color:#ffd77a;text-decoration:none;font-weight:500}
+header a:hover,header a:focus-visible{text-decoration:underline}
+main{max-width:720px;margin:auto;padding:20px 18px 60px}
+h1{color:#141b3a;font-size:28px;margin:10px 0}
+h2{color:#141b3a;font-size:20px;margin:28px 0 6px}
+a{color:#1f4fb3}
+.muted{color:#5a5e75;font-size:15px}
+li{margin-bottom:6px}
+.box{background:#fff;border:1px solid #e7e1d3;border-radius:14px;padding:14px 18px;margin:14px 0}

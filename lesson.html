@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
 <style>
-:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--gold2:#ffd77a;--rose:#ef6f6c;--paper:#fbf7ef;--ink:#1d2140;--muted:#6b6f86;--line:#e7e1d3;--ok:#1f9d6b}
+:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--gold2:#ffd77a;--rose:#ef6f6c;--paper:#fbf7ef;--ink:#1d2140;--muted:#5a5e75;--line:#e7e1d3;--ok:#1f9d6b}
 *{box-sizing:border-box}
 body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;overflow-x:hidden}
 a{color:inherit}
@@ -230,6 +230,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 3
   .card.ex>.exq{grid-column:2;grid-row:1 / span 30;top:76px;max-height:calc(100vh - 100px);font-size:18px}
 }
 </style>
+<link rel="stylesheet" href="a11y.css">
 </head>
 <body>
 <header class="top">
@@ -282,7 +283,7 @@ footer{text-align:center;font-size:12.5px;color:var(--muted);padding:20px 16px 3
 
 <div class="ytm" id="ytm"><div class="box"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="סרטון"></iframe>
   <div class="bar"><span id="ytt"></span><span><a id="ytl" target="_blank" rel="noopener">ביוטיוב ↗</a> <button class="x" id="ytx" aria-label="סגירה">×</button></span></div></div></div>
-<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי · התרגילים נוצרים אוטומטית – אם משהו נראה לא נכון, <a href="https://wa.me/972506702628" target="_blank" rel="noopener">כתבו לי</a>.</footer>
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי · התרגילים נוצרים אוטומטית – אם משהו נראה לא נכון, <a href="https://wa.me/972506702628" target="_blank" rel="noopener">כתבו לי</a>.<nav class="legal-links" aria-label="מידע משפטי"><a href="privacy.html">מדיניות פרטיות</a> <a href="terms.html">תנאי שימוש</a> <a href="accessibility.html">הצהרת נגישות</a></nav></footer>
 
 <script>
 const WORKER_URL = "https://pshut-solve.pshut-math.workers.dev/";

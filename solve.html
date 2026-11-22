@@ -27,7 +27,7 @@
 <style>
 :root{
   --night:#141b3a; --night2:#1f2a57; --gold:#f5b83d; --gold2:#ffd77a; --rose:#ef6f6c;
-  --paper:#fbf7ef; --ink:#1d2140; --muted:#6b6f86; --line:#e7e1d3; --card:#ffffff; --r:18px;
+  --paper:#fbf7ef; --ink:#1d2140; --muted:#5a5e75; --line:#e7e1d3; --card:#ffffff; --r:18px;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;overflow-x:hidden}
@@ -326,13 +326,13 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 .work{position:relative;padding:12px 14px 20px;min-height:52vh}
 .work .tap{position:static;display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;border:2px dashed #f5b83d;background:#fff8e6;border-radius:16px;padding:14px;margin:4px 0 12px;color:#141b3a}
 .work .tap span{background:#141b3a;color:#fff;font-weight:800;font-size:18px;border-radius:999px;padding:10px 22px;box-shadow:none}
-.work .tap small{font-size:13px;color:#6b6f86}
+.work .tap small{font-size:13px;color:#5a5e75}
 .blk{margin:6px 0 16px;border-radius:12px;transition:background .3s;cursor:pointer}
 .blk.off{display:none}
 .blk.now{background:rgba(255,236,170,.35);box-shadow:0 0 0 2px rgba(245,184,61,.6)}
 .blk .hd{display:flex;align-items:center;gap:8px;font-family:"Gveret Levin",cursive;font-size:24px;color:#1d2a6b;line-height:1.2}
 .blk .num{flex:0 0 34px;height:34px;border:2.5px solid #e0312b;border-radius:50% 46% 52% 48%;display:grid;place-items:center;color:#e0312b;font-size:21px;font-family:"Gveret Levin",cursive}
-.blk .why{font-size:13.5px;color:#6b6f86;margin:2px 42px 4px 0;line-height:1.5}
+.blk .why{font-size:13.5px;color:#5a5e75;margin:2px 42px 4px 0;line-height:1.5}
 .blk .ln{opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
 .blk .ln:not(.in){max-height:0;overflow:hidden;margin:0;padding-top:0;padding-bottom:0}
 .blk .ln.in{opacity:1;transform:none}
@@ -419,6 +419,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   .blk .ln.text{font-size:21px}
 }
 </style>
+<link rel="stylesheet" href="a11y.css">
 </head>
 <body>
 
@@ -449,6 +450,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
           <label class="gal"><span class="ic"><svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 4h21l9 9v31H10z" fill="#fff" stroke="#1d2140" stroke-width="2.2" stroke-linejoin="round"/><path d="M31 4v9h9" fill="none" stroke="#1d2140" stroke-width="2.2" stroke-linejoin="round"/><text x="25" y="28" font-size="11" font-family="Arial" font-weight="700" text-anchor="middle" fill="#1d2140">π √x</text><path d="M16 35h18" stroke="#f5b83d" stroke-width="2.4" stroke-linecap="round"/></svg></span>שאלה ששמורה בטלפון<input type="file" accept="image/*" id="inGal"></label>
         </div>
         <div class="tips"><span>☀️ באור טוב</span><span>📐 ישר מלמעלה</span><span>1️⃣ שאלה אחת בכל פעם</span></div>
+        <p class="privnote" style="text-align:center;color:var(--muted);font-size:13px;margin:12px 0 0;line-height:1.6">🔒 התמונה נשלחת לפענוח במערכת בינה מלאכותית (Google Gemini), ואנחנו לא שומרים אותה. צלמו רק את השאלה, בלי שם, פנים או פרטים אישיים. <a href="privacy.html#solve">פרטים נוספים</a></p>
       </div>
 
       <div class="preview" id="prevBox" hidden>
@@ -533,7 +535,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
 <div class="ytm" id="ytm"><div class="box"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="סרטון"></iframe>
   <div class="bar"><span id="ytt"></span><span><a id="ytl" target="_blank" rel="noopener">ביוטיוב ↗</a> <button class="x" id="ytx" aria-label="סגירה">×</button></span></div></div></div>
 
-<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי</footer>
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי<nav class="legal-links" aria-label="מידע משפטי"><a href="privacy.html">מדיניות פרטיות</a> <a href="terms.html">תנאי שימוש</a> <a href="accessibility.html">הצהרת נגישות</a></nav></footer>
 
 <script>
 /* =========================================================

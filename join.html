@@ -18,7 +18,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=Secular+One&display=swap" rel="stylesheet">
 <style>
-:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--gold2:#ffd77a;--paper:#fbf7ef;--ink:#1d2140;--muted:#6b6f86;--line:#e7e1d3;--teal:#2bb3ab}
+:root{--night:#141b3a;--night2:#1f2a57;--gold:#f5b83d;--gold2:#ffd77a;--paper:#fbf7ef;--ink:#1d2140;--muted:#5a5e75;--line:#e7e1d3;--teal:#2bb3ab}
 *{box-sizing:border-box}
 body{margin:0;font-family:Rubik,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6}
 a{color:inherit}
@@ -72,6 +72,7 @@ h2{font-family:"Secular One",Rubik,sans-serif;font-weight:400;font-size:clamp(28
 .final h2{color:#fff}.final .sub{color:rgba(255,255,255,.75)}
 footer{text-align:center;color:var(--muted);font-size:13.5px;padding:24px 0 40px}footer a{color:var(--muted)}
 </style>
+<link rel="stylesheet" href="a11y.css">
 </head>
 <body>
 <header><div class="wrap">
@@ -156,7 +157,7 @@ footer{text-align:center;color:var(--muted);font-size:13.5px;padding:24px 0 40px
   </div>
 </section>
 
-<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי · <a href="privacy.html">מדיניות פרטיות</a></footer>
+<footer>© פשוט להצליח במתמטיקה · אוראל פנחסי<nav class="legal-links" aria-label="מידע משפטי"><a href="privacy.html">מדיניות פרטיות</a> <a href="terms.html">תנאי שימוש</a> <a href="accessibility.html">הצהרת נגישות</a></nav></footer>
 
 <script>
 (function(){

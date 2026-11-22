@@ -81,6 +81,7 @@ def page(path, title, desc, h1, body, crumbs, extra_ld=None):
 <link rel="icon" href="{up}icons/icon-192.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{up}m/seo.css">
+<link rel="stylesheet" href="{up}a11y.css">
 {ld}
 </head>
 <body>
@@ -91,7 +92,7 @@ def page(path, title, desc, h1, body, crumbs, extra_ld=None):
 <h1>{E(h1)}</h1>
 {body}
 </main>
-<footer><div class="wrap">{SITE} · אוראל פנחסי · <a href="{up}index.html">לאתר</a> · <a href="{up}m/">כל הנושאים</a> · <a href="{up}bagrut/">בחינות בגרות</a> · <a href="{up}privacy.html">פרטיות</a></div></footer>
+<footer><div class="wrap">{SITE} · אוראל פנחסי · <a href="{up}index.html">לאתר</a> · <a href="{up}m/">כל הנושאים</a> · <a href="{up}bagrut/">בחינות בגרות</a> · <a href="{up}privacy.html">פרטיות</a> · <a href="{up}terms.html">תנאי שימוש</a> · <a href="{up}accessibility.html">הצהרת נגישות</a></div></footer>
 </body>
 </html>
 """
@@ -269,7 +270,7 @@ page("bagrut/index.html", f"בחינות בגרות במתמטיקה עם פתר
      [(SITE, "index.html"), ("בחינות בגרות", "bagrut/")])
 
 # ---------- sitemap + robots ----------
-MAIN = ["", "join.html", "bagrut.html", "solve.html", "worksheets.html", "yesodi.html", "learn.html", "lesson.html", "privacy.html"]
+MAIN = ["", "join.html", "bagrut.html", "solve.html", "worksheets.html", "yesodi.html", "learn.html", "lesson.html", "privacy.html", "accessibility.html", "terms.html"]
 urls = [BASE + u for u in MAIN if u == "" or os.path.exists(u)] + [BASE + (p[:-10] if p.endswith("index.html") else p) for p in PAGES]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + \
      "".join(f"  <url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"

@@ -11,7 +11,7 @@ root.innerHTML=`<div class="p-hd"><span class="p-kick">לפי תוכנית הל�
 <div class="p-prog"><div class="p-ttl" id="pTtl"></div><div class="row"><b id="pPt"></b><div class="p-bar"><i id="pPb"></i></div></div></div>
 <div class="p-units" id="pUnits"></div><div class="practice" id="pPr"></div><div class="p-note" id="pNote"></div>`;
 function save(){st.set("pshut-done",JSON.stringify(done))}
-function vrow(id,n,rest){const r=VID[id];if(!r)return"";return `<div class="v${done[id]?" done":""}${rest?" rest":""}" data-vid="${id}" role="button" tabindex="0"><span class="n">${n}</span><img loading="lazy" src="t/${id}.webp" alt="" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/mqdefault.jpg'"><span class="vt">${esc(r.title)}</span><button class="ck" type="button" aria-label="סימון צפיתי">✓</button></div>`}
+function vrow(id,n,rest){const r=VID[id];if(!r)return"";return `<div class="v${done[id]?" done":""}${rest?" rest":""}" data-vid="${id}"><button class="vp" type="button"><span class="n">${n}</span><img loading="lazy" src="t/${id}.webp" alt="" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/mqdefault.jpg'"><span class="vt">${esc(r.title)}</span></button><button class="ck" type="button" aria-label="סימון צפיתי" aria-pressed="${!!done[id]}">✓</button></div>`}
 function mat(m){if(!Array.isArray(m))return mbm(m);return `<a class="m" href="${m[1]}" target="_blank" rel="noopener"><span class="ft">${esc(m[2])}</span>${esc(m[0])}<span class="src">משרד החינוך</span></a>`}
 function mbm(m,rest){const pm=m.t.match(/^(פרק(?:ים)? [\d-]+) · (.*)$/);return `<div class="m mb${rest?" rest":""}"><span class="ft">PDF</span><span class="mt">${pm?`<b>${esc(pm[2])}</b> <small>${esc(pm[1])} · תשפ״ז</small>`:esc(m.t)}</span><span class="lk">${m.l.map(([l,u])=>`<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}</span></div>`}
 function mats(u,p){const a=u.mats.filter(Array.isArray),b=u.mats.filter(x=>!Array.isArray(x));if(!a.length&&!b.length)return `<div class="none">${p.practice?"דפי עבודה לתרגול – בהמשך העמוד":"תרגלו עם הסרטונים, ואם נתקעתם – צלמו שאלה 📸"}</div>`;
@@ -32,7 +32,7 @@ function render(){
     const more=u.v.length>SHOW?`<button type="button" class="showall">הצגת כל ${u.v.length} הסרטונים לפי הסדר ▾</button>`:"";
     const mts=mats(u,p);
     return `<div class="unit${k===fo?" open":""}${full?" full":""}" data-k="${k}"><div class="dot">${full?"✓":k+1}</div><div class="card">
-<div class="uh"><h3>${esc(u.t)}</h3>${u.m?`<span class="mo">${esc(u.m)}</span>`:""}<span class="cnt">${all.length?`${dn}/${all.length} סרטונים`:""}</span><button class="tg" type="button" aria-label="פתיחה">▾</button></div>
+<div class="uh"><h3>${esc(u.t)}</h3>${u.m?`<span class="mo">${esc(u.m)}</span>`:""}<span class="cnt">${all.length?`${dn}/${all.length} סרטונים`:""}</span><button class="tg" type="button" aria-label="פתיחה וסגירה של הנושא" aria-expanded="${k===fo}">▾</button></div>
 <div class="body"><div class="cols"><div><h4>מה לומדים</h4><ul>${u.learn.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div><div><h4>חומרי עבודה</h4>${mts}</div></div>
 <h4>🎬 הסרטונים לפי הסדר</h4><div class="vs">${vids}</div>${more}</div></div></div>`}).join("");
   q("#pPr").innerHTML=p.practice?`<div class="card"><div class="uh"><h3>📄 ${esc(p.practice[0])}</h3><span class="mo">משרד החינוך</span></div><p class="none" style="margin:8px 0 12px">דפי עבודה ותרגול של משרד החינוך, לחזרה ולתרגול נוסף לאורך השנה.</p><div class="grid2">${p.practice[1].map(mat).join("")}</div></div>`:"";
@@ -44,7 +44,7 @@ function pick(id,scroll){cur=D.paths.find(x=>x.id===id)||D.paths[0];st.set("pshu
 function setDone(id,v){if(window.PSHUT){window.PSHUT.mark(id,!!v,VID[id]&&VID[id].title);return}done[id]=v;save();refresh()}
 /* account.js מודיע כשההתקדמות משתנה (סימון בעמוד הבית, או סנכרון מהחשבון) */
 addEventListener("pshut-sync",()=>{if(window.PSHUT)done=window.PSHUT.done();if(cur)refresh()});
-function refresh(){root.querySelectorAll(".v[data-vid]").forEach(e=>e.classList.toggle("done",!!done[e.dataset.vid]));
+function refresh(){root.querySelectorAll(".v[data-vid]").forEach(e=>{e.classList.toggle("done",!!done[e.dataset.vid]);const c=e.querySelector(".ck");if(c)c.setAttribute("aria-pressed",String(!!done[e.dataset.vid]))});
   root.querySelectorAll(".unit").forEach(s=>{const u=cur.units[s.dataset.k],a=ids(u),dn=a.filter(i=>done[i]).length,f=a.length&&dn===a.length;s.querySelector(".cnt").textContent=a.length?`${dn}/${a.length} סרטונים`:"";s.classList.toggle("full",!!f);s.querySelector(".dot").textContent=f?"✓":(+s.dataset.k+1)});prog();}
 function play(id){const t=VID[id]?VID[id].title:"";if(window.PSHUT&&window.PSHUT.gate(id,t))return;setDone(id,true);if(typeof window.openModal==="function")window.openModal(id,t);else window.open("https://www.youtube.com/watch?v="+id,"_blank","noopener");}
 root.addEventListener("click",e=>{
@@ -54,9 +54,8 @@ root.addEventListener("click",e=>{
   const v=e.target.closest(".v");if(v){play(v.dataset.vid);return}
   const mb=e.target.closest(".mball");if(mb){const c=mb.parentElement;c.classList.toggle("mbopen");mb.textContent=c.classList.contains("mbopen")?"הצגת פחות ▴":`עוד ${c.querySelectorAll(".mb.rest").length} דפים ▾`;return}
   const sa=e.target.closest(".showall");if(sa){const vs=sa.previousElementSibling;vs.classList.toggle("all");sa.textContent=vs.classList.contains("all")?"הצגת פחות ▴":sa.textContent.replace("▴","▾").replace("הצגת פחות",`הצגת כל ${vs.querySelectorAll(".v:not(.rest)").length+vs.querySelectorAll(".rest").length} הסרטונים לפי הסדר`);return}
-  const h=e.target.closest(".uh");if(h){h.closest(".unit").classList.toggle("open");return}
+  const h=e.target.closest(".uh");if(h){const u=h.closest(".unit");if(!u)return;const o=u.classList.toggle("open");const t=h.querySelector(".tg");if(t)t.setAttribute("aria-expanded",String(o));return}
 });
-root.addEventListener("keydown",e=>{const v=e.target.closest&&e.target.closest(".v");if(v&&e.key==="Enter")play(v.dataset.vid)});
 /* קישורים חיצוניים לכיתה: <a href="#p-z"> */
 document.addEventListener("click",e=>{const a=e.target.closest('a[href^="#p-"]');if(!a||!D)return;e.preventDefault();pick(a.getAttribute("href").slice(3),true)});
 addEventListener("hashchange",()=>{const h=location.hash;if(D&&h.startsWith("#p-")&&h.slice(3)!==cur.id)pick(h.slice(3),true)});
