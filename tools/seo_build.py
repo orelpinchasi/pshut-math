@@ -199,7 +199,7 @@ for q in BAG["q"]:
     rows = ""
     for s in q["ss"]:
         full = os.path.exists(f"sol/{s['k']}.json")
-        sol_link = f'<a class="go" href="{s["k"]}.html">▶ פתרון מלא בווידאו</a>' if full else ""
+        sol_link = f'<a class="go" href="{s["k"]}.html">▶ פתרון מלא בווידאו</a>' if full else f'<a href="{s["k"]}.html">דף המועד ←</a>'
         rows += (f'<tr><td><b>{E(sess_name(s))}</b> <small>{E(s.get("hy","").replace(chr(34),"״"))}</small></td>'
                  f'<td><a href="{E(s["pdf"])}" target="_blank" rel="noopener">השאלון</a></td>'
                  f'<td><a href="{E(s["sol"])}" target="_blank" rel="noopener">פתרון רשמי</a></td><td>{sol_link}</td></tr>')
@@ -216,6 +216,30 @@ for q in BAG["q"]:
          [(SITE, "index.html"), ("בחינות בגרות", "bagrut/"), (f"שאלון {qid}", f"bagrut/{qid}.html")],
          [itemlist(pids)])
     bag_cards += f'<a class="box" href="{qid}.html"><b>{qid}</b><span>{E(lv)} · {E(nm)} · כיתה {E(gr)}</span></a>'
+
+    # דפי מועד בלי פתרון מלא: שאלון, פתרון רשמי וסרטוני הנושאים
+    for s in q["ss"]:
+        if os.path.exists(f"sol/{s['k']}.json"): continue
+        nm_s = sess_name(s)
+        hy = s.get("hy", "").replace('"', "״")
+        sv = [x[0] for x in s.get("v", []) if isinstance(x, (list, tuple)) and x and x[0] in TITLE]
+        others = [o for o in q["ss"] if o["k"] != s["k"]][:6]
+        page(f"bagrut/{s['k']}.html",
+             f"בגרות {qid} {nm_s} – שאלון ופתרון | {SITE}",
+             f"בחינת הבגרות במתמטיקה {qid} ({lv}, {nm}) – {nm_s}" + (f" ({hy})" if hy else "") + ": השאלון המקורי, הפתרון הרשמי של משרד החינוך וסרטוני הסבר לכל נושא בשאלון.",
+             f"בגרות {qid} – {nm_s}",
+             f'<p class="lead">בחינת הבגרות במתמטיקה <b>{qid}</b> ({E(lv)}, {E(nm)}, כיתה {E(gr)}) – <b>{E(nm_s)}</b>' + (f" {E(hy)}" if hy else "") + '. '
+             f'כאן השאלון המקורי והפתרון הרשמי של משרד החינוך, וסרטוני הסבר על הנושאים שמופיעים בשאלון.</p>'
+             f'<div class="boxes"><a class="box" href="{E(s["pdf"])}" target="_blank" rel="noopener"><b>📄 השאלון</b><span>{qid} – {E(nm_s)}</span></a>'
+             f'<a class="box" href="{E(s["sol"])}" target="_blank" rel="noopener"><b>✅ פתרון רשמי</b><span>משרד החינוך</span></a>'
+             f'<a class="box" href="{E(BAG["formula"].get(lv[0], ""))}" target="_blank" rel="noopener"><b>📐 דף נוסחאות</b><span>{E(lv)}</span></a></div>'
+             + CTA(up)
+             + (f'<h2>סרטונים לשאלות מהמועד הזה</h2>' + vlist(sv, up) if sv else "")
+             + f'<h2>סרטוני הסבר לפי הנושאים בשאלון {qid}</h2>{parts}'
+             + '<h2>מועדים נוספים</h2><ul class="toc">' + "".join(f'<li><a href="{o["k"]}.html">{qid} – {E(sess_name(o))}</a></li>' for o in others)
+             + f'<li><a href="{qid}.html">כל המועדים של שאלון {qid} ←</a></li></ul>',
+             [(SITE, "index.html"), ("בחינות בגרות", "bagrut/"), (f"שאלון {qid}", f"bagrut/{qid}.html"), (nm_s, f"bagrut/{s['k']}.html")],
+             [itemlist(pids)])
 
     # דפי מועד עם פתרון מלא
     for s in q["ss"]:
