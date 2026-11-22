@@ -418,6 +418,17 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
   .qnotes{font-size:18px}
   .blk .ln.text{font-size:21px}
 }
+/* ===== סגנון 2 (כמו בסרטוני הבגרות): הצילום של השאלה בצד, כותבים לאט שורה אחרי שורה, ולכל שורה הסבר בקול ===== */
+.qimg img{display:block;width:100%;max-height:26vh;object-fit:contain;background:#fff;border:1.5px solid #cfd8e6;border-radius:10px;cursor:zoom-in;margin:4px 0 6px}
+.qimg:empty{display:none}
+@media (min-width:900px){ .qimg img{max-height:46vh} }
+.blk .ln.why2{margin:4px 0 6px}
+.blk .ln.why2 .pen{background:#fff6dc;color:#7a4a00;border-right:5px solid #f5b83d;border-radius:8px;padding:3px 10px;font-size:17px;line-height:1.5}
+.blk .ln.data .lb{color:#c92a2a;font-weight:700;margin-left:6px}
+.blk .ln.ask .lb{color:#2b8a3e;font-weight:700;margin-left:6px}
+.blk .ln.cur:not(.why2):not(.hd) .pen{background:linear-gradient(transparent 62%,rgba(255,214,10,.5) 62%)}
+.blk .rulep{display:inline-block;background:#141b3a;color:#ffd77a;font-weight:800;border-radius:999px;padding:3px 14px;margin-top:6px}
+.blk.has-says>.why{display:none}
 </style>
 <link rel="stylesheet" href="a11y.css">
 </head>
@@ -496,6 +507,7 @@ footer{padding:30px 0 40px;color:var(--muted);font-size:13px;text-align:center}
       <aside class="qcol" id="qcol">
         <div class="qhead"><span class="qlbl">📄 השאלה</span><button class="qb" id="qPhoto" hidden>📷 הצילום שלי</button><button class="qb" id="qFold" aria-label="הקטנה">▴</button></div>
         <div class="qbody" id="qbody">
+          <div class="qimg" id="qImg"></div>
           <div class="qfig" id="qFig"></div>
           <div class="qtext" id="qText"></div>
           <div class="qnotes" id="qNotes" data-k="givens"></div>
@@ -784,12 +796,21 @@ function buildScenes(L){
     html:`${L.question ? `<div class="ln text bigq"><span class="k">השאלה כפי שהבנתי</span>${mixed(L.question)}</div>` : ""}
           ${L.big_idea ? `<div class="ln big">💡 ${esc(L.big_idea)}</div>` : ""}`,
     say:`בואו נפתור את זה יחד. ${L.big_idea || ""}` });
-  const bfig = figSVG(L.figure, false), bgiv = giversHTML(L, "bgiv");
-  if (bfig || bgiv) out.push({ key:"givens", num:"הנתונים", ttl:"📋 מה נתון ומה מחפשים", hl:"all", html:`<div class="ln text bgiv" style="text-align:right">${bgiv.replace(/<h5>/g,"<b>").replace(/<\/h5>/g,"</b>")}</div>`,
-    say: (() => { const pl = a => (a || []).map(g => String(g).replace(/\\[()]/g, "").replace(/\\perp/g, "⊥").replace(/\\angle/g, "∠").replace(/\\cdot/g, "·").replace(/\\[a-zA-Z]+/g, "").replace(/[{}]/g, "").trim());
-      return "בוא נסדר את מה שיש לנו. " + (L.givens && L.givens.length ? "נתון לנו: " + pl(L.givens).join(". ") + ". " : "") + (L.wanted && L.wanted.length ? "ומה מחפשים: " + pl(L.wanted).join(". ") + "." : ""); })() });
-  L.steps.forEach((s,i) => out.push({ key:`step-${i}`, num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:s.board||[], mark:s.mark, say:s.say||"",
-    hl: [s.title, s.mark, ...(s.board||[]).map(b => b.v)].join(" ") }));
+  const spk = g => String(g || "").replace(/\\perp/g, " מאונך ל ").replace(/\\angle/g, " זווית ");
+  const giv = L.givens || [], want = L.wanted || [];
+  if (giv.length || want.length) {
+    const parts = [{ say:"התשובות נמצאות בנתונים. אז קוראים את השאלה לאט, וכל נתון רושמים בצד.", ln:0 }]
+      .concat(giv.map((g, j) => ({ say:"נתון: " + spk(g) + ".", ln:1 + j })))
+      .concat(want.map((w, j) => ({ say:(j ? "ועוד שואלים: " : "ומה שואלים? ") + spk(w) + ".", ln:1 + giv.length + j })));
+    out.push({ key:"givens", num:"הנתונים", ttl:"📄 קוראים את השאלה", hl:"all", parts, say: parts.map(p => p.say).join(" ") });
+  }
+  L.steps.forEach((s,i) => {
+    const b = s.board || [], says = b.some(x => x.say);
+    const parts = says ? [{ say:s.say || "", ln:0 }].concat(b.map((x, j) => ({ say:x.say || "", ln:1 + j }))) : null;
+    out.push({ key:`step-${i}`, num:`שלב ${i+1} מתוך ${L.steps.length}`, ttl:s.title, lines:b, mark:s.mark, parts,
+      say: parts ? parts.map(p => p.say).filter(Boolean).join(" ") : (s.say||""),
+      hl: [s.title, s.mark, ...b.map(x => x.v)].join(" ") });
+  });
   if (L.answer) out.push({ key:"answer", num:"התשובה", ttl:"🎯 הגענו!", answer:true,
     html:`<div class="ln answer-box"><span class="k">התשובה הסופית</span><div class="ln math in">${tex(L.answer.tex)}</div></div>
           ${L.check ? `<div class="ln text">✅ איך בודקים: ${mixed(L.check)}</div>` : ""}`,
@@ -819,6 +840,7 @@ function openLesson(L, notes=[], img=null){
   // צד השאלה
   $("#qText").innerHTML = L.question ? qHTML(L.question) : (img ? "" : "");
   $("#qPhoto").hidden = !img;
+  $("#qImg").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם" title="הגדלה">` : "";
   $("#qBigIn").innerHTML = img ? `<img src="${img}" alt="השאלה שצילמתם">` : `<div class="qtxt">${qHTML(L.question)}</div>`;
   const giv = (L.givens || []), want = (L.wanted || []);
   $("#qNotes").innerHTML = (giv.length ? `<b>נתונים</b>${giv.map((g, i) => `<div class="gi" data-g="${i}">${mixed(g)}</div>`).join("")}` : "") + (want.length ? `<b style="margin-top:4px">מחפשים</b>${want.map((g, i) => `<div class="wi" data-w="${i}">${mixed(g)}</div>`).join("")}` : "");
@@ -923,6 +945,7 @@ function giversHTML(L, cls){
 }
 
 function lineHTML(b, mark){
+  if (b.t === "why") return `<div class="ln text why2"><span class="pen">💡 ${mixed(b.v)}</span></div>`;
   if (b.t === "math") {
     let v = b.v; if (mark && v.includes(mark)) v = v.split(mark).join(`\\textcolor{#e0312b}{${mark}}`);
     return `<div class="ln math"><span class="pen">${tex(v)}</span></div>`;
@@ -936,18 +959,24 @@ function renderPage(L){
       ${L.overview.goal ? `<p><b>המטרה:</b> ${mixed(L.overview.goal)}</p>` : ""}${L.overview.what ? `<p><b>מה עושים:</b> ${mixed(L.overview.what)}</p>` : ""}
       ${(L.overview.tools||[]).map(t => `<div class="tool">🛠️ ${mixed(t)}</div>`).join("")}</div></div></div>`;
   h += `<div class="blk" data-k="intro">${L.big_idea ? `<div class="ln text"><span class="pen idea-h">💡 ${esc(L.big_idea)}</span></div>` : `<div class="ln text"><span class="pen idea-h">בואו נפתור ביחד ✏️</span></div>`}</div>`;
+  const giv = L.givens || [], want = L.wanted || [];
+  if (giv.length || want.length)
+    h += `<div class="blk has-says" data-k="givens"><div class="ln text hd"><span class="num">📄</span><span class="pen">קוראים את השאלה</span></div>`
+      + giv.map(g => `<div class="ln text data"><span class="pen"><span class="lb">נתון:</span>${mixed(g)}</span></div>`).join("")
+      + want.map(w => `<div class="ln text ask"><span class="pen"><span class="lb">מה שואלים?</span>${mixed(w)}</span></div>`).join("") + `</div>`;
   L.steps.forEach((s, i) => {
-    h += `<div class="blk" data-k="step-${i}"><div class="ln text hd"><span class="num">${i+1}</span><span class="pen">${esc(s.title)}</span></div>`
+    const says = (s.board || []).some(b => b.say);
+    h += `<div class="blk${says ? " has-says" : ""}" data-k="step-${i}"><div class="ln text hd"><span class="num">${i+1}</span><span class="pen">${esc(s.title)}</span></div>`
       + (s.say ? `<div class="why">${esc(s.say)}</div>` : "")
       + (s.board || []).map(b => lineHTML(b, s.mark)).join("") + `</div>`;
   });
   if (L.answer) h += `<div class="blk" data-k="answer"><div class="ln text hd"><span class="num">🎯</span><span class="pen">התשובה</span></div>
     <div class="ln math"><span class="pen"><span class="ansbox">${tex(L.answer.tex, false)}</span></span></div>
     ${L.check ? `<div class="ln text"><span class="pen chk">✅ איך בודקים: ${mixed(L.check)}</span></div>` : ""}</div>`;
-  if (L.remember) h += `<div class="blk" data-k="remember"><div class="ln text"><div class="postit">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}<br><small>כל אחד יכול להצליח. רק צריך תנאים נכונים.</small></div></div></div>`;
+  if (L.remember) h += `<div class="blk" data-k="remember"><div class="ln text"><div class="postit">⭐ <b>לזכור לפעם הבאה:</b> ${esc(L.remember)}<br><small>כל אחד יכול להצליח. רק צריך תנאים נכונים.</small></div></div><div class="ln text"><span class="pen rulep">פשוט ליהנות</span></div></div>`;
   $("#blocks").innerHTML = h;
 }
-const blockOf = sc => sc && sc.key && (sc.key === "givens" ? $("#qNotes") : document.querySelector(`#blocks [data-k="${sc.key}"]`));
+const blockOf = sc => sc && sc.key && document.querySelector(`#blocks [data-k="${sc.key}"]`);
 function showAll(){
   document.querySelectorAll("#blocks .blk").forEach(b => { b.classList.remove("off","now"); b.querySelectorAll(".ln").forEach(l => l.classList.add("in")); });
   $("#qNotes").classList.add("on"); $("#qNotes").classList.remove("now");
@@ -961,8 +990,7 @@ function setUpTo(i){
     if (k < i) b.querySelectorAll(".ln").forEach(l => l.classList.add("in"));
     if (k === i) b.querySelectorAll(".ln").forEach(l => l.classList.remove("in"));
   });
-  const gi = keys.indexOf("givens");
-  $("#qNotes").classList.toggle("on", gi >= 0 && gi <= i);
+  $("#qNotes").classList.add("on");
 }
 function follow(el){
   if (!el || el.id === "qNotes") return;
@@ -1054,27 +1082,30 @@ let ttsCache = {}, ttsQueue = [], ttsBusy = 0, ttsFails = 0;
 const NA = new Audio(); NA.preload = "auto";
 function ttsReset(){ Object.values(ttsCache).forEach(e => e.url && URL.revokeObjectURL(e.url)); ttsCache = {}; ttsQueue = []; ttsFails = 0; }
 function ttsWanted(){ return WORKER_URL && natVoice !== "device" && ttsFails < 3; }
-function ttsGet(k){
-  if (!ttsWanted() || !scenes[k] || !scenes[k].say.trim()) return null;
-  const key = k + "|" + natVoice;
+function ttsT(text){
+  text = String(text || "").trim();
+  if (!ttsWanted() || !text) return null;
+  const key = text + "|" + natVoice;
   if (ttsCache[key]) return ttsCache[key].p;
   const e = ttsCache[key] = {};
-  e.p = new Promise(res => { ttsQueue.push({ k, e, res, voice: natVoice }); ttsPump(); });
+  e.p = new Promise(res => { ttsQueue.push({ text, e, res, voice: natVoice }); ttsPump(); });
   return e.p;
 }
+const sceneSays = sc => sc ? (sc.parts ? sc.parts.map(p => p.say) : [sc.say]).filter(t => t && t.trim()) : [];
+function ttsGet(k){ const t = sceneSays(scenes[k]); t.slice(1).forEach(ttsT); return t.length ? ttsT(t[0]) : null; }
 function ttsPump(){
   while (ttsBusy < 2 && ttsQueue.length) {
     const job = ttsQueue.shift(); ttsBusy++;
     const ctrl = ("AbortController" in window) ? new AbortController() : null; const t = setTimeout(() => ctrl && ctrl.abort(), 45000);
     fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, signal: ctrl ? ctrl.signal : undefined,
-      body: JSON.stringify({ tts: speakFix(scenes[job.k].say), voice: job.voice }) })
+      body: JSON.stringify({ tts: speakFix(job.text), voice: job.voice }) })
       .then(r => r.ok && /audio/.test(r.headers.get("content-type") || "") ? r.blob() : Promise.reject(r.status))
       .then(b => { job.e.url = URL.createObjectURL(b); ttsFails = 0; job.res(job.e.url); })
       .catch(() => { ttsFails++; job.res(null); })
       .finally(() => { clearTimeout(t); ttsBusy--; ttsPump(); });
   }
 }
-function ttsPrefetch(k){ for (let j = k; j < Math.min(scenes.length, k + 3); j++) ttsGet(j); }
+function ttsPrefetch(k){ for (let j = k; j < Math.min(scenes.length, k + 2); j++) sceneSays(scenes[j]).forEach(ttsT); }
 function playNatural(url, id, words, onWord){
   return new Promise(resolve => {
     let done = false, tick;
@@ -1088,11 +1119,11 @@ function playNatural(url, id, words, onWord){
   });
 }
 async function speak(text, id, onWord, k){
-  if (!muted && ttsWanted() && k != null) {
+  if (!muted && ttsWanted() && k != null && String(text || "").trim()) {
     ttsPrefetch(k);
     const words = text.trim().split(/\s+/).filter(Boolean);
     const cap = $("#cap"); let got = false; const slow = setTimeout(() => { if (!got && id === runId) cap.classList.add("waiting"); }, 600);
-    const url = await Promise.race([ttsGet(k), new Promise(r => setTimeout(() => r(null), 20000))]); got = true;
+    const url = await Promise.race([ttsT(text), new Promise(r => setTimeout(() => r(null), 20000))]); got = true;
     clearTimeout(slow); cap.classList.remove("waiting");
     if (id !== runId) return false;
     if (url && await playNatural(url, id, words, onWord)) return id === runId;
@@ -1128,15 +1159,33 @@ async function runFrom(i){
     drawScene(k);
     for (const c of (scenes[k].pre || [])) if (!(await playClip(c, id))) return;
     const blk = blockOf(scenes[k]);
-    const lns = blk && blk.id !== "qNotes" ? [...blk.querySelectorAll(".ln")] : [];
-    const capW = [...$("#cap").querySelectorAll(".w")];
-    const mark = n => { capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo")); const w = capW[Math.min(n, capW.length-1)], c = $("#cap"); if (w) c.scrollTop = Math.max(0, w.offsetTop - 5); };
-    // הפתרון נכתב על הדף במקביל לקריינות
+    const lns = blk ? [...blk.querySelectorAll(".ln")] : [];
+    const penD = el => { const len = el.textContent.length; el.style.setProperty("--d", Math.min(3.2, .8 + len * .045) / rate + "s"); };
+    const capSet = t => { $("#cap").innerHTML = String(t || "").trim().split(/\s+/).filter(Boolean).map(w => `<span class="w todo">${esc(w)}</span>`).join(" "); return [...$("#cap").querySelectorAll(".w")]; };
+    const markOn = capW => n => { capW.forEach((w,j) => w.className = "w " + (j<n ? "done" : j===n ? "on" : "todo")); const w = capW[Math.min(n, capW.length-1)], c = $("#cap"); if (w) c.scrollTop = Math.max(0, w.offsetTop - 5); };
+    if (scenes[k].parts) {
+      // כמו בסרטונים: כל שורה נכתבת לאט בזמן שמסבירים אותה
+      for (const p of scenes[k].parts) {
+        const el = lns[p.ln];
+        lns.forEach(x => x.classList.remove("cur"));
+        if (el) { penD(el); el.classList.add("in", "cur"); follow(el); }
+        if (p.say && p.say.trim()) { if (!(await speak(p.say, id, markOn(capSet(p.say)), k))) return; }
+        else if (!(await sleep(1500 / rate, id))) return;
+        if (!(await sleep(250 / rate, id))) return;
+      }
+      lns.forEach(x => { x.classList.remove("cur"); x.classList.add("in"); });
+      if (!(await sleep(500 / rate, id))) return;
+      if (k < scenes.length-1) $("#segs").children[k].style.setProperty("--p", 1);
+      continue;
+    }
+    const capW = capSet(scenes[k].say);
+    const mark = markOn(capW);
+    // הפתרון נכתב על הדף לאט, במקביל לקריינות
     const speech = speak(scenes[k].say, id, mark, k);
+    const gap = Math.min(4200, Math.max(1600, capW.length * 380 / Math.max(lns.length, 1))) / rate;
     for (const el of lns) {
-      if (!(await sleep(el === lns[0] ? 200 : 1200 / rate, id))) return;
-      const len = el.textContent.length; el.style.setProperty("--d", Math.min(1.4, .35 + len*.02)/rate + "s");
-      el.classList.add("in"); follow(el);
+      if (!(await sleep(el === lns[0] ? 200 : gap, id))) return;
+      penD(el); el.classList.add("in"); follow(el);
     }
     if (!(await speech)) return;
     for (const c of (scenes[k].post || [])) if (!(await playClip(c, id))) return;
@@ -1149,6 +1198,7 @@ async function runFrom(i){
 function stopAll(){ runId++; playing = false; try { VA.pause(); NA.pause(); } catch(e){} if ("speechSynthesis" in window) speechSynthesis.cancel(); $("#bPlay").textContent = "▶"; }
 
 $("#qPhoto").onclick = () => { $("#qBig").hidden = false; };
+$("#qImg").onclick = () => { if (window._img) $("#qBig").hidden = false; };
 $("#qBigX").onclick = () => { $("#qBig").hidden = true; };
 $("#qFold").onclick = () => { const f = $("#qcol").classList.toggle("fold"); $("#qFold").textContent = f ? "▾" : "▴"; };
 const focusBoard = () => scrollTo({top: $("#pg").getBoundingClientRect().top + scrollY - 64, behavior:"smooth"});
@@ -1244,7 +1294,7 @@ $("#ytx").onclick = () => { $("#ytm").classList.remove("on"); $("#ytf").src = ""
 $("#ytm").onclick = e => { if (e.target.id === "ytm") $("#ytx").click(); };
 
 /* KaTeX נטען ב-defer – אם שיעור נפתח לפני כן, מציירים מחדש כשמוכן */
-addEventListener("load", () => { if (!$("#scrLesson").hidden && window._lesson) { renderWritten(window._lesson); if (!playing) drawScene(cur,false); } });
+addEventListener("load", () => { if (!$("#scrLesson").hidden && window._lesson) { renderPage(window._lesson); if (playing) setUpTo(cur); else { showAll(); drawScene(cur,false); } } });
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
 if (new URLSearchParams(location.search).has("demo")) addEventListener("load", () => $("#demoBtn").click());
 { const LK = new URLSearchParams(location.search).get("lesson");

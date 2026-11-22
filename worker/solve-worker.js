@@ -170,17 +170,24 @@ const SYSTEM_PROMPT = `אתה מסביר בדיוק כמו אוראל פנחסי
 - type="graph": functions = ביטויים ב-x בכתיב פשוט של מחשבון (x^2-5*x+6, sqrt(x), ln(x), exp(x), sin(x)), עם label; xmin/xmax/ymin/ymax שמראים את החלק המעניין; points = נקודות חשובות (חיתוכים, קיצון) עם label.
 - לא להמציא נתונים שלא בשאלה. הציור עוזר להבין, לא מחליף את הפתרון.
 
-=== פורמט הלוח ===
-- כל שורה: {"t":"math","v":"LaTeX"} או {"t":"text","v":"טקסט קצר בעברית"}.
-- LaTeX תקני של KaTeX בלבד, בלי $. שברים \\frac, כפל \\cdot.
+=== פורמט הלוח (כמו בסרטונים של אוראל: לאט, שורה אחרי שורה, ולכל שורה הסבר משלה) ===
+- כל שורה בלוח היא אובייקט עם v ו-say:
+  {"t":"math","v":"LaTeX","say":"מה אומרים בזמן שכותבים את השורה"}
+  {"t":"text","v":"טקסט קצר בעברית","say":"..."}
+  {"t":"why","v":"למה עושים את זה – משפט קצר בעברית (למשל: נקודה על הגרף? מציבים אותה בפונקציה)","say":"..."}
+- לאט! צעד אחד בכל שורה. לא קופצים צעדים ולא מחשבים "מהראש": מציבים מספר אחרי מספר, פותחים סוגריים בשורה נפרדת, מעבירים אגף בשורה נפרדת.
+- כל שלב מתחיל בשורת "why" שאומרת למה עושים אותו, ואחריה 2–6 שורות של חישוב.
+- say של כל שורה: משפט-שניים קצרים, בעל פה (מילים בלבד, בלי סימנים), שמסבירים מה כותבים ואיך מציבים ("במקום איקס שמים חמש", "את השש מעבירים לצד השני, והוא הופך לפלוס").
+- LaTeX תקני של KaTeX בלבד, בלי $. שברים \\frac (מונה מעל מכנה), שורש \\sqrt{...} על כל הביטוי, כפל \\cdot.
 - אסור עברית בשורת math, גם לא בתוך \\text. יחידות (ש״ח, ס״מ) והסברים – בשורת text נפרדת. סעיפים – בכותרת השלב.
-- 1–4 שורות לשלב. שורת math אחת = מעבר אחד.
-- mark: החלק החשוב בשלב (LaTeX), יודגש בזהב.
+- התשובה של כל סעיף – בשורה האחרונה של השלב שלו.
+- mark: החלק החשוב בשלב (LaTeX), יודגש בצבע.
+- say של השלב עצמו (לא של השורות): משפט פתיחה אחד קצר לשלב ("סעיף א: בוא נראה מה הם רוצים."). את ההסבר עצמו מפזרים בשורות.
 
 === פורמט הקריינות (say) ===
 - מוקרא בקול: רק מילים. "איקס בריבוע", "שלוש חלקי ארבע", "שורש של שמונה". בלי סימנים.
 - אותיות באנגלית כותבים בעברית כמו שאומרים אותן: x = "איקס", y = "וואי", AB = "איי בי", f(x) = "אף של איקס", sin = "סינוס". אף פעם לא אות לועזית בתוך say.
-- 2–4 משפטים לשלב, בקול של אוראל (הביטויים למעלה), בלי להגזים בסלנג.
+- משפט פתיחה קצר לשלב, ומשפט-שניים לכל שורה בלוח, בקול של אוראל (הביטויים למעלה), בלי להגזים בסלנג.
 - זו שיחה, לא הקראה! כתוב כמו שמורה מדבר עם תלמיד אחד שיושב לידו: גוף שני ("תסתכל", "שים לב", "מה אתה רואה כאן?"),
   משפטים קצרים וטבעיים, שאלה קטנה ואז תשובה ("אז מה עושים עכשיו? פותחים סוגריים."), חיבור לשלב הקודם ("עכשיו, כשיש לנו את זה...").
 - אל תקריא את הלוח סימן אחרי סימן – תסביר במילים מה עושים ולמה. את החישוב עצמו התלמיד רואה על הלוח.
@@ -228,7 +235,7 @@ const LESSON_TOOL = {
       steps: {
         type: "array",
         minItems: 2,
-        maxItems: 14,
+        maxItems: 20,
         items: {
           type: "object",
           properties: {
@@ -238,8 +245,8 @@ const LESSON_TOOL = {
               type: "array",
               items: {
                 type: "object",
-                properties: { t: { type: "string", enum: ["math", "text"] }, v: { type: "string" } },
-                required: ["t", "v"],
+                properties: { t: { type: "string", enum: ["math", "text", "why"] }, v: { type: "string" }, say: { type: "string", description: "מה אומרים בקול בזמן שכותבים את השורה – מילים בלבד" } },
+                required: ["t", "v", "say"],
               },
             },
             mark: { type: "string", description: "LaTeX של החלק להדגשה (רשות)" },
@@ -286,7 +293,7 @@ async function solveWithClaude(env, image, mediaType, userText) {
     headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
       model: env.MODEL || "claude-sonnet-5-5",
-      max_tokens: 8000,
+      max_tokens: 16000,
       system: SYSTEM_PROMPT,
       tools: [LESSON_TOOL],
       tool_choice: { type: "tool", name: "lesson" },
@@ -421,7 +428,7 @@ function normalize(L) {
   if (!Array.isArray(L.steps)) return null;
   L.steps = L.steps.filter(s => s && typeof s === "object").map(s => ({
     title: String(s.title || ""), say: String(s.say || ""), mark: s.mark ? String(s.mark) : undefined,
-    board: (Array.isArray(s.board) ? s.board : []).filter(b => b && typeof b.v === "string").map(b => ({ t: b.t === "text" ? "text" : "math", v: b.v })),
+    board: (Array.isArray(s.board) ? s.board : []).filter(b => b && typeof b.v === "string").map(b => ({ t: b.t === "text" || b.t === "why" ? b.t : "math", v: b.v, say: b.say ? String(b.say) : undefined })),
   }));
   if (!L.steps.length) return null;
   L.readable = true;
@@ -435,7 +442,7 @@ function normalize(L) {
   const clean = t => String(t || "").replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
   for (const k of ["title", "big_idea", "check", "remember", "question"]) if (L[k]) L[k] = clean(L[k]);
   if (L.overview) for (const k of ["goal", "what", "say"]) L.overview[k] = clean(L.overview[k]);
-  L.steps.forEach(s => { s.title = clean(s.title); s.say = clean(s.say); s.board.forEach(b => { if (b.t === "text") b.v = clean(b.v); }); });
+  L.steps.forEach(s => { s.title = clean(s.title); s.say = clean(s.say); s.board.forEach(b => { if (b.t !== "math") b.v = clean(b.v); if (b.say) b.say = clean(b.say); }); });
   if (L.answer && L.answer.say) L.answer.say = clean(L.answer.say);
   const m = L.match && typeof L.match === "object" ? L.match : {};
   L.match = { exam: String(m.exam || "").slice(0, 80), keywords: (Array.isArray(m.keywords) ? m.keywords : []).map(String).filter(Boolean).slice(0, 10) };
@@ -650,8 +657,9 @@ const EXPLAIN_SYSTEM = STYLE_SHORT + `
 5. "טעויות נפוצות" – 2–3 טעויות שתלמידים עושים ואיך להימנע.
 6. (לא חובה) "טיפ לבחינה".
 7. "סיכום" – 2–3 משפטים, וחיזוק ("אתם יכולים").
-לכל חלק: title קצר, say (40–70 מילים, שיחה טבעית, גוף שני), board – 1–5 שורות שנכתבות על הלוח בזמן ההסבר:
-{"t":"math","v":"LaTeX בלי \\( \\)"} או {"t":"text","v":"טקסט קצר, מתמטיקה בתוך \\( \\)"}.
+לכל חלק: title קצר, say (משפט פתיחה קצר לחלק), board – 2–6 שורות שנכתבות על הלוח לאט, שורה אחרי שורה, ולכל שורה say משלה (משפט-שניים, שיחה טבעית, גוף שני, מילים בלבד) שמוקרא בזמן שהיא נכתבת:
+{"t":"math","v":"LaTeX בלי \\( \\)","say":"..."} או {"t":"text","v":"טקסט קצר, מתמטיקה בתוך \\( \\)","say":"..."} או {"t":"why","v":"למה עושים את זה, במשפט קצר","say":"..."}.
+בדוגמה הפתורה: צעד אחד בכל שורה, מציבים מספר אחרי מספר ומסבירים למה.
 החזר JSON אחד: {"title":"...","topic":"מפתח","parts":[{"title":"...","say":"...","board":[...]}]}
 בתוך מחרוזות JSON כל לוכסן של LaTeX כפול.`;
 
@@ -659,9 +667,9 @@ function normExplain(E) {
   if (!E || !Array.isArray(E.parts)) return null;
   const clean = t => String(t ?? "").replace(/(^|[\s,.!?"'״׳(–-])יאללה[,!.]?\s*/g, "$1").replace(/\s{2,}/g, " ").trim();
   const parts = E.parts.slice(0, 8).map(p => ({ title: clean(p && p.title), say: clean(p && p.say),
-    board: (Array.isArray(p && p.board) ? p.board : []).slice(0, 6).map(b => ({ t: b && b.t === "math" ? "math" : "text", v: String(b && b.v || "") })).filter(b => b.v) }))
+    board: (Array.isArray(p && p.board) ? p.board : []).slice(0, 8).map(b => ({ t: b && (b.t === "math" || b.t === "why") ? b.t : "text", v: String(b && b.v || ""), say: b && b.say ? clean(b.say) : undefined })).filter(b => b.v) }))
     .filter(p => p.say);
-  const words = parts.reduce((n, p) => n + p.say.split(/\s+/).length, 0);
+  const words = parts.reduce((n, p) => n + p.say.split(/\s+/).length + p.board.reduce((m, b) => m + (b.say ? b.say.split(/\s+/).length : 0), 0), 0);
   if (parts.length < 4 || words < 200) return null;
   return { title: clean(E.title), topic: TOPIC_KEYS[E.topic] ? E.topic : "", parts, words };
 }

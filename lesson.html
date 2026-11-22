@@ -81,6 +81,15 @@ textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10
 .part .pb .m .katex{color:#1d2a6b}
 .part .pb .t{font-family:"Gveret Levin",cursive;font-size:21px;color:#1d2a6b}
 .part .ps{font-size:14.5px;color:#3b4060;line-height:1.6}
+/* סגנון 2 (כמו בסרטוני הבגרות): כל שורה נכתבת לאט בזמן שמסבירים אותה */
+.part .pb .ln{opacity:0;max-height:0;overflow:hidden;transition:opacity .3s}
+.part .pb .ln.in{opacity:1;max-height:none;overflow:visible}
+.part .pb .pen{display:inline-block;max-width:100%;clip-path:inset(0 100% 0 0);transition:clip-path var(--d,1.2s) ease-out}
+.part .pb .t .pen,.part .pb .why .pen{clip-path:inset(0 0 0 100%)}
+.part .pb .ln.in .pen{clip-path:inset(0 0 0 0)}
+.part .pb .ln.cur .pen{background:linear-gradient(transparent 62%,rgba(255,214,10,.5) 62%)}
+.part .pb .why .pen{background:#fff6dc;color:#7a4a00;border-right:5px solid #f5b83d;border-radius:8px;padding:3px 10px;font-size:16.5px;line-height:1.5}
+.part.says .ps{display:none}
 .part.now .ps{background:#fff8e1;border-radius:10px;padding:4px 8px}
 .ectl{display:flex;gap:8px;margin-top:12px;position:sticky;bottom:8px}
 .ectl .btn{flex:1}
@@ -516,25 +525,44 @@ async function playExplain(E){
     <div class="ectl"><button class="btn light" data-a="pause">⏸ עצירה</button><button class="btn gold" data-a="go">${S.watch ? "לתרגילים הפתורים ←" : "לתרגילים ←"}</button></div>`;
   $("#feed").append(card);
   const box = card.querySelector(".parts");
-  const partHTML = (p, k) => `<div class="part" data-k="${k}"><h4><span class="n">${k+1}</span>${esc(p.title)}</h4>
-    ${p.board.length ? `<div class="pb">${p.board.map(b => b.t === "math" ? `<div class="m">${tex(b.v)}</div>` : `<div class="t">${mixed(b.v)}</div>`).join("")}</div>` : ""}
+  const lineH = b => b.t === "math" ? `<div class="ln m"><span class="pen">${tex(b.v)}</span></div>` : b.t === "why" ? `<div class="ln why"><span class="pen">💡 ${mixed(b.v)}</span></div>` : `<div class="ln t"><span class="pen">${mixed(b.v)}</span></div>`;
+  const partHTML = (p, k, shown) => `<div class="part${p.board.some(b => b.say) ? " says" : ""}" data-k="${k}"><h4><span class="n">${k+1}</span>${esc(p.title)}</h4>
+    ${p.board.length ? `<div class="pb">${p.board.map(b => lineH(b).replace('class="ln', shown ? 'class="ln in' : 'class="ln')).join("")}</div>` : ""}
     <div class="ps">${mixed(p.say)}</div></div>`;
+  const penD = el => el.style.setProperty("--d", Math.min(3.2, .8 + el.textContent.length * .045) + "s");
   let paused = false, k = 0;
   const done = () => { explainTok++; if (cancelSay) cancelSay(); NA.pause(); card.querySelector(".ectl").remove(); nextExercise(); };
-  card.querySelector('[data-a="go"]').onclick = () => { E.parts.slice(k + 1).forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, k + 1 + j))); k = E.parts.length; done(); };
+  card.querySelector('[data-a="go"]').onclick = () => { box.querySelectorAll(".ln").forEach(l => l.classList.add("in")); E.parts.slice(k + 1).forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, k + 1 + j, true))); k = E.parts.length; done(); };
   const pb = card.querySelector('[data-a="pause"]');
   pb.onclick = () => { paused = !paused; pb.textContent = paused ? "▶ המשך" : "⏸ עצירה";
     if (paused) { explainTok++; if (cancelSay) cancelSay(); NA.pause(); } else run(k); };
-  if (!voiceOn) { E.parts.forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, j))); pb.remove(); k = E.parts.length; return; }
+  if (!voiceOn) { E.parts.forEach((p, j) => box.insertAdjacentHTML("beforeend", partHTML(p, j, true))); pb.remove(); k = E.parts.length; return; }
   async function run(from){
     const t = ++explainTok;
     for (k = from; k < E.parts.length; k++) {
       if (!box.querySelector(`.part[data-k="${k}"]`)) box.insertAdjacentHTML("beforeend", partHTML(E.parts[k], k));
       box.querySelectorAll(".part").forEach(el => el.classList.toggle("now", +el.dataset.k === k));
       const el = box.querySelector(`.part[data-k="${k}"]`); el.scrollIntoView({ behavior: "smooth", block: "center" });
-      if (E.parts[k + 1]) ttsUrl(E.parts[k + 1].say);
-      const ok = await sayWait(E.parts[k].say);
-      if (t !== explainTok || !ok) return;
+      const P = E.parts[k], lns = [...el.querySelectorAll(".ln")];
+      const nx = E.parts[k + 1]; if (nx) { ttsUrl(nx.say); nx.board.forEach(b => b.say && ttsUrl(b.say)); }
+      P.board.forEach(b => b.say && ttsUrl(b.say));
+      if (P.board.some(b => b.say)) {
+        // כמו בסרטונים: פתיחה קצרה, ואז כל שורה נכתבת לאט בזמן שמסבירים אותה
+        if (!(await sayWait(P.say)) || t !== explainTok) return;
+        for (let j = 0; j < lns.length; j++) {
+          lns.forEach(x => x.classList.remove("cur")); penD(lns[j]); lns[j].classList.add("in", "cur");
+          lns[j].scrollIntoView({ behavior: "smooth", block: "center" });
+          const ok = P.board[j].say ? await sayWait(P.board[j].say) : await new Promise(r => setTimeout(() => r(true), 1600));
+          if (t !== explainTok || !ok) return;
+        }
+        lns.forEach(x => x.classList.remove("cur"));
+      } else {
+        // שיעור בפורמט הישן: השורות נכתבות לאט לאורך הדיבור
+        let stop = false; const gap = Math.min(4200, Math.max(1600, P.say.split(/\s+/).length * 380 / Math.max(lns.length, 1)));
+        (async () => { for (const l of lns) { await new Promise(r => setTimeout(r, l === lns[0] ? 300 : gap)); if (stop || t !== explainTok) return; penD(l); l.classList.add("in"); } })();
+        const ok = await sayWait(P.say); stop = true; lns.forEach(l => l.classList.add("in"));
+        if (t !== explainTok || !ok) return;
+      }
     }
     box.querySelectorAll(".part").forEach(el => el.classList.remove("now"));
     pb.remove();
