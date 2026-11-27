@@ -124,6 +124,8 @@ for v in VIDEOS:
     for c in codes(v):
         topic_groups.setdefault(v[1], set()).add(c)
 ORDER = list(GNAME)
+GLV = {g[0]: g[5] for g in GROUPS}
+HAS_VID = {v[1] for v in VIDEOS}
 for tid, t in TOPICS.items():
     ids = [v[0] for v in VIDEOS if v[1] == tid]
     if not ids: continue
@@ -136,6 +138,22 @@ for tid, t in TOPICS.items():
         gid = [v[0] for v in VIDEOS if v[1] == tid and g in codes(v)]
         if gid:
             sections += f'<h2>{E(name)} – {E(GNAME.get(g, g))} <a class="more" href="{GSLUG[g]}.html">כל הנושאים של {E(GNAME[g])} ←</a></h2>' + vlist(gid, up)
+    # נושאים קשורים: שכנים בתוכנית הלימודים של אותה כיתה/שאלון + דף השאלון בבגרות
+    rel = []
+    for g in gs:
+        lst = CURR[GLV[g][0]][GLV[g][1]] if g in GLV else []
+        if tid not in lst: continue
+        i = lst.index(tid)
+        for j in sorted(range(len(lst)), key=lambda j: (abs(j - i), j)):
+            o = lst[j]
+            if o != tid and o not in rel and o in HAS_VID: rel.append(o)
+            if len(rel) >= 6: break
+        if len(rel) >= 6: break
+    rel_html = ""
+    if rel:
+        rel_html = '<h2>נושאים קשורים</h2><ul class="toc">' + "".join(f'<li><a href="topic-{o}.html">{E(TOPICS[o]["name"])}</a></li>' for o in rel)
+        rel_html += "".join(f'<li><a href="../bagrut/{BAG_FOR[g]}.html">📝 בגרות – שאלון {BAG_FOR[g]}: כל המועדים</a></li>' for g in gs if g in BAG_FOR)
+        rel_html += "</ul>"
     intro = (f"<p class=\"lead\">{len(ids)} סרטוני הסבר ותרגול בנושא <b>{E(name)}</b>"
              + (f" – ל{E(where)}" if where else "")
              + ". כל נושא מוסבר מהקל אל הקשה: קודם הרעיון, אחר כך תרגילים, ובסוף שאלות בסגנון בגרות. הכול בחינם, בשיטת \"פשוט להצליח\".</p>")
@@ -143,7 +161,7 @@ for tid, t in TOPICS.items():
          f"{name} – {len(ids)} סרטוני הסבר ותרגול במתמטיקה | {SITE}",
          f"{name}: {len(ids)} סרטוני הסבר, תרגול ושאלות בגרות פתורות" + (f" ל{where}" if where else "") + ". לומדים בחינם, צעד אחרי צעד.",
          f"{name} – סרטוני הסבר ותרגול",
-         intro + CTA(up) + sections,
+         intro + CTA(up) + sections + rel_html,
          [(SITE, "index.html"), ("כל הנושאים", "m/"), (name, f"m/topic-{tid}.html")],
          [itemlist(ids)])
 
