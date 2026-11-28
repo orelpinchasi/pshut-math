@@ -6,8 +6,12 @@ key=sys.argv[1]; ver=sys.argv[2] if len(sys.argv)>2 else "א"
 ROOT=os.path.dirname(os.path.dirname(HERE))
 import html
 TEX={"·":r"\cdot ","−":"-","≥":r"\ge ","≤":r"\le ","⇒":r"\Rightarrow ","≈":r"\approx ","′":"'","√":r"\sqrt ","μ":r"\mu ","σ":r"\sigma ","Φ":r"\Phi ","∠":r"\angle ","⊥":r"\perp ","°":r"^\circ ","²":"^2","³":"^3","π":r"\pi ","α":r"\alpha ","∞":r"\infty ","ˣ":"^x","⁴":"^4","⁰":"^0","ⁿ":"^n","₁":"_1","₂":"_2","₀":"_0","″":"''","≠":r"\ne ","←":r"\leftarrow ","→":r"\to ","∫":r"\int ","ℓ":r"\ell ","∢":r"\measuredangle ","↔":r"\leftrightarrow ","%":r"\%"}
-SUP={"⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","ˡ":"l","²":"2","³":"3","⁴":"4","⁰":"0","¹":"1","ⁿ":"n","ˣ":"x","⁻":"-"}
+SUP={"⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","ˡ":"l","²":"2","³":"3","⁴":"4","⁰":"0","¹":"1","ⁿ":"n","ˣ":"x","⁻":"-","ᵗ":"t","ᵏ":"k"}
+SUB={"₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9","ₜ":"t"}
 def tex(x):
+  x=x.replace("¹·⁵","^{1.5}")
+  x=re.sub(r"(\w)\u20d7",lambda m:"\\vec{"+m.group(1)+"}",x)   # u⃗ → \vec{u}
+  x=re.sub("["+"".join(SUB)+"]+",lambda m:"_{"+"".join(SUB[c] for c in m.group(0))+"}",x)   # S₁₈ → S_{18}
   x=re.sub("["+"".join(SUP)+"]+",lambda m:"^{"+"".join(SUP[c] for c in m.group(0))+"}",x)   # e²ˣ → e^{2x}
   return "".join(TEX.get(ch,ch) for ch in x)
 def strip(h):
