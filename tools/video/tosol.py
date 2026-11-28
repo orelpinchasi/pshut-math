@@ -13,9 +13,10 @@ def tex(x):
   x=re.sub(r"(\w)\u20d7",lambda m:"\\vec{"+m.group(1)+"}",x)   # u⃗ → \vec{u}
   x=re.sub("["+"".join(SUB)+"]+",lambda m:"_{"+"".join(SUB[c] for c in m.group(0))+"}",x)   # S₁₈ → S_{18}
   x=re.sub("["+"".join(SUP)+"]+",lambda m:"^{"+"".join(SUP[c] for c in m.group(0))+"}",x)   # e²ˣ → e^{2x}
-  return "".join(TEX.get(ch,ch) for ch in x)
+  return "".join(TEX.get(ch,ch) for ch in x).replace("\x01","<")
 def strip(h):
   # סגנון 2: שברים ושורשים הופכים ל-LaTeX, כדי שבפתרון הכתוב באתר יופיעו כמו בסרטון
+  h=re.sub(r'<(?=[\s0-9])','\x01',h)   # סימן "קטן מ" בתוך נוסחה (לא תגית)
   for _ in range(30):
     h0=h
     h=re.sub(r'<span class="sq"><i>√</i><span>([^<]*)</span></span>',lambda m:"\\sqrt{"+m.group(1)+"}",h)
@@ -24,7 +25,7 @@ def strip(h):
     h=re.sub(r'<span class="m">([^<]*)</span>',lambda m:"$"+tex(m.group(1))+"$",h)
     if h==h0: break
   h=re.sub(r"</?span[^>]*>"," ",h)
-  h=re.sub(r"\s+"," ",h).strip()
+  h=re.sub(r"\s+"," ",h).strip().replace("\x01","<")
   # טקסט רגיל עובר escape; נוסחאות בין $...$ נשארות כמו שהן (KaTeX מקבל אותן כטקסט)
   return "$".join(x if i%2 else html.escape(html.unescape(x),quote=False) for i,x in enumerate(h.split("$")))
 Q=[]
