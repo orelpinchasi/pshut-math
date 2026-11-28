@@ -40,3 +40,6 @@ td small{color:var(--muted)}td a.go{font-weight:700;white-space:nowrap}
 .part ul{margin:6px 0;padding-inline-start:18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
 .ans{margin:6px 0;font-weight:500;color:#1d6b4b}
 footer{color:var(--muted);font-size:14px;padding:30px 0 40px;margin-top:40px;border-top:1px solid var(--line)}footer a{color:var(--muted)}
+.faq details{border:1px solid rgba(127,127,127,.3);border-radius:10px;padding:10px 14px;margin:8px 0}
+.faq summary{cursor:pointer;font-weight:700}
+.faq p{margin:8px 0 0}

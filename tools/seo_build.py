@@ -224,15 +224,28 @@ for q in BAG["q"]:
     years = sorted({s["k"].split("_")[1] for s in q["ss"]})
     title = f"בגרות {qid[2:]} ({qid}) במתמטיקה {lv} – כל המועדים {years[0]}–{years[-1]} עם פתרונות | {SITE}"
     desc = f"פתרון בגרות {qid[2:]} – שאלון {qid}, {lv}, {nm} (כיתה {gr}): כל בחינות הבגרות {years[0]}–{years[-1]}, חורף וקיץ, עם השאלון והפתרון, וסרטוני הסבר לכל נושא בשאלון."
+    # שאלות נפוצות – רק מתוך הנתונים (FAQPage)
+    nfull = sum(1 for s in q["ss"] if os.path.exists(f"sol/{s['k']}.json"))
+    faq = [(f"לאיזו כיתה ורמה מיועד שאלון {qid}?",
+            f"שאלון {qid} הוא {nm} של מתמטיקה ב-{lv}, ונבחנים בו בכיתה {gr}.")]
+    if q.get("w"):
+        faq.append((f"כמה שווה שאלון {qid} מציון הבגרות?", f"שאלון {qid} שווה {q['w']} מהציון במתמטיקה ב-{lv}."))
+    faq.append((f"אילו נושאים יש בשאלון {qid}?", f"הנושאים בשאלון {qid}: " + "; ".join(p["t"].replace(" — ", ": ") for p in q["parts"]) + ". לכל נושא יש סרטוני הסבר בדף הזה."))
+    faq.append((f"איפה יש פתרונות לבחינות קודמות ודף נוסחאות לשאלון {qid}?",
+                f"בדף הזה יש {len(q['ss'])} מועדים מהשנים {years[0]}–{years[-1]}, ולכל מועד השאלון והפתרון הרשמי של משרד החינוך"
+                + (f"; ל-{nfull} מהם יש גם פתרון מלא בווידאו" if nfull else "") + f". דף הנוסחאות ל-{lv} מקושר מתחת לטבלת המועדים."))
+    faq_html = '<h2>שאלות נפוצות על שאלון ' + qid + '</h2><div class="faq">' + "".join(f'<details><summary>{E(a)}</summary><p>{E(b)}</p></details>' for a, b in faq) + "</div>"
+    faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": a, "acceptedAnswer": {"@type": "Answer", "text": b}} for a, b in faq]}
     page(f"bagrut/{qid}.html", title, desc, f"שאלון {qid} – {lv}, {nm}",
          f'<p class="lead">שאלון <b>{qid}</b> הוא {E(nm)} של מתמטיקה ב<b>{E(lv)}</b> (כיתה {E(gr)}, {E(q.get("w",""))} מהציון). '
          f'כאן כל הבחינות מהשנים {years[0]}–{years[-1]} – השאלון והפתרון הרשמי של משרד החינוך לכל מועד – וסרטוני הסבר על כל נושא שמופיע בבחינה.</p>'
          + CTA(up)
          + f'<h2>בחינות קודמות ופתרונות</h2><div class="tw"><table><thead><tr><th>מועד</th><th>שאלון</th><th>פתרון</th><th></th></tr></thead><tbody>{rows}</tbody></table></div>'
          + f'<p class="note">דף נוסחאות: <a href="{E(BAG["formula"].get(lv[0], ""))}" target="_blank" rel="noopener">דף הנוסחאות ל{E(lv)}</a></p>'
-         + f'<h2>סרטוני הסבר לפי הנושאים בשאלון</h2>{parts}',
+         + f'<h2>סרטוני הסבר לפי הנושאים בשאלון</h2>{parts}' + faq_html,
          [(SITE, "index.html"), ("בחינות בגרות", "bagrut/"), (f"שאלון {qid}", f"bagrut/{qid}.html")],
-         [itemlist(pids)])
+         [itemlist(pids), faq_ld])
     bag_cards += f'<a class="box" href="{qid}.html"><b>{qid}</b><span>{E(lv)} · {E(nm)} · כיתה {E(gr)}</span></a>'
 
     # דפי מועד בלי פתרון מלא: שאלון, פתרון רשמי וסרטוני הנושאים
